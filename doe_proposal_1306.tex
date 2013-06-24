@@ -53,6 +53,106 @@
 \section{Introduction}
 
 
+
+\section{Photometric Redshifts}
+
+The fact that three quarters of the Universe is composed of something we absolutely
+do not understand (dark energy) represents one of the deepest puzzles in fundamental
+physics today.  Fortunately, as a fundamental constituent of the cosmos, dark energy
+has a strong effect on the formation history of galaxies.
+Detailed maps of the three dimensional distribution of galaxies 
+\cite{muvarpi2,roland} and statistical studies of how their images are distorted via
+gravitational weak lensing \cite{sudeep} can teach us much of what we do not
+currently know about the dark sector of the Universe.  These maps will require
+robust measures of the cosmological redshift of the light emitted by galaxies.
+
+While it is straightforward to determine a galaxy's redshift by directly taking
+its spectrum, this is an expensive measurement.  
+Thus, survey astronomers rely on
+photometric redshifts -- redshifts inferred from observations of the galaxy
+through a handful of broad-band photometric filters.  Given a
+galaxy's spectrum and knowledge of the profile of our filters, we
+can in principle determine the galaxy's redshift by artificially shifting the
+theoretical spectrum, integrating it through the filter, and repeating until we have a
+good match for the observed photometry.  Unfortunately, galaxies come in many
+varieties and the process is not as simple as the one-parameter fit described. 
+Photometric redshift algorithms must fit for all types of galaxies at all
+observed redshifts using data from as few as five photometric
+filters.  This
+multi-parameter fit is highly non-trivial and incorrect calculations can degrade
+dark energy constraints by nearly an order of magnitude \cite{Ma2006}.
+New algorithms must be designed and tested against high-fidelity simulations of the
+forthcoming data in order to realize the results anticipated by the Dark
+Energy Task Force \cite{detf}.  
+
+
+\section{Transient Classification}
+
+In addition to the unknown constituents of cosmology, future surveys promise to
+yield observations of unknown sources within our own galaxy.  Most exciting
+among these will be the variable sources: stars whose luminosity changes either
+periodically or cataclysmically.  Some such sources are already known and
+well-understood, such as type II supernovae.  
+Some are known, but mysterious, such as the afterglows of
+Gamma Ray Bursts.
+Many others are still waiting to be discovered \cite{sciencebook}.  As with
+cosmological redshift, it would be ideal if we could take detailed spectra and
+time-series photometry of each source in order to understand its physical
+nature.  This is unrealistic.  The LSST is projected to detect as many as one
+million variable sources every night \cite{lsstoverview}. 
+There are not sufficient follow-up resources to target every one of these
+sources with a detailed observation. 
+Astronomers must develop algorithms to identify,
+in real time, using sparse observations which transients are novel and which are 
+well-understood and what follow-up observations would yield the most information
+about the novel sources.  These algorithms must be rapid and robust, as the
+decision to follow-up a given transient must be made before the transient fades
+back into quiescence.  In addition to their impact on future surveys, such as
+the LSST, these algorithms will find immediate application characterizing
+observations taken by The Palomar Transient
+Factory\footnote{http://www.astro.caltech.edu/ptf/} and Catalina Sky
+Survey\footnote{http://www.lpl.arizona.edu/css/}.
+
+Real-time automatic classification of objects is already widely acknowledged as a
+necessary support technology for the forthcoming age of survey astronomy
+\cite{djorgovski2011,richards2011,richards2012,graham2012,mahabal2008a,mahabal2011a}.
+Objects will need to be categorized into known science classes so that novel
+or rare objects can be flagged for detailed follow-up observations.
+For transient events, algorithms must be able to make rapid
+decisions so that sources can be targeted for follow-up 
+and classifications learned before
+objects return to their quiescent phases.  A great deal of work has
+already been done developing algorithms that can learn the classification of an
+object given a fixed set of observations and training data.  
+Mahabal {\it et al}. (2008a,2011a,2011b) propose to break down the
+observations of a given object into $\{\Delta m,\Delta t\}$ pairs (where $m$
+is magnitude and $t$ is time) and use the density of observations in this 
+two-dimensional space as the basis for a Bayesian classification algorithm.
+Mahabal {\it et al}. (2008b) alternatively propose to use those same 
+$\{\Delta m,\Delta t\}$ pairs as the input to a Gaussian process regression
+by which they will reconstruct the object's entire light curve as a function
+of time, and then classify the object based on that reconstruction.
+Richards {\it et al}. (2011) use observations of transient objects to extract
+periodic (e.g. the amplitude and frequency of the first two Fourier modes of
+the object's light curve) and non-periodic (e.g. the variance and skewness of
+all of the magnitude observations taken, regardless of their separation in
+time) and feed those features into several tree-based classifiers.
+They find misclassification rates lower than 30\% with their best method yielding a
+misclassification rate of 22.8\%.  Using only non-periodic features, which will be
+especially easy for survey telescopes to gather, rather than
+full light curves, they 
+find a misclassification rate of
+between 26\% and 28\%.
+Bloom {\it et al}. (2011) also use a tree-based automatic classifier on
+Palomar Transient Factory data and find a 3.8\% error rate when
+discriminating between four major classifications.  Richards {\it et al}.
+consider a more complete set of 25 possible classifications.
+Clearly, many possibile approaches are available for the automated
+classification of transient objects, and not all of them rely upon highly
+detailed observations to function.
+
+\section{On-Line Learning Algorithms}
+
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
