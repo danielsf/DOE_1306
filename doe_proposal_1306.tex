@@ -99,14 +99,25 @@ Because the empirical photometric redshift mapping function is learned
 directly from actual data, there is no need to ensure perfect theoretical
 understanding of the spectra being inferred. 
 
+
+
 \begin{figure}
+\subfigure[]{
 \includegraphics[scale=0.2]{annz_scatter_plot.png}
-\caption{
-Photometric redshift inferred by the ANNz neural network algorithm plotted
-against true spectroscopic redshift for 48,000 simulated LSST galaxy
-observations.
+\label{subfig:annz}
 }
-\label{fig:annzscatter}
+\subfigure[]{
+\includegraphics[scale=0.2]{eazy_scatter_plot.png}
+\label{subfig:eazy}
+}
+\caption{
+Photometric redshift plotted
+against true spectroscopic redshift for 48,000 simulated LSST galaxy
+observations.  Photometric redshifts are derived using the ANNZ neural
+network algorithm in Figure \ref{subfig:annz} and the EAZY template-fitting
+algorithm in Figure \ref{subfig:eazy}
+}
+\label{fig:scatter}
 \end{figure}
 
 \subsection{Gaussian Processes}
