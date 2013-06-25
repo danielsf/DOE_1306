@@ -272,8 +272,74 @@ neural networks (see Figure \ref{subfig:lnsumlsst}).
 Figure \ref{fig:sdss} recreates Figure \ref{subfig:lnsumlsst} using actual data
 taken from the Sloan Digital Sky Survey \cite{Abazajian:2008wr}.
 
+\subsection{Active Learning and Photometric Redshifts}
+\label{sec:mlpz}
 
+The discussion above illustrates how the appropriate choice of machine
+learning algorithm can affect the fidelity of one's photometric redshift
+determinations.  Further gains can be made if one is similarly judicious in
+choosing a training set.  While next generation surveys like the LSST will
+be exclusively photometric, they will present us with large numbers of
+galaxies which we will have the option to follow-up with off-site
+spectroscopy.  It behooves us, therefore, to develop a quantitative way of
+determining which galaxies represent the most effective use of these
+limited follow-up resources.  Such methods fall in the field of active
+learning and we will develop novel algorithms for this purpose.
 
+Active learning algorithms iteratively decide which data points they will
+collect outputs on and add to the training set.  The goal is to choose the
+points that will most improve the model being learned.  At each step, they
+consider the current training data, the potential training data that could
+be collected, and the current learned model, and evalute each potential new
+point according to some objective criterion.  After selecting one or more
+new points, the outputs for those points are collected and added to the
+training set and the process repeats.  The key to the active learning
+algorithm is the specification of the objective criterion used for
+selection.  Settles (2009) presents a survey of such criteria.
+
+\begin{figure}
+\includegraphics[scale=0.2]{learning_curve.png}
+\caption{
+A demonstration of the efficacy of Active Learning.
+15\% of the 97,000 simulated LSST galaxy observations are randomly
+assigned to the training data for our Gaussian Process algorithm.
+The black curve shows the performance of the algorithm as more galaxies
+are assigned at random to the training data.
+The red curve shows the performace of the algorithm as galaxies are chosen
+which maximize $-\ln[P(\text{mode})]$ and added to the training data.
+Judiciously choosing training galaxies ultimately improves the performance of
+our learning algorithm.
+}
+\label{fig:learning}
+\end{figure}
+
+Figure \ref{fig:learning} demonstrates the effect that active learning can
+have on an automatic classifier, like our Gaussian Process photometric redshift
+algorithm.  Initially, 15\% of our 97,000 simulated LSST galaxy observations are
+randomly chosen to be training (spectroscopic) data.  After that, we attempt two
+schemes to grow our training set.  The black curve represents random selection
+of training data.  The red curve represents training data chosen such that
+galaxies with the maximum value of of $F\equiv-\ln[P(\text{mode)]$ are added 
+to the
+training data at any given time.  As you can see, choosing to follow up on 
+galaxies about
+which the least is known (those with maximum $F$) ultimately produces a more
+effective classifier.
+
+The method demonstrated above was the simplest possible active learning scheme. 
+At each iteration, the algorithm ``greedily'' chose the galaxy with the
+least-constraining PDF (measured by the vaule of the PDF at its mode).
+More advanced active learning algorithms explored by our group in other contexts
+\cite{Garnett11,Garnett12} choose follow-up galaxies by ``looking ahead'' and
+determining the effect of a follow-up measurement on the expected accuracy of
+the classification after both the immediate next iteration and the iteration to
+follow.  This algorithm was originally implemented in the case of a binary
+classification (``benign'' versus ``malicious'' inputs).  In the current
+context, we will extend this analysis to incorporate the full posterior
+PDF over redshift.
+
+We will test our algorithms using both real (as in Figure \ref{fig:sdss}) and
+simulated (as in Figures \ref{fig:learning} and \ref{fig:gp}) data.
 Connolly is
 the LSST lead for simulation.  Validation of these techniques will utilize
 existing data sets comprising spectroscopic redshifts and five band
@@ -282,10 +348,6 @@ galaxies) and 30,000 galaxies from the
 DEEP2\footnote{http://deep.ps.uci.edu} survey (for high redshift galaxies).
 We will extend these datasets to include multiple narrow band observations
 to evaluate how well we can measure redshifts with narrow band photometry.
-We will assess the performance of our algorithms by minimizing both the
-mean bias $\text{Av}[z_\text{spec}-z_\text{phot}]$ of determined photometric
-redshift and their RMS scatter (the vertical axis of Figure \ref{dzfig}).
-
 
 \section{Transient Classification}
 
