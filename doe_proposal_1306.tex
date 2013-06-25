@@ -88,7 +88,14 @@ While it is straightforward in principle, it requires
 accurate foreknowledge to select the appropriate basis spectra.  If the chosen
 spectra are not representative of the population of observed
 galaxies, the algorithm will fail to give accurate redshifts and cosmological
-inferences will be inaccurate \cite{budavari2008}.
+inferences will be inaccurate \cite{budavari2008}.  The effects of this
+shortcoming can be seen in Figure \ref{subfig:eazy}, which plots the results
+of running the publically available EAZY algorithm \cite{eazy} on a set of
+simulated galaxy observations designed to represent results expected from the
+Large Synoptic Survey Telescope (LSST\footnote{http://www.lsst.org}).
+While many of the galaxies fall near the
+$z_\text{photometric}=z_\text{spectroscopic}$ line, there is significant scatter
+in the results.
 
 Empirical photometric redshift methods take a training set of galaxies for
 which photometric and spectroscopic information exists and construct an
@@ -97,35 +104,48 @@ their photometric measurements.  The neural network code ANNz is one example
 of this method \cite{annz}.
 Because the empirical photometric redshift mapping function is learned
 directly from actual data, there is no need to ensure perfect theoretical
-understanding of the spectra being inferred. 
-
-
+understanding of the spectra being inferred.  In this case, the principal
+shortcoming the method is that present algorithms are designed only to return a
+photometric redshift value and an uncertainty.  This leaves their results
+sensitive to degeneracies in the photometric data whereby low redshift galaxies
+look similar to high redshift galaxies, confusing the algorithm.  This can be
+seen in Figure \ref{subfig:annz}.
 
 \begin{figure}
-\subfigure[]{
-\includegraphics[scale=0.2]{annz_scatter_plot.png}
-\label{subfig:annz}
-}
 \subfigure[]{
 \includegraphics[scale=0.2]{eazy_scatter_plot.png}
 \label{subfig:eazy}
 }
+\subfigure[]{
+\includegraphics[scale=0.2]{annz_scatter_plot.png}
+\label{subfig:annz}
+}
 \caption{
 Photometric redshift plotted
 against true spectroscopic redshift for 48,000 simulated LSST galaxy
-observations.  Photometric redshifts are derived using the ANNZ neural
-network algorithm in Figure \ref{subfig:annz} and the EAZY template-fitting
-algorithm in Figure \ref{subfig:eazy}
+observations.  Photometric redshifts are derived using the
+EAZY template-fitting
+algorithm in Figure \ref{subfig:eazy} and
+the ANNZ neural
+network algorithm in Figure \ref{subfig:annz}.
 }
 \label{fig:scatter}
 \end{figure}
 
+We propose to address these shortcomings by designing an empirical algorithm
+which treats the photometric redshift problem probabilistically.  Rather than
+taking the spectroscopic data and learning a one-to-one photometric redshift
+relationship, we will use Gaussian Processes to model a probability density
+function in $z_\text{photometric}$ which can characterize the probability that a
+given galaxy is at a given redshift.  This method will not only be resilient
+against the pitfalls demonstrated in Figure \ref{fig:scatter}, but will allow us
+to quantify the information gained by future observations in such a way as to
+optimize the gathering of additional spectroscopic data to further improve on
+our results.
+
 \subsection{Gaussian Processes}
 \label{sec:gppz}
 
-Before we discuss the application of active learning to the problem of
-photometric redshift determination, we will introduce the framework of Gaussian
-processes upon which we will build our active learning algorithms.
 Gaussian processes (GPs) are means for interpolating the value of a scalar
 function on high-dimensional coordinate spaces given noisy data \cite{gp}.
 An important feature of GPs is that they do not make parametric assumptions
@@ -208,41 +228,28 @@ determined photometric redshifts.  This would directly address the
 shortcomings of present Gaussian Process methods identified by Bonfield
 {\it et al}. (2010) vis-\`a-vis error propagation.
 
-To demonstrate the efficacy of Gaussian processes on the problem of
-photometric redshift directly, we consider a set of 106,000 galaxies with
-five-band photometric and spectroscopic data taken from the eighth data
-release of the Sloan Digital Sky Survey \cite{Abazajian:2008wr}.  We
-randomly select 53,000 of these galaxies to be our test set.  These will
-act as real data for which we will pretend we do not have spectroscopic
-redshifts.  The remaining 53,000 will be randomly segregated into 35,000
-galaxies used for training and 18,000 used for validation.  We will feed
-these sets into a Gaussian process whose covariance function is of the form
-\begin{equation}
-\label{testcovar}
-K_{ij}=\exp\bigg[-\frac{1}{2}D^2_{ij}/\ell^2\bigg]
-\end{equation}
-where $D_{ij}$ is the distance in photometric color space between the ith
-and jth galaxies.  $\ell^2$ and $\sigma^2$ (see eqn \ref{eq:mean}) are
-hyperparameters which will be selected so as to maximize the fit to the
-18,000 validation galaxy redshifts.  In the interest of conserving
-computing resources, each photometric redshift will be inferred using only
-data from the 200 nearest neighbor (in photometric color space) training
-galaxies.  For comparison, we will use the same data sets as inputs into
-the publicly available neural net code ANNz \cite{annz} and compare the
-algorithms' results.  Figure \ref{dzfiga} compares the results of the two
-algorithms by plotting $\sqrt{\text{Av}[(z_\text{spec}-z_\text{phot})^2]}$ in bins
-of $\Delta z=0.1$ where $z_\text{spec(phot)}$ is spectroscopic
-(photometric) redshift and $\text{Av}[~]$ denotes the average over the test set.
-As can be seen, this very simple Gaussian process is already as accurate as
-the neural network code.  Figure \ref{dzfiggap} shows the same plot when
-all galaxies with $0.2\le z\le0.4$ have been excised from the training and
-validation sets (so that the algorithm has no way of learning about the
-photometric behavior of galaxies in that redshift range) but not from the
-test set.  Again, the algorithms are comparable, except that the Gaussian
-process is slightly more accurate than the neural net in the unlearned
-redshift range.  This is consistent with the findings of Bonfield {\it et
-  al}. (2010) who show that Gaussian processes are more resilient than
-neural networks to incomplete training sets.
+\begin{figure}
+\subfigure[]{
+\includegraphics[scale=0.2]{gp_scatter_plot.png}
+\label{subfig:gpscatter}
+}
+\subfigure[]{
+\includegraphics[scale=0.2]{lnsum_lsst.png}
+\label{subfig:lnsumlsst}
+}
+\caption{
+Figure \ref{subfig:gpscatter} plots photometric redshift determined by
+our probabilistic Gaussian Process model as a function of spectroscopic
+redshift.  Figure \ref{subfig:lnsumlsst} shows the mean value of
+$\ln[P(\text{truth})]$ as a function of photometric redshift (the vertical
+axes in Figures \ref{fig:scatter} and \ref{subfig:gpscatter}) for all
+three algorithms under consideration.  Note that, even though Figure
+\ref{subfig:gpscatter} shows the same degeneracy seen in Figure
+\ref{subfig:annzscatter}, it gives a significantly higher value of
+$\ln[P(\text{truth})]$ in that range of photometric redshift.
+}
+\end{figure}
+
 
 We propose to build algorithms that are not only robust against incomplete
 data, but are able to extrapolate photometric redshifts beyond the redshift
