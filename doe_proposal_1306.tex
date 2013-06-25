@@ -72,13 +72,14 @@ Detailed spectroscopy is an expensive measurement.  Photometry -- measuring the
 brightness of objects in broad passband filters -- is thousands of times less
 expensive.  Therefore, a great deal of attention has focused on developing a
 method of determining ``photometric redshifts'': inferring a relationship
-between an object's photometric spectroscopic and signatures such that redshifts
+between an object's photometric and spectroscopic signatures such that redshifts
 can be determined solely from photometric data.  Presently, two broad classes of
 photometric redshift algorithm are typically employed: template fitting and
 empirical algorithms.
 
 Template fitting methods operate by using synthetic or empirical basis spectra
-to reconstruct a galaxy's spectrum.  The reconstructed spectrum is then
+to reconstruct a galaxy's rest frame spectrum.  
+The reconstructed spectrum is then
 redshifted and integrated over the profile of the given
 photometric filters until a good fit to the observed photometric data is
 found.  The redshift of the galaxy is taken as that which produces the best fit
@@ -139,7 +140,7 @@ relationship, we will use Gaussian Processes to model a probability density
 function in $z_\text{photometric}$ which can characterize the probability that a
 given galaxy is at a given redshift.  This method will not only be resilient
 against the pitfalls demonstrated in Figure \ref{fig:scatter}, but will allow us
-to quantify the information gained by future observations in such a way as to
+to quantify the information content of our trainind data in such a way as to
 optimize the gathering of additional spectroscopic data to further improve on
 our results.
 
@@ -199,17 +200,20 @@ Rasmussen and Williams (2006).
 
 Gaussian processes offer two distinct advantages which render them particularly
 amenable to integration into active learning frameworks.
-The variance (eqn \ref{eq:cov})
-can be used to assign an uncertainty to the predicted value
-$f(\vec{\theta}^{q})$ (in our case, the photometric redshift).  
-The covariance
-provides the structure between all pairs of predicted and observed outputs.
-Bryan {\it et al}. (2007) and Daniel {\it et al}. (2012) use this aspect of
-Gaussian processes to great affect, treating the determined variances as a
+Because they model the likelihood of both their inputs and their outputs, they
+allow us to assess both our confidence in the outputs (the probability that we
+have found the correct photometric redshift), and our confidence in the model as
+a whole.
+Bryan {\it et al}. (2007) and Daniel {\it et al}. (2012) use the former 
+feature to great affect, treating the determined variances as a
 measure of the information that can be learned by promoting a query point
 to a new training point and thus learning the likelihood surface of a
 theory space with greater efficiency than traditional MCMC methods (see
 especially Figures 5-10 of Daniel {\it et al}. 2012).
+The latter feature allows us to compare PDF models with one and two modes, thus
+correcting for the degeneracies in the photometry-to-redshift relationship in
+Figure \ref{subfig:annz}.  This is the method we use to generate Figure
+\ref{fig:gp}.
 
 The second advantage of Gaussian processes is their indifference to the
 physical meaning of the inputs and outputs.  There is nothing to prevent us
@@ -262,10 +266,13 @@ redshift for 715,000 galaxies taken from the Sloan Digital Sky Survey.
 
 Figure \ref{fig:gp} shows preliminary results of our proposed probabilistic
 Gaussian Process algorithm.  Figure \ref{subfig:gpscatter} plots photometric
-redshift versus spectroscopic redshift for the same galaxies used in Figure
-\ref{fig:scatter}.  Gaussian Processes perform better than the EAZY algorithm
+redshift versus spectroscopic redshift for the same simulated
+galaxy observations used in Figure
+\ref{fig:scatter}.  
+According to this metric,
+Gaussian Processes perform better than the EAZY algorithm
 and comparably to the neural network of ANNz.  However, if we instead measure
-performancy by considering $\ln[P(\text(truth)]$, i.e. the logarithm of the
+performancy by considering $\ln[P(\text{truth})]$, i.e. the logarithm of the
 value of the posterior probability density function at the known spectroscopic
 redshift of our galaxies, we see that Gaussian Processes consistently outperform
 neural networks (see Figure \ref{subfig:lnsumlsst}).
@@ -318,10 +325,11 @@ have on an automatic classifier, like our Gaussian Process photometric redshift
 algorithm.  Initially, 15\% of our 97,000 simulated LSST galaxy observations are
 randomly chosen to be training (spectroscopic) data.  After that, we attempt two
 schemes to grow our training set.  The black curve represents random selection
-of training data.  The red curve represents training data chosen such that
-galaxies with the maximum value of of $F\equiv-\ln[P(\text{mode})]$ are added 
+of training data.  The red curve represents training data chosen such that,
+at each iteration, the
+galaxy with the maximum value of of $F\equiv-\ln[P(\text{mode})]$ is added 
 to the
-training data at any given time.  As you can see, choosing to follow up on 
+training data.  Choosing to follow up on 
 galaxies about
 which the least is known (those with maximum $F$) ultimately produces a more
 effective classifier.
@@ -330,7 +338,7 @@ The method demonstrated above was the simplest possible active learning scheme.
 At each iteration, the algorithm ``greedily'' chose the galaxy with the
 least-constraining PDF (measured by the vaule of the PDF at its mode).
 More advanced active learning algorithms explored by our group in other contexts
-\cite{Garnett11,Garnett12} choose follow-up galaxies by ``looking ahead'' and
+\cite{Garnett11,Garnett12} choose follow-up candidates by ``looking ahead'' and
 determining the effect of a follow-up measurement on the expected accuracy of
 the classification after both the immediate next iteration and the iteration to
 follow.  This algorithm was originally implemented in the case of a binary
@@ -339,7 +347,7 @@ context, we will extend this analysis to incorporate the full posterior
 PDF over redshift.
 
 We will test our algorithms using both real (as in Figure \ref{fig:sdss}) and
-simulated (as in Figures \ref{fig:learning} and \ref{fig:gp}) data.
+simulated (as in Figures \ref{fig:gp} and \ref{fig:learning}) data.
 Connolly is
 the LSST lead for simulation.  Validation of these techniques will utilize
 existing data sets comprising spectroscopic redshifts and five band
