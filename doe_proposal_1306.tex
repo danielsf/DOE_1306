@@ -244,7 +244,160 @@ right panel shows sampling at the deep drilling cadence.
 \section{Experimental Design and Optimization through Active
   Learning}
  
-Experimental design description
+{\bf Experimental design description}
+
+{\bf I have just copied-and-pasted the ``active learning for transients''
+paragraphs from the previous draft}
+
+
+Real-time automatic classification of objects is already widely acknowledged as a
+necessary support technology for the forthcoming age of survey astronomy
+\cite{djorgovski2011,richards2011,richards2012,graham2012,mahabal2008a,mahabal2011a}.
+Objects will need to be categorized into known science classes so that novel
+or rare objects can be flagged for detailed follow-up observations.
+For transient events, algorithms must be able to make rapid
+decisions so that sources can be targeted for follow-up 
+and classifications learned before
+objects return to their quiescent phases.  A great deal of work has
+already been done developing algorithms that can learn the classification of an
+object given a fixed set of observations and training data.  
+Mahabal {\it et al}. (2008a,2011a,2011b) propose to break down the
+observations of a given object into $\{\Delta m,\Delta t\}$ pairs (where $m$
+is magnitude and $t$ is time) and use the density of observations in this 
+two-dimensional space as the basis for a Bayesian classification algorithm.
+Mahabal {\it et al}. (2008b) alternatively propose to use those same 
+$\{\Delta m,\Delta t\}$ pairs as the input to a Gaussian process regression
+by which they will reconstruct the object's entire light curve as a function
+of time, and then classify the object based on that reconstruction.
+Richards {\it et al}. (2011) use observations of transient objects to extract
+periodic (e.g. the amplitude and frequency of the first two Fourier modes of
+the object's light curve) and non-periodic (e.g. the variance and skewness of
+all of the magnitude observations taken, regardless of their separation in
+time) and feed those features into several tree-based classifiers.
+They find misclassification rates lower than 30\% with their best method yielding a
+misclassification rate of 22.8\%.  Using only non-periodic features, which will be
+especially easy for survey telescopes to gather, rather than
+full light curves, they 
+find a misclassification rate of
+between 26\% and 28\%.
+Bloom {\it et al}. (2011) also use a tree-based automatic classifier on
+Palomar Transient Factory data and find a 3.8\% error rate when
+discriminating between four major classifications.  Richards {\it et al}.
+consider a more complete set of 25 possible classifications.
+Clearly, many possibile approaches are available for the automated
+classification of transient objects, and not all of them rely upon highly
+detailed observations to function.
+
+The input features for transient object classification will be photometric
+and morphologic measures taken at different increments in time.  The output
+is a categorical variable indicating the class.  This is in contrast to
+photometric redshifts where the output is continuous.  Fortunately, the
+underlying covariance for Gaussian process classification is the same as
+for regression and we will adopt a similar prediction model.
+
+The active learning problem for transient objects contains three
+subproblems, active learning, active search, and active feature
+acquisition.  Finally, one additional difference between the transient
+object method and the photometric redshift method is that transient object
+decisions must be made in an online, streaming fashion.  Rather than
+considering an entire pool of test objects, they appear one at a time as
+they are detected and the algorithm must decide whether and how to follow
+up on each immediately as they are detected.  We first describe algorithms
+for each of the three pieces and then how to combine them into a single
+algorithm for streaming transient detections.
+
+{\bf Active Learning.} In order to get a ground-truth class for a transient
+object, repeated observations are taken to estimate a full light curve.  A
+human expert then assigns a class label.  Both the repeated telescope
+observations and human time are expensive and thus we want to learn a good
+classification model using limited training data.  We propose a
+corresponding trace and survey criteria for active learning on transients
+as in Section \ref{sec:mlpz}.
+
+{\bf Active Feature Acquisition.} When considering photometric redshifts,
+we assumed that all photometric inputs were observed for every object of
+interest.  For transients this will not be the case.  A large component of
+the problem is deciding for each object, whether observations of additional
+colors and/or additional times would be valuable in classifying or
+characterizing the object.
+
+We propose to extend our recent work on using GPs to detect damped
+lyman-alpha (DLA) systems \cite{Garnett12a}.  In that work GP regression
+was used on each observed, noisy spectrum to infer the latent spectrum.
+The single independent (input) variable was wavelength.  For transient
+objects we will have 5 color magnitudes that are a function of time and are
+coupled to each other.  In the DLA work, a different model was learned for
+spectra with and without a DLA.  DLAs were classified by recognizing which
+model fit best.  In the proposed work, we will learn a different model for
+each class of object and will estimate class probabilities using Bayes rule
+for combining the prior probability for each class and how well the
+respective models fit the observations.  The key advantage of this approach
+is that the GPs naturally provide a mean and covariance for future
+unobserved colors.  This uncertainty propagates through to class labels and
+we can use it to estimate the reduction in class uncertainty that will be
+gained by observing a certain color at a certain time.  The observation
+yielding the greatest reduction in entropy for the class and the light
+curves for this object will be taken.
+
+{\bf Active Search.} Many transient objects will be from common and/or 
+well-understood classes that do not have much observational value.  The ultimate
+objective in following up detected transients is to maximize the number of
+interesting transients classified and characterized while staying within a
+budget of follow-up observations.  This is an active search problem. The
+problem and the Bayesian optimal algorithm for it are described in our
+recent work \cite{Garnett11,Garnett12}.  As in active learning, the
+acquisition of class labels is expensive and we need to learn a model to
+predict these labels from limited input data.  However, the final
+performance objective is not the accuracy of the classifier, but rather the
+number of positives (i.e. objects from interesting classes) identified.  We
+propose to use the simple myopic algorithm described in that work.  It
+computes the probability of each point belonging to the positive class and
+chooses the largest.
+
+
+{\bf A combined streaming method.} The three goals above will be combined
+in a staged set of decisions.  When a new transient is detected, the light
+curve model will be used to provide estimated light curves for the object.
+Those light curves are the input variables for this object in the active
+learning and active search algorithms.  In parallel, the active learning
+and active search methods will decide whether to follow up on this object.
+If either of them selects the object, it is advanced to active feature
+acquisition.  There additional observations on the object are selected and
+the process for this object repeats.  An object that initially seemed
+interesting to one algorithm may cease to be so after additional
+observations or may be adopted by the other one.  The process for one
+object terminates when neither active learning nor active search remains
+interested in it or the object class and light curves are characterized
+well enough that no more observations are required.
+
+The active search and active learning algorithms each compute an objective
+criterion score for each object.  For photometric redshifts the scores are
+used to create a ranked list and observations are scheduled proceeding down
+the list.  When a budget is given for follow-ups on each batch of newly
+detected transients, going down a ranked list in each batch until that
+budget is exhausted is appropriate.
+
+However, when the budget is an aggregate over a longer time period a
+streaming decision on how much of the budget to spend on each batch must be
+made on that batch in isolation.  This will be done by choosing a score
+threshold.  The threshold will be set by evaluating the historical stream
+and setting it at a value that would yield a number of follow ups equal to
+an available budget for following up.  The threshold will be adjusted
+continuously as more observations are taken and the models and scientific
+goals change (e.g. the object types designated as ``interesting'' are
+changed).
+
+Since all of the algorithm components are based on GP models, it is
+possible to merge them together into a single model.  We hypothesize that
+additional performance improvements can be made through an integrated model
+and decision algorithm.  For example, an object with a modest active
+learning score that can be easily characterized with only one more follow
+up might be promoted over one with a higher score that can not be easily
+characterized even with many more observations.  After we have implemented
+the staged method described above, we will investigate and compare an
+integrated model.
+
+
 
 \subsection{Active learning for calibrating cosmology}
 
