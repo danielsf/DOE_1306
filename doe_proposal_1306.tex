@@ -116,31 +116,7 @@ relies on analyses at a scale, speed, and complexity beyond the
 capabilities of current automated machine learning methods.
 
 
-A classic active learning method, called uncertainty sampling, uses
-the uncertainty of each test point as the criterion for choosing the
-next experiment (e.g.\ the next spectroscopic measurement of a source
-in the training sample).  We will expand upon these approaches using
-our recent work on the problem of optimal surveying or polling
-(Garnett et al 2012a).  Rather than having a goal of correctly
-predicting the output for each point in a test set, the goal is to
-predict the average output (or the class proportions in classification
-problems) over the test set.  This dramatically increases the
-efficiency of the active learning.  In preliminary experiments on
-graphs and other domains, minimizing this survey variance not only
-performs well on the surveying problem, but also outperforms the trace
-criterion and other popular active learning methods such as
-uncertainty and density sampling on active learning problems.
-Intuitively, it seems reasonable that considering the entire
-covariance matrix might lead to better performance than choosing only
-based on its diagonal.  We have, however, little theoretical understanding of
-why this is better than the trace criterion which directly optimizes
-the quantity on which we will ultimately measure performance.  We will
-seek a better theoretical understanding of this phenomenon as part of
-this work.
-
-
-
-\section{Active learning for calibrating cosmology}
+\section{The Need for Active Learning in Cosmology}
 
 Over the last decade a concordance model has emerged for the universe
 that describes its energy content. The most significant contribution
@@ -254,7 +230,13 @@ result is a full covariance matrix for the query points.  Readers looking
 for a more detailed explanation of Gaussian processes should consult
 Rasmussen and Williams (2006).
 
-
+The framework above provides many advantages when applied to active learning. 
+Because Gaussian Processes model the training data as a probability
+distribution, the output (specifically, equation \ref{eq:var}) provides a direct
+quantification of the information content of the model.  This allows us to
+identify the least-well constrained test datum for follow up observations.  It
+also allows us to project the impact of future observations on the entire data
+set so as to maximize the efficacy of our follow-up \cite{Garnett11,Garnett12}.
 
 \subsection{Inference in the Presence of Noise and Gaps in a Data
   Stream}
@@ -335,6 +317,32 @@ right panel shows sampling at the deep drilling cadence.
   Learning}
  
 {\bf Experimental design description}
+
+
+A classic active learning method, called uncertainty sampling, uses
+the uncertainty of each test point as the criterion for choosing the
+next experiment (e.g.\ the next spectroscopic measurement of a source
+in the training sample).  We will expand upon these approaches using
+our recent work on the problem of optimal surveying or polling
+(Garnett et al 2012a).  Rather than having a goal of correctly
+predicting the output for each point in a test set, the goal is to
+predict the average output (or the class proportions in classification
+problems) over the test set.  This dramatically increases the
+efficiency of the active learning.  In preliminary experiments on
+graphs and other domains, minimizing this survey variance not only
+performs well on the surveying problem, but also outperforms the trace
+criterion and other popular active learning methods such as
+uncertainty and density sampling on active learning problems.
+Intuitively, it seems reasonable that considering the entire
+covariance matrix might lead to better performance than choosing only
+based on its diagonal.  We have, however, little theoretical understanding of
+why this is better than the trace criterion which directly optimizes
+the quantity on which we will ultimately measure performance.  We will
+seek a better theoretical understanding of this phenomenon as part of
+this work.
+
+\subsection{Active Learning for Transient Classification}
+
 
 {\bf I have just copied-and-pasted the ``active learning for transients''
 paragraphs from the previous draft}
