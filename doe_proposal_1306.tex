@@ -314,14 +314,8 @@ classification model using limited training data.  We propose a
 corresponding trace and survey criteria for active learning on transients
 as in Section \ref{sec:mlpz}.
 
-{\bf Active Feature Acquisition.} When considering photometric redshifts,
-we assumed that all photometric inputs were observed for every object of
-interest.  For transients this will not be the case.  A large component of
-the problem is deciding for each object, whether observations of additional
-colors and/or additional times would be valuable in classifying or
-characterizing the object.
-
-We propose to extend our recent work on using GPs to detect damped
+{\bf Active Feature Acquisition.}  We propose to extend our recent work on 
+using Gaussian Processes to detect damped
 lyman-alpha (DLA) systems \cite{Garnett12a}.  In that work GP regression
 was used on each observed, noisy spectrum to infer the latent spectrum.
 The single independent (input) variable was wavelength.  For transient
@@ -426,7 +420,7 @@ efficient that spectroscopic observations). Our task, then, is to
 construct algorithms whereby we can convert these much cheaper
 photometric data into accurate redshifts (i.e. photometric redshifts).
 
-Presently, photometric redshifts are principally determined using
+Photometric redshifts are principally determined using
 forward-fitting models.  Astronomers assume that they can model the rest frame
 spectra of any galaxy.  These spectral models are
 redshifted and integrated over the profile of an experiment's
@@ -556,22 +550,6 @@ in one Gaussian Process.  The final $P(z_\text{photometric})$ is a linear
 combination of these two hypotheses, weighted according to their respective
 model likelihoods.
 
-Figure \ref{fig:gp} shows preliminary results of our proposed probabilistic
-Gaussian Process algorithm.  Figure \ref{subfig:gp} plots photometric
-redshift versus spectroscopic redshift for the same simulated
-galaxy observations used in Figure
-\ref{fig:scatter}.  
-According to this metric,
-Gaussian Processes perform better than the EAZY algorithm
-and comparably to the neural network of ANNz.  However, if we instead measure
-performancy by considering $\ln[P(\text{truth})]$, i.e. the logarithm of the
-value of the posterior probability density function at the known spectroscopic
-redshift of our galaxies, we see that Gaussian Processes consistently outperform
-neural networks (see Figure \ref{subfig:lnsumlsst}).
-Figure \ref{subfig:lnsumsdss} recreates Figure \ref{subfig:lnsumlsst} using actual data
-taken from the Sloan Digital Sky Survey \cite{Abazajian:2008wr}.
-
-
 \begin{figure}
 \subfigure[]{
 \includegraphics[scale=0.2]{lnsum_lsst.png}
@@ -588,22 +566,28 @@ axes in Figures \ref{fig:scatter}) for all
 three algorithms under consideration.  
 Figure \ref{subfig:lnsumsdss} compares our Gaussian Process method
 to the artificial neural network code ANNz \cite{annz} on real
-data taken from the Sloan Digital Sky Survey.  In this latter case, the
+data taken from the Sloan Digital Sky Survey \cite{Abazagian:2008wr}.  
+In this latter case, the
 algorithms are trained on 70,000 galaxies and tested on 715,000 galaxies.
 }
 \label{fig:gp}
 \end{figure}
 
 Other data-driven algorithms for photometric redshift determination do exist. 
-The most popular of these is the publically-available code ANNz \cite{annz},
+An example of these is the publically-available code ANNz \cite{annz},
 which is based on an artificial neural network scheme.
 In this case, the principal
-shortcoming the method is that present algorithms are designed only to return a
-photometric redshift value and an uncertainty.  This leaves their results
+shortcoming the method is that the artificial neural network
+is designed only to return only a
+photometric redshift value and an uncertainty.  This leaves its results
 sensitive to degeneracies in the photometric data whereby low redshift galaxies
 look similar to high redshift galaxies, confusing the algorithm. 
-We see this in the lower mean values of $\ln[P(\text{truth})]$ returned by ANNz
-in Figure \ref{fig:gp}.
+Figure \ref{fig:gp} plots the mean value of $\ln[P(\text{truth})]$,
+i.e. the value of $P(z_\text{photometric}=z_\text{spectroscopic})$ 
+as a function
+of photometric redshift for EAZY, ANNz, and our Gaussian Process algorithm.
+We see that both EAZY and ANNz consistenly assign lower probabilities to
+$z_\text{photometric}=z_\text{spectroscopic}$ than does our Gaussian Process algorithm.
 
 The demands of next generation cosmological experiments will require
 that our photometric redshift determinations be accurate to within
