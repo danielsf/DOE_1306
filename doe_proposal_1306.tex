@@ -73,14 +73,12 @@ brightness of objects in broad passband filters -- is thousands of times less
 expensive.  Therefore, a great deal of attention has focused on developing a
 method of determining ``photometric redshifts'': inferring a relationship
 between an object's photometric and spectroscopic signatures such that redshifts
-can be determined solely from photometric data.  Presently, two broad classes of
-photometric redshift algorithm are typically employed: template fitting and
-empirical algorithms.
+can be determined solely from photometric data.  
 
-Template fitting methods operate by using synthetic or empirical basis spectra
-to reconstruct a galaxy's rest frame spectrum.  
-The reconstructed spectrum is then
-redshifted and integrated over the profile of the given
+Presently, photometric redshifts are principally determined using
+forward-fitting models.  Astronomers assume that they can model the rest frame
+spectra of any galaxy.  These spectral models are
+redshifted and integrated over the profile of an experiment's
 photometric filters until a good fit to the observed photometric data is
 found.  The redshift of the galaxy is taken as that which produces the best fit
 between template and data.  Many publicly available codes such as 
@@ -96,21 +94,9 @@ simulated galaxy observations designed to represent results expected from the
 Large Synoptic Survey Telescope (LSST\footnote{http://www.lsst.org}).
 While many of the galaxies fall near the
 $z_\text{photometric}=z_\text{spectroscopic}$ line, there is significant scatter
-in the results.
+in the results.  We propose to overcome this difficulty with an exclusively
+data-driven algorithm based on Gaussian Processes.
 
-Empirical photometric redshift methods take a training set of galaxies for
-which photometric and spectroscopic information exists and construct an
-empirical mapping function to assign redshifts to galaxies based solely on
-their photometric measurements.  The neural network code ANNz is one example
-of this method \cite{annz}.
-Because the empirical photometric redshift mapping function is learned
-directly from actual data, there is no need to ensure perfect theoretical
-understanding of the spectra being inferred.  In this case, the principal
-shortcoming the method is that present algorithms are designed only to return a
-photometric redshift value and an uncertainty.  This leaves their results
-sensitive to degeneracies in the photometric data whereby low redshift galaxies
-look similar to high redshift galaxies, confusing the algorithm.  This can be
-seen in Figure \ref{subfig:annz}.
 
 \begin{figure}
 \subfigure[]{
@@ -118,8 +104,8 @@ seen in Figure \ref{subfig:annz}.
 \label{subfig:eazy}
 }
 \subfigure[]{
-\includegraphics[scale=0.2]{annz_scatter_plot.png}
-\label{subfig:annz}
+\includegraphics[scale=0.2]{gp_scatter_plot.png}
+\label{subfig:gp}
 }
 \caption{
 Photometric redshift plotted
@@ -127,22 +113,24 @@ against true spectroscopic redshift for 48,000 simulated LSST galaxy
 observations.  Photometric redshifts are derived using the
 EAZY template-fitting
 algorithm in Figure \ref{subfig:eazy} and
-the ANNZ neural
-network algorithm in Figure \ref{subfig:annz}.
+our Gaussian Process based algorithm in Figure \ref{subfig:gp}.
 }
 \label{fig:scatter}
 \end{figure}
 
-We propose to address these shortcomings by designing an empirical algorithm
-which treats the photometric redshift problem probabilistically.  Rather than
+We treat the photometric redshift problem probabilistically.  Rather than
 taking the spectroscopic data and learning a one-to-one photometric redshift
 relationship, we will use Gaussian Processes to model a probability density
-function in $z_\text{photometric}$ which can characterize the probability that a
+function in $P(z_\text{photometric})$ which can characterize the probability that a
 given galaxy is at a given redshift.  This method will not only be resilient
-against the pitfalls demonstrated in Figure \ref{fig:scatter}, but will allow us
+against the pitfalls demonstrated in Figure \ref{subfig:eazy}, but will allow us
 to quantify the information content of our trainind data in such a way as to
 optimize the gathering of additional spectroscopic data to further improve on
-our results.
+our results.  
+Figure \ref{subfig:gp} shows preliminary results from our
+algorithm when trained on spectroscopic data from an 
+additional 50,000 galaxies.
+We discuss specifically how we model $P(z_\text{photometric})$ below.
 
 \subsection{Gaussian Processes}
 \label{sec:gppz}
@@ -234,34 +222,24 @@ shortcomings of present Gaussian Process methods identified by Bonfield
 
 \begin{figure}
 \subfigure[]{
-\includegraphics[scale=0.2]{gp_scatter_plot.png}
-\label{subfig:gpscatter}
-}
-\subfigure[]{
 \includegraphics[scale=0.2]{lnsum_lsst.png}
 \label{subfig:lnsumlsst}
 }
+\subfigure[]{
+\includegraphics[scale=0.2]{sdss_lnsum.png}
+\label{subfig:lnsumsdss}
+}
 \caption{
-Figure \ref{subfig:gpscatter} plots photometric redshift determined by
-our probabilistic Gaussian Process model as a function of spectroscopic
-redshift.  Figure \ref{subfig:lnsumlsst} shows the mean value of
+Figure \ref{subfig:lnsumlsst} shows the mean value of
 $\ln[P(\text{truth})]$ as a function of photometric redshift (the vertical
-axes in Figures \ref{fig:scatter} and \ref{subfig:gpscatter}) for all
-three algorithms under consideration.  Note that, even though Figure
-\ref{subfig:gpscatter} shows the same degeneracy seen in Figure
-\ref{subfig:annz}, it gives a consistently higher value of
-$\ln[P(\text{truth})]$ in that range of photometric redshift.
+axes in Figures \ref{fig:scatter}) for all
+three algorithms under consideration.  
+Figure \ref{subfig:lnsumsdss} compares our Gaussian Process method
+to the artificial neural network code ANNz \cite{annz} on real
+data taken from the Sloan Digital Sky Survey.  In this latter case, the
+algorithms are trained on 70,000 galaxies and tested on 715,000 galaxies.
 }
 \label{fig:gp}
-\end{figure}
-
-\begin{figure}
-\includegraphics[scale=0.2]{sdss_lnsum.png}
-\caption{
-The mean value of $\ln[P(\text{truth})]$ as a function of photometric
-redshift for 715,000 galaxies taken from the Sloan Digital Sky Survey.
-}
-\label{fig:sdss}
 \end{figure}
 
 Figure \ref{fig:gp} shows preliminary results of our proposed probabilistic
@@ -278,6 +256,16 @@ redshift of our galaxies, we see that Gaussian Processes consistently outperform
 neural networks (see Figure \ref{subfig:lnsumlsst}).
 Figure \ref{fig:sdss} recreates Figure \ref{subfig:lnsumlsst} using actual data
 taken from the Sloan Digital Sky Survey \cite{Abazajian:2008wr}.
+
+Other data-driven algorithms for photometric redshift determination do exist. 
+The most popular of these is the publically-available code ANNz \cite{annz},
+which is based on an artificial neural network scheme.
+In this case, the principal
+shortcoming the method is that present algorithms are designed only to return a
+photometric redshift value and an uncertainty.  This leaves their results
+sensitive to degeneracies in the photometric data whereby low redshift galaxies
+look similar to high redshift galaxies, confusing the algorithm.  This can be
+seen in Figure \ref{subfig:annz}.
 
 \subsection{Active Learning and Photometric Redshifts}
 \label{sec:mlpz}
