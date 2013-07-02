@@ -262,7 +262,39 @@ data set \cite{Garnett11,Garnett12}.
 \subsection{Inference in the Presence of Noise and Gaps in a Data
   Stream}
 
+The non-parametric inferences produced by
+Gaussian Processes yield smooth functions which are sensitive to the
+correlations in the input data.  Because of this, Gaussian Processes are
+often used to solve regression problems in the case of
+sparsely sampled training data \cite{wang2011,wang2012}.  
+We intend to harness these features to produce classification algorithms that
+are resilient against noise and gaps in our training data.
 
+Figure \ref{fig:desert} compares a Gaussian Process classifier (the
+photometric redshift algorithm described in Section \ref{sec:photoz}) to 
+an artificial neural network when both are trained on
+data whose distribution does not match the true distribution of data.  
+The classification is a scalar function $f$.  
+The data points $\{\vec{\theta}\}$
+exist in a 6-dimensional space.  
+We treat the algorithms as returning a probability distribution over $f$.  The horizontal axis is
+the mode of these returned probability distributions (effectively, $f_q$ from equation
+\ref{eq:mean}).  The vertical axis is the value of the probability distribution returned at the
+true value of $f$.
+The thin lines are
+produced when all of the training data with values $1.4\le f\le
+2.5$ (between the vertical green lines).  In this case, the artificial neural network
+(red curves) does demonstrably better than the Gaussian Process classifier (black curves).
+The thick lines are produced when only 5\% of the excised training data is restored.
+Now we see that the Gaussian Process classifier learns much faster and does a much better job
+of classifying data in the presence of this sparse training distribution.
+
+This is a very basic test.  The Gaussian Process was not allowed to choose optimal observations or
+training data, nor was much thought given to selecting the appropriate cost function used when
+designing the Gaussian Process model.  Incorporation of active learning based on the information
+content encoded in the probability distributions returned by our Gaussian Process algorithm will
+yield further gains in performance over current classifiers (e.g. the artificial 
+neural network considered below).
 
 \begin{figure}
 \includegraphics[scale=0.2]{doe_desert_plot.png}
@@ -277,7 +309,6 @@ that training data has been restored.
 }
 \label{fig:desert}
 \end{figure}
-
 
 \subsection{Anomaly Detection and Classification in Massive Data
  Streams}
