@@ -366,7 +366,9 @@ or rare objects can be flagged for detailed follow-up observations.
 For transient events, algorithms must be able to make rapid
 decisions so that sources can be targeted for follow-up 
 and classifications learned before
-objects return to their quiescent phases.  A great deal of work has
+objects return to their quiescent phases.  
+
+A great deal of work has
 already been done developing algorithms that can learn the classification of an
 object given a fixed set of observations and training data.  
 Mahabal {\it et al}. (2008a,2011a,2011b) propose to break down the
@@ -394,7 +396,19 @@ discriminating between four major classifications.  Richards {\it et al}.
 consider a more complete set of 25 possible classifications.
 Clearly, many possibile approaches are available for the automated
 classification of transient objects, and not all of them rely upon highly
-detailed observations to function.
+detailed observations to function.  
+None of the above algorithms, however, make
+any promises regarding their ability to deliver rapid recommendations for
+optimum follow-up observations.
+
+Similarly, a large number of classifiers have been developed which are optimized
+for the case of binary classifications: ``Is something a quasar, or is it not?''
+\cite{kim2011,pichara2012}, ``Is an object at redshift greater than 4 or is it
+not?'' \cite{morgan2011}, ``Is an object a real astrophysical transient, or is
+it an instrumental artifact?'' \cite{brink2012}.  These methods are all useful
+and provide guidance for what can and should be attempted, however, they do not
+deliver the robust, probabilistic, multi-class identifiers that will be required
+by modern, large-data experiments in astronomy and other sciences.
 
 The input features for transient object classification will be photometric
 and morphologic measures taken at different increments in time.  The output
@@ -402,6 +416,15 @@ is a categorical variable indicating the class.  This is in contrast to
 photometric redshifts where the output is continuous.  Fortunately, the
 underlying covariance for Gaussian process classification is the same as
 for regression and we will adopt a similar prediction model.
+Brink {\it et al}. (2012) and Richards {\it et al}. (2012b) consider this
+diversity of features in designing automatic classifiers on static data sets. 
+They use cross-validation to
+find that some features are more useful than others and that the inclusion
+of all features degrades the performance of their classifier.  This
+determination of optimal inputs is at the heart of machine learning.  Our
+intention is to introduce an information-theoretic approach which will allow
+us to perform a similar determination in real time as the observations come in,
+directing experiments as they are performed.
 
 The active learning problem for transient objects contains three
 subproblems, active learning, active search, and active feature
@@ -736,6 +759,10 @@ Banerji,~M., Adams,~R.~G. 2010, Monthly Notices of the Royal Astronomical Societ
 Brammer,~G.~B., van Dokkum,~P.~G., and Coppi,~P. 2008,
 The Astrophysical Journal {\bf 686}, 1503
 
+\bibitem[Brink {\it et al}. 2012]{brink2012}
+Brink, Henrik, Richards, Joseph W., Poznanski, Dovi, Bloom, Joshua S., Rice,
+John, Negahban, Sahand, and Wainwright, Martin 2012, arXiv:1209.3775
+
 \bibitem[Bryan 2007]{brentsthesis}
 Bryan, B., 2007, Ph.D. thesis
 \verb|http://reports-archive.adm.cs.cmu.edu/anon/|
@@ -841,6 +868,10 @@ Monthly Notices of the Royal Astronomical Society {\bf 366}, 101
 Kaufman, Cari G., Bingham, Derek, Habib, Salman, Heitmann, Katrin, and Frieman,
 Joshua A. 2011, The Annals of Applied Statistitcs {\bf 5} 2470
 
+\bibitem[Kim {\it et al}. 2011]{kim2011}
+Kim, Dae-Won, Protopapas, Pavlos, Byun, Young-Ik, Alcock, Charles, Khardon,
+Roni, and Trichas, Markos 2011, arXiv:1101.3316
+
 \bibitem[Kitching {\it et al}. 2008]{kitching}
 Kitching,~T.~D., Taylor,~A.~N., and Heavens,~A.~F. 2008,
 Monthly Notices of the Royal Astronomical Society {\bf 389} 173
@@ -918,6 +949,10 @@ Schneider,~J., Szalay,~A., Szapudi,~I., and Wasserman,~L. 2000,
 ``Fast Algorithms and Efficient Statistics: N-point Correlation Functions,'' in
 MPA/MPE/ESO Conference on Mining the Sky [arXiv:astro-ph/0012333]
 
+\bibitem[Morgan {\it et al}. 2011]{morgan2011}
+Morgan, A.N., Long, James, Richards, Joseph W., Broderick, Tamara, Butler,
+Nathaniel R., and Bloom, Joshua S. 2011, arXiv:1112.3654
+
 \bibitem[Nakajima {\it et al}. 2012]{nakajima2011}
 Nakajima,~R., Mandelbaum,~R., Seljak,~U., Cohn,~J.~D., Reyes,~R., and
 Cool,~R. 2012, Monthly Notices of the Royal Astronomical Society {\bf 420}, 3240
@@ -935,6 +970,10 @@ Oluseyi, Hakeem M., Becker, Andrew C., Culliton, Christopher, Furqan, Muhammad,
 Hoadley, Keri L., Regencia, Paul, Wells, Akeem J., Ivez\`ic, Zeljko, Jones, R.
 Lynne, Krughoff, K. Simon, and Sesar, Branimir (2012), The Astronomical Joural
 {\bf 144} 9
+
+\bibitem[Pichara {\it et al}. 2012]{pichara2012}
+Pichara, K., Protopapas, P., Kim, D.-W., Marquette, J.-B., and Tisserand, P.
+2012, Monthly Notices of the Royal Astronomical Society, {\bf 427} 1284
 
 \bibitem[Poczos and Schneider 2011]{poczos11alphadiv}
 Poczos,~B. and Schneider,~J. 2011, ``On the Estimation of alpha-Divergences,''
@@ -967,10 +1006,15 @@ Richards,~J.~W., Starr,~D.~L., Butler,~N.~R., Bloom,~J.~S., Brewer,~J.~M.,
 Crellin-Quick,~A., Higgins,~J., Kennedy,~R., and Rischard,~M. 2011,
 The Astrophysical Journal {\bf 733}, 10
 
-\bibitem[Richards {\it et al}. 2012]{richards2012}
+\bibitem[Richards {\it et al}. 2012a]{richards2012}
 Richards,~J.~W., Starr,~D.~L., Brink,~H., Miller,~A.~A., Bloom,~J.~S.,
-Butler,~N.~R., James,~J.~B., Long,~J.~P., and Rice,~J. 2012
+Butler,~N.~R., James,~J.~B., Long,~J.~P., and Rice,~J. 2012a
 The Astrophysical Journal {\bf 744}, 192
+
+\bibitem[Richards {\it et al}. 2012b]{richards2012b}
+Richards, Joseph W., Starr, Dan L., Miller, Adam A., Bloom, Joshua S.,
+Butler, Nathaniel R., Brink, Henrik, and Crellin-Quick, Arien 2012b,
+The Astrophysical Journal Supplement Series {\bf 203} 32
 
 \bibitem[Rosenfield {\it et al}. 2011]{rosenfield2011}
 Rosenfield,~P., Connolly,~A., Fay,~J., Sayres,~C., and Tofflemire,~B. 2011,
@@ -1157,7 +1201,7 @@ faced by the community.  Figure 6 of Richards {\it et al}. (2011)
 demonstrates that automated classifiers are much better at identifying
 objects of common types, for which training data is abundant, than they are
 at identifying objects of rare types, for which training data is sparse.
-The authors address this problem in Richards {\it et al.} (2012) by designing
+The authors address this problem in Richards {\it et al.} (2012a) by designing
 an active learning algorithm which selectively adds to the training set,
 choosing objects of uncertain classification and asking human classifiers to
 provide detailed information (via either their expertise alone or with
@@ -1173,7 +1217,7 @@ account for the importance of
 generating further 
 observations about a source or the cost of these observations.  
 The active learner implemented by
-Richards {\it et al.} (2012)
+Richards {\it et al.} (2012a)
 simply asks its human operators to provide classifications without offering
 any guidance how.  Certainly, the humans would be almost guaranteed to
 find the proper classification if they were to take both a full spectrum
