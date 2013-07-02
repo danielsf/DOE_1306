@@ -269,7 +269,7 @@ data set \cite{Garnett11,Garnett12}.
  Streams}
 
 The next generation of astrophysical surveys we will visit the same
-region of sky many thousands of time. This opening of the temporal
+region of sky many thousands of times. This opening of the temporal
 domain in astrophysics offers the potential to discover new classes of
 physical phenomena while coming with many associated computational
 challenges. Variability within the universe is believed to be present
@@ -297,7 +297,7 @@ universe by an order of magnitude.
 
 With timescales as short as seconds to hours we need to be able to
 identify, classify and report any detection in time to allow for
-followup observations before the initial outburst
+follow-up observations before the initial outburst
 fades. Identification and classification must, therefore, be
 undertaken in almost real-time with probabilistic classifications that
 incorporate our uncertainties about our classification together with
@@ -319,7 +319,7 @@ due to atmospheric conditions, changes in the performance of the
 telescope and camera and the possibility that we observe sources at
 different wavelengths at different times.
 
-spock
+
 
 \begin{figure}
 \includegraphics[scale=0.2]{becker_RRLyrae_fig.png}
@@ -393,7 +393,7 @@ by which they will reconstruct the object's entire light curve as a function
 of time, and then classify the object based on that reconstruction.
 Anomaly detection has been attempted by decomposing light curves into
 basis functions of different timescales and looking for events that occur
-more rapidly than some fit baseline \cite{preston2009,blocker2013}
+more rapidly than some fit baseline \cite{preston2009,blocker2013}.
 Richards {\it et al}. (2011) use observations of transient objects to extract
 periodic (e.g. the amplitude and frequency of the first two Fourier modes of
 the object's light curve) and non-periodic (e.g. the variance and skewness of
@@ -414,40 +414,43 @@ classification of transient objects, and not all of them rely upon highly
 detailed observations to function.  
 None of the above algorithms, however, make
 any promises regarding their ability to deliver rapid recommendations for
-optimum follow-up observations.
+optimum follow-up observations in real time.  This will be a significant
+contribution to all time-sensitive sciences.
 
 Similarly, a large number of classifiers have been developed which are optimized
 for the case of binary classifications: ``Is something a quasar, or is it not?''
 \cite{kim2011,pichara2012}, ``Is an object at redshift greater than 4 or is it
 not?'' \cite{morgan2011}, ``Is an object a real astrophysical transient, or is
-it an instrumental artifact?'' \cite{brink2012}.  These methods are all useful
+it an instrumental artifact?'' \cite{brink2012}.  The methods developed
+(Random Forests; Support Vector Machiens; etc.) are all useful
 and provide guidance for what can and should be attempted, however, they do not
 deliver the robust, probabilistic, multi-class identifiers that will be required
-by modern, large-data experiments in astronomy and other sciences.
+by the rapid, big-data experiments of the next decades.
+
+\subsection{Proposed method for active learning classifier}
 
 The input features for transient object classification will be photometric
 and morphologic measures taken at different increments in time.  The output
-is a categorical variable indicating the class.  This is in contrast to
-photometric redshifts where the output is continuous.  Fortunately, the
-underlying covariance for Gaussian process classification is the same as
-for regression and we will adopt a similar prediction model.
+is a categorical variable indicating the class.
 Brink {\it et al}. (2012) and Richards {\it et al}. (2012b) consider this
 diversity of features in designing automatic classifiers on static data sets. 
 They use cross-validation to
 find that some features are more useful than others and that the inclusion
 of all features degrades the performance of their classifier.  This
 determination of optimal inputs is at the heart of machine learning.  Our
-intention is to introduce an information-theoretic approach which will allow
-us to perform a similar determination in real time as the observations come in,
+intention is to introduce an information-theoretic approach 
+based on the output covariance matrix of equation \ref{eq:cov} which will allow
+us to perform a similar determination in real time as observations are made,
 directing experiments as they are performed.  This sort of information theoretic
 approach has already been tried in the static dataset case by Huisje {\it et al}. 
-(2011, 2012) who use a the correntropy to determine a light curves true period.
+(2011, 2012) who use a the correntropy to determine a light curve's 
+true period.  The method should be successful when extended to the case of
+multiple observed and latent quantities.
 
 The active learning problem for transient objects contains three
 subproblems, active learning, active search, and active feature
-acquisition.  Finally, one additional difference between the transient
-object method and the photometric redshift method is that transient object
-decisions must be made in an online, streaming fashion.  Rather than
+acquisition all of which must be made in an online, streaming fashion.  
+Rather than
 considering an entire pool of test objects, they appear one at a time as
 they are detected and the algorithm must decide whether and how to follow
 up on each immediately as they are detected.  We first describe algorithms
@@ -614,36 +617,36 @@ Other works have already attempted to apply Gaussian Processes to the problem of
 photometric redshfifts \cite{kaufman,bonfield}, however, they have treated the
 problem as one of learning the form of a one-to-one scalar function.  We propose
 to use the probabilistic nature of Gaussian Processes to learn the full
-probability distribution that a given galaxy is at a given redshift.  We
-describe our method below.
+probability distribution that a given galaxy is at a given redshift.  
+This will produce an algorithm that is simultaneously more robust against
+sparse, noisy or degenerate training data and more amenable to improvement 
+by the introduction of
+active learning.  We describe our method below.
 
-
-We treat the photometric redshift problem probabilistically.  Rather than
-taking the spectroscopic data and learning a one-to-one photometric redshift
-relationship, we will use Gaussian Processes to model a probability density
+We will treat the photometric redshift problem probabilistically. 
+We will use Gaussian Processes to model a probability density
 function in $P(z_\text{photometric})$ which can characterize the probability that a
-given galaxy is at a given redshift.  This method will not only be resilient
-against the pitfalls demonstrated in Figure \ref{subfig:eazy}, but will allow us
+given galaxy is at a given redshift.  This method will allow us
 to quantify the information content of our trainind data in such a way as to
 optimize the gathering of additional spectroscopic data to further improve on
 our results.  
 Figure \ref{subfig:gp} shows preliminary results from our
-algorithm when trained on spectroscopic data from an 
-additional 50,000 galaxies.
-We discuss specifically how we model $P(z_\text{photometric})$ below.
+algorithm when trained on spectroscopic data from 50,000 galaxies and tested
+on the same 48,000 galaxies as Figure \ref{subfig:eazy}.
+%We discuss specifically how we model $P(z_\text{photometric})$ below.
 
-Galaxy observations are represented as vectors $\{\vec{\theta}_q\}$ of
-flux information.  For each unknown
-test galaxy $\{\vec{\theta}_q\}$, we find the $k$ nearest neighbor training
-galaxies in flux space ($k$ is treated as a parameter to be optimized by our
-algorithm).  We divide these neighbor galaxies into two sub-populations based on
-their spectroscopic redshifts and fit a Gaussian Process to each sub-population.
-This gives us a bi-modal probability distribution for $P(z_\text{photometric})$. 
-We compare the likelihood of this hypothesis to a single-mode
-$P(z_\text{photometric})$ in which all of the neighbor galaxies are fit together
-in one Gaussian Process.  The final $P(z_\text{photometric})$ is a linear
-combination of these two hypotheses, weighted according to their respective
-model likelihoods.
+%Galaxy observations are represented as vectors $\{\vec{\theta}_q\}$ of
+%flux information.  For each unknown
+%test galaxy $\{\vec{\theta}_q\}$, we find the $k$ nearest neighbor training
+%galaxies in flux space ($k$ is treated as a parameter to be optimized by our
+%algorithm).  We divide these neighbor galaxies into two sub-populations based on
+%their spectroscopic redshifts and fit a Gaussian Process to each sub-population.
+%This gives us a bi-modal probability distribution for $P(z_\text{photometric})$. 
+%We compare the likelihood of this hypothesis to a single-mode
+%$P(z_\text{photometric})$ in which all of the neighbor galaxies are fit together
+%in one Gaussian Process.  The final $P(z_\text{photometric})$ is a linear
+%combination of these two hypotheses, weighted according to their respective
+%model likelihoods.
 
 \begin{figure}
 \subfigure[]{
@@ -678,7 +681,8 @@ photometric redshift value and an uncertainty.  This leaves its results
 sensitive to degeneracies in the photometric data whereby low redshift galaxies
 look similar to high redshift galaxies, confusing the algorithm. 
 Figure \ref{fig:gp} plots the mean value of $\ln[P(\text{truth})]$,
-i.e. the value of $P(z_\text{photometric}=z_\text{spectroscopic})$ 
+i.e. the value of the logarithm $P(z_\text{photometric})$ at the point
+$z_\text{photometric}=z_\text{spectroscopic}$ 
 as a function
 of photometric redshift for EAZY, ANNz, and our Gaussian Process algorithm.
 We see that both EAZY and ANNz consistenly assign lower probabilities to
@@ -737,7 +741,9 @@ Focus on these as our primary test to develop these algorithms
 
 Information gain and astronomy (Jake's stuff)
 
+\section{Conclusion}
 
+We probably need one of these....
 
 \begin{thebibliography}{99}
 
