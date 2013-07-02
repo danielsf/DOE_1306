@@ -264,6 +264,20 @@ data set \cite{Garnett11,Garnett12}.
 
 
 
+\begin{figure}
+\includegraphics[scale=0.2]{doe_desert_plot.png}
+\caption{
+We compare the Gaussian Process algorithm outlined in Section \ref{sec:photoz}
+to an artificial neural network in the case of sparse training data.  The red
+curves represent an artificial neural network scheme.  The black curves
+represent the Gaussian Process algorithm presented in Section \ref{sec:photoz}. 
+The thin curves represent the case where all of the training data between the
+dashed lines has been excised.  The thick curves represent the case where 5\% of
+that training data has been restored.
+}
+\label{fig:desert}
+\end{figure}
+
 
 \subsection{Anomaly Detection and Classification in Massive Data
  Streams}
@@ -545,6 +559,7 @@ integrated model.
 
 
 \subsection{Active learning for calibrating cosmology}
+\label{sec:photoz}
 
 The accurate determination of an object's distance or redshift is
 central to every test of cosmology that happens outside of a particle
