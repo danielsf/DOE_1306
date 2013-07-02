@@ -297,7 +297,7 @@ yield further gains in performance over current classifiers (e.g. the artificial
 neural network considered below).
 
 \begin{figure}
-\includegraphics[scale=0.3]{doe_desert_plot.png}
+\centerline{\includegraphics[scale=0.3]{doe_desert_plot.png}}
 \caption{
 We compare the Gaussian Process algorithm outlined in Section \ref{sec:photoz}
 to an artificial neural network in the case of sparse training data.  The red
@@ -368,17 +368,26 @@ different wavelengths at different times.
 
 \begin{figure}
 \subfigure[]{
-\includegraphics[scale=0.25]{becker_RRLyrae_fig.png}
-\label{subfig:cadence}
+\includegraphics[scale=0.25]{becker_rrlyrae_uc.png}
+\label{subfig:uc}
 }
 \subfigure[]{
-\includegraphics[scale=1.0]{becker_RRlyrae_phase.png}
-\label{subfig:phase}
+\includegraphics[scale=0.25]{becker_rrlyrae_dd.png}
+\label{subfig:dd}
+}
+\subfigure[]{
+\includegraphics[scale=1.0]{becker_rrlyrae_year_1.png}
+\label{subfig:year1}
+}
+\subfigure[]{
+\includegraphics[scale=1.0]{becker_rrlyrae_year_5.png}
+\label{subfig:year5}
 }
 \caption{
-Taken from \cite{rrlyrae}.  Figure \ref{subfig:cadence} shows the sampling of
-a template RR Lyrae light curve at the LSST Universal Cadence (left) and 
-Deep Drilling Cadence (right).  Figure \ref{subfig:phase} compares the scatter
+Taken from \cite{rrlyrae}.  Figure \ref{subfig:uc} shows the sampling of
+a template RR Lyrae light curve at the LSST Universal Cadence.
+Figure \ref{subfig:dd} shows the same for the 
+Deep Drilling Cadence.  Figures \ref{subfig:year1} and \ref{subfig:year5} compare the scatter
 in determining the phase of an RR Lyrae light curve after 1 year of Universal Cadence
 data and 5 years of Universal Cadence data.  This illustrates the significant effect
 on scientific output of more and more targeted data.
