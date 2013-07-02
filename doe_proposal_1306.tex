@@ -419,7 +419,7 @@ we start with 20,000 training points and assess the efficacy of our Gaussian
 Process classifier by considering the mean value of the probability distribution
 returned at the true value of the classifying function $f$.  The training set is
 then grown by selecting new points either randomly (black curve) or according to
-the maximum value of $-\ln[P(\text{mode})]$ (red curve).  As you can see,
+the maximum value of $\left(-\ln[P(\text{mode})]\right)$ (red curve).  As you can see,
 assembling the training set with active learning leads to a significant
 improvement in the classifier's performance.
 We will expand upon these approaches using
@@ -454,7 +454,7 @@ Active learning applied to classification according to a scalar function on a
 set.  The vertical axis is the mean value of the output probability distribution
 at the true value of the scalar function.  The black curve assembles the
 training set randomly.  The red curve selects new training points that maximize
-the figure of merit $-\ln[P(\text{mode})]$.
+the figure of merit $\left(-\ln[P(\text{mode})]\right)$.
 }
 \label{fig:learning}
 \end{figure}
