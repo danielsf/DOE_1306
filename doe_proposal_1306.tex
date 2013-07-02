@@ -308,6 +308,7 @@ due to atmospheric conditions, changes in the performance of the
 telescope and camera and the possibility that we observe sources at
 different wavelengths at different times.
 
+spock
 
 \begin{figure}
 \includegraphics[scale=0.2]{becker_RRLyrae_fig.png}
@@ -379,6 +380,9 @@ Mahabal {\it et al}. (2008b) alternatively propose to use those same
 $\{\Delta m,\Delta t\}$ pairs as the input to a Gaussian process regression
 by which they will reconstruct the object's entire light curve as a function
 of time, and then classify the object based on that reconstruction.
+Anomaly detection has been attempted by decomposing light curves into
+basis functions of different timescales and looking for events that occur
+more rapidly than some fit baseline \cite{preston2009,blocker2013}
 Richards {\it et al}. (2011) use observations of transient objects to extract
 periodic (e.g. the amplitude and frequency of the first two Fourier modes of
 the object's light curve) and non-periodic (e.g. the variance and skewness of
@@ -424,7 +428,9 @@ of all features degrades the performance of their classifier.  This
 determination of optimal inputs is at the heart of machine learning.  Our
 intention is to introduce an information-theoretic approach which will allow
 us to perform a similar determination in real time as the observations come in,
-directing experiments as they are performed.
+directing experiments as they are performed.  This sort of information theoretic
+approach has already been tried in the static dataset case by Huisje {\it et al}. 
+(2011, 2012) who use a the correntropy to determine a light curves true period.
 
 The active learning problem for transient objects contains three
 subproblems, active learning, active search, and active feature
@@ -745,6 +751,9 @@ Staggs,~S., Suntzeff,~N.~B. (Dark Energy Task Force) 2006,
 Berg\'e,~J., Price,~S., Amara,~A., and Rhodes,~J. 2012,
 Monthly Notices of the Royal Astronomical Society {\bf 419}, 2356
 
+\bibitem[Blocker and Protopapas 2013]{blocker2013}
+Blocker, Alexander W. and Protopapas, Pavlos 2013, arXiv:1301.3027
+
 \bibitem[Bloom {\it et al}. 2011]{bloom2011}
 Bloom,~J.~S., Richards,~J.~W., Nugent,~P.~E., Quimby,~R.~M., Kasliwal,~M.~M.,
 Starr,~D.~L., Posnanski,~D., Ofek,~E.~O., Cenko,~S.~B., Butler,~N.~R.,
@@ -988,6 +997,9 @@ Intelligence
 Poczos,~B., Xiong,~L., Sutherland,~D., and Schneider,~J. 2012,
 ``Nonparametric Kernel Estimators for Image Classification,''
 IEEE Conference on Computer Vision and Pattern Recognition
+
+\bibitem[Preston {\it et al}. 2009]{preston2009}
+Preston, Dan, Protopapas, Pavlos, and Brodely, Carla 2009, arXiv:0901.3329
 
 \bibitem[Rasmussen and Williams 2006]{gp}
 Rasmussen, C.~E. and Williams, C.~K.~I., 2006, ``Gaussian
