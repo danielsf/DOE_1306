@@ -230,13 +230,23 @@ result is a full covariance matrix for the query points.  Readers looking
 for a more detailed explanation of Gaussian processes should consult
 Rasmussen and Williams (2006).
 
-The framework above provides many advantages when applied to active learning. 
-Because Gaussian Processes model the training data as a probability
-distribution, the output (specifically, equation \ref{eq:var}) provides a direct
-quantification of the information content of the model.  This allows us to
+Gaussian Processes have already received significant attention in the field of
+machine learning, but primarily for their felicitous qualities as function
+regressors, rather than for their ability to directly model the probability
+distribution of data.  Wang {\it et al}. (2011, 2012) use a mixture of Gaussian
+Processes to model light curves and identify periodically varying stars.  Huisje
+{\it et al}. (2011, 2012) improve upon their methods, using information
+theoretic quantities to separate true period of these variations from
+systematics introduced by observing systems.
+
+We propose to use the probabilistic nature of Gaussian Processes 
+(specifically, equation \ref{eq:var}) to provide a direct
+quantification of the information content of the model.  This will
+allow us to
 identify the least-well constrained test datum for follow up observations.  It
 also allows us to project the impact of future observations on the entire data
 set so as to maximize the efficacy of our follow-up \cite{Garnett11,Garnett12}.
+
 
 \subsection{Inference in the Presence of Noise and Gaps in a Data
   Stream}
@@ -815,6 +825,14 @@ Graham,~M.~J., Djorgovski,~S.~G., Mahabal,~A., Donalek,~C., Drake,~A.,
 Longo,~G. 2012 [arXiv:1208.2480] to appear in special issue of Distributed and
 Parallel Databases on Data Intensive eScience
 
+\bibitem[Huijse {\it et al}. 2011]{huijse2011}
+Huijse, Pablo, Est\'evez, Pablo A., Zegers, Pablo, Pr\'incipe, Jose C.,
+and Protopapas, Pavlos 2011, IEEE Signal Processing Letters {\bf 18}, 371
+
+\bibitem[Huijse {\it et al}. 2012]{huijse2012}
+Huijse, Pablo, Est\'evez, Pablo A., Protopapas, Pavlos, Zebers, Pablo,
+and Pr\'incipe, Jos\'e C. 2012, arXiv:1212.2398
+
 \bibitem[Huterer {\it et al}. 2006]{huterer2006}
 Huterer,~D., Takada,~M., Bernstein,~G., and Jain,~B. 2006,
 Monthly Notices of the Royal Astronomical Society {\bf 366}, 101
@@ -1004,6 +1022,14 @@ Rockosi,~C., Schlegel,~D., Stoughtfon,~C., Tucker,~D.~L., Yanny,~B., York,~D.~G.
 \bibitem[Vanderplas and Connolly 2009]{vdp2009}
 Vanderplas,~J. and Connolly,~A.~J. 2009,
 Astronomical Journal {\bf 138}, 1365
+
+\bibitem[Wang {\it et al}. 2011]{wang2011}
+Wang, Yuyang, Khardon, Roni, and Protopapas, Pavlos 2011
+arXiv:1111.1315
+
+\bibitem[Wang {\it et al}. 2012]{wang2012}
+Wang, Yuyang, Khardon, Roni, and Protopapas, Pavlos 2012
+arXiv:1203.0970
 
 \bibitem[Wiley {\it et al}. 2011]{wiley2011}
 Wiley,~K, Connolly,~A.~J., Gardner,~J., Krughoff,~S., Balazinska,~M., Howe,~B.,
