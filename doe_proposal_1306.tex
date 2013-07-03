@@ -149,8 +149,38 @@ machine learning methods.
 \subsection{Project Objectives}
 \label{sec:objectives}
 
-We divide the problem of on-line big-data analysis into the following three
-problems.
+On-line, data-driven analysis will require model-fitting and classifications
+that are non-parametric and probabilistic in the way they treat their outputs.
+Gaussian Processes represent a class of algorithms consistent with these
+requirements and therefore we propose to build our framework around them.
+We divide our research program into the following objectives.
+
+{\bf Designing Robust Gaussian Processes.}  Figures \ref{fig:scatter}
+and \ref{fig:gp} below will demonstrate that, ``out of the box,'' Gaussian
+Processes already perform much better than other algorithms (both
+forward-fitting and data-driven) and model inference.  However, extending them
+to the future of big-data science will require confronting problems not yet
+faced by automatic data analysis algorithms.
+\begin{itemize}
+\item Model degeneracy -- most model-fitting algorithms, including Gaussian
+Processes, are written to return an optimal value (whether a latent physical
+variable or a classification) and some error on that value.  This assumes that
+the true model obeys single-mode Gaussian statistics.  As future experiments
+continue to push the boundaries of our physical understanding, this assumption
+will cease to be valid and we will be forced to build algorithms that can
+accommodate multi-modal models obeying a wide range of probabilistic
+distributions.  We propose a series of modifications that will allow Gaussian
+Processes to function in this regime.
+
+\item Incomplete training data -- the difficulty of experiments being attempted
+in high energy physics, astrophysics, and biology often means that, not only is
+the gathering of data expensive, it may not be possible in some regimes.  Future
+algorithms will need to be able to make inferences about models in regimes where
+training data is either very sparse not available at all.  Because of their
+non-parametric design, Gaussian Processes are uniquely amenable to this kind of
+modeling and we propose additional modifications that will enhance their
+robustness against such incomplete training data.
+\end{itemize}
 
 {\bf Active Learning.} Automatic regression and classification
 algorithms require input from human experts against which to calibrate
