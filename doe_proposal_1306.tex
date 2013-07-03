@@ -252,8 +252,127 @@ Processes discussed in Section \ref{sec:gp} below.
 
 \subsection{The Collaboration}
 
+To accomplish the objectives laid out in this program we have
+assembled a team experienced in algorithm design, data structures, and
+in developing and delivering data mining algorithms that are actively
+used by the cosmology community. The PIs of this research proposal
+have a proven track record for propagating research ideas in
+educational and multidisciplinary environments. Connolly and Schneider
+have been part of an ongoing collaboration between machine learning,
+cosmology and statistics for over a decade (noted by the President
+of the American Statistical Association (ASA) as an exemplary
+interdisciplinary research team \cite{straf03}).
+
+Highlights from this collaboration include n-tree searching algorithms
+that make the calculation of n-point correlation functions scale to
+the size of current surveys \cite{GrayMoore} and that enable rapid
+characterization of orbital tracks in sparsely sampled temporal data
+\cite{kubica}. The software associated with these algorithms was made
+publicly available and has been used to compute the 2--point function
+on over 10$^6$ galaxies and the 3--point correlation function of
+400,000 galaxies from the SDSS survey
+\cite{Scranton2002,Szapudi2002,Nichol2006,mcbride2011a,mcbride2011b}
+as well as in measures of the marked correlation functions
+\cite{Skibba2006}.  As part of this collaboration \cite{yip2004a,
+  vdp2009, daniel2011} introduced, to astrophysics, signal compression
+and analysis techniques that are now regularly applied to the analysis
+of spectroscopic surveys. More recently this collaboration has
+developed algorithms to automatically classify astronomical objects
+\cite{vdp2009,daniel2011} as well as an initial set of papers that use
+a simplified active learning method to accelerate the exploration of
+complex parameter spaces \cite{daniel2012}.  Schneider's group has led
+the development of several new methods of regularization to learn
+complex models with only a small amount of training data
+\cite{YiZhangICML2010,YiZhangSDM2010,YiZhangMultitask2010,YiZhang2011multiECOC,YiZhang2012},
+for non-parametric estimators for divergences and dependencies
+\cite{poczos11alphadiv,Poczos2011UAI,poczos12CVPR}, and for graphical
+models for finding groups of collectively anomalous records
+\cite{Xiong2011gad,xiong2011fgm}.
+ 
+Connolly leads the University of Washington data management group that
+develops the algorithms and techniques for the real time analysis of
+LSST data (including the real-time detection and characterization of
+transients and anomalies).  Schneider heads a machine learning group
+that has done extensive work on automatic anomaly detection and
+pattern-recognition in complex data sets
+\cite{Xiong2011gad,poczos12CVPR}.  Schneider, and Connolly are members
+of the Large Synoptic Survey Telescope collaboration with Connolly the
+software coordinator for the DOE sponsored Dark Energy Science
+Collaboration (a collaboration of over 150 scientists working on the
+characterization of dark energy).
 
 
+On the educational front, all PIs have developed and taught computational techniques at the
+graduate and undergraduate level including data-mining for
+Astrophysics. Connolly recently completed a text book ``Statistics,
+Data Mining, and Machine Learning in Astronomy: A Practical Python
+Guide for the Analysis of Survey Data'' that will be published by
+Princeton University Press and provides a comprehensive introduction
+to the cutting-edge statistical methods together with the software
+associated with these techniques. On sabbatical at Google, Connolly led the
+development of Sky in Google Earth (aka Google Sky;
+http://earth.google.com/sky), which was similarly successful at
+engaging the public.
+
+%We expect the proposed research to move beyond astrophysics to other
+%data intensive sciences. In its broadest sense machine learning for
+%massive Petabyte data archives drives many of the physical and
+%biological sciences with catalogs containing hundreds millions of
+%samples with thousands of measurements. The algorithms to be
+%investigated here will also impact machine learning beyond their
+%application to cosmology.  They move beyond the traditional learning
+%of full models and are able to handle data that do not need to be
+%pre-assembled into temporal sequences.  If successful, this will add
+%new types of data sets and by inference new scientific fields to the
+%list that can benefit from active learning of models.
+
+
+
+\section{The Role of Active Learning in Cosmology}
+
+Over the last decade a concordance model has emerged for the universe
+that describes its energy content. The most significant contribution
+to the energy budget today comes in the form of ``dark energy'', which
+explains the observation that we reside in an accelerating
+universe. Despite its importance to the formation and evolution of the
+universe there is no compelling theory that explains the energy
+density nor the properties of the dark energy. Understanding the
+nature of dark energy remains as one of the most fundamental questions
+in Physics today, impacting our understanding of cosmology, particle
+physics, and potentially theories of gravity itself.  As noted in the draft
+report of the Dark Energy Task Force (DETF; constituted jointly by
+DOE, NSF and NASA), ``the nature of dark energy ranks among the very
+most compelling of all outstanding problems in physical science''.
+
+
+To address the question of the nature of dark energy a new generation
+of DOE sponsored experiments are entering service (e.g.\ the Dark
+Energy Survey, DES\footnote{http://www.darkenergysurvey.org} and the
+Large Synoptic Sky Survey, LSST\footnote{http://www.lsst.org}).  These
+surveys will represent a 40-fold increase in data rates over current
+experiments (generating over 100 Petabytes of data over a period of 10
+years) and decreasing the uncertainties on our measures of the
+underlying properties of dark energy by more than a factor of ten.
+
+Impact 
+
+ On
+these scales, statistical noise will no longer determine the accuracy
+to which we can measure cosmological parameters. The control and
+correction of systematics will ultimately determine our final
+figure-of-merit. Prime amongst these systematics is the estimation of
+distances to extragalactic sources, the identification of anomalous
+events within the temporal universe (e.g.\ detecting optical flashes
+and supernovae at cosmological distances), and the real time
+classification of data in the presence of uncertainties and gaps
+within the data stream.
+
+With surveys such as the LSST we will detect 250,000 SNe per year
+increasing the accuracy of measures of the energy content of the
+universe by an order of magnitude.
+
+
+more...
 
 \section{A Probabilistic Framework for Scientific Inference}
 
@@ -671,6 +790,7 @@ the figure of merit $\left(-\ln[P(\text{mode})]\right)$.
 Anomaly Detection and Classification in Massive Data
  Streams}
 
+
 While the problem of photometric redshift determination is fertile ground for
 the development of active learning algorithms, it poses little challenge for
 active feature acquisition: for a given experiment, the photometric filters are
@@ -729,6 +849,7 @@ how we sample the time domain, variations in the quality of the data
 due to atmospheric conditions, changes in the performance of the
 telescope and camera and the possibility that we observe sources at
 different wavelengths at different times.
+
 
 
 
