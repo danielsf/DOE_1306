@@ -220,46 +220,32 @@ continuously as more observations are taken and the models and scientific
 goals change (e.g. the object types designated as ``interesting'' are
 changed).
 
+Each of these goals will require us to develop algorithms to simultaneously
+learn the latent physical model underlying a given data, the uncertainties
+around that model, and the potential information to be gained by futher studying
+a specific instance of the model (an event or object as described above).
+We believe that this problem can be best addressed by treating our models
+non-parametrically and probabilistically, 
+i.e. by solving for the probability distribution over the data's features.
+For this reason, we propose to base our work on the formalism of Gaussian
+Processes discussed in Section \ref{sec:gp} below.
 
 \subsection{The Collaboration}
 
-\section{The Need for Active Learning in Cosmology}
+\section{Probabilistic Framework for Scientific Inference}
 
-Over the last decade a concordance model has emerged for the universe
-that describes its energy content. The most significant contribution
-to the energy budget today comes in the form of ``dark energy'', which
-explains the observation that we reside in an accelerating
-universe. Despite its importance to the formation and evolution of the
-universe there is no compelling theory that explains the energy
-density nor the properties of the dark energy. Understanding the
-nature of dark energy remains as one of the most fundamental questions
-in Physics today, impacting our understanding of cosmology, particle
-physics, and potentially theories of gravity itself.  As noted in the draft
-report of the Dark Energy Task Force (DETF; constituted jointly by
-DOE, NSF and NASA), ``the nature of dark energy ranks among the very
-most compelling of all outstanding problems in physical science''.
+\subsection{Gaussian Processes}
+\label{sec:gp}
 
 
-To address the question of the nature of dark energy a new generation
-of DOE sponsored experiments are entering service (e.g.\ the Dark
-Energy Survey, DES\footnote{http://www.darkenergysurvey.org} and the
-Large Synoptic Sky Survey, LSST\footnote{http://www.lsst.org}).  These
-surveys will represent a 40-fold increase in data rates over current
-experiments (generating over 100 Petabytes of data over a period of 10
-years) and decreasing the uncertainties on our measures of the
-underlying properties of dark energy by more than a factor of ten. On
-these scales, statistical noise will no longer determine the accuracy
-to which we can measure cosmological parameters. The control and
-correction of systematics will ultimately determine our final
-figure-of-merit. Prime amongst these systematics is the estimation of
-distances to extragalactic sources, the identification of anomalous
-events within the temporal universe (e.g.\ detecting optical flashes
-and supernovae at cosmological distances), and the real time
-classification of data in the presence of uncertainties and gaps
-within the data stream.
-
-We propose to address these problems by using Gaussian Processes (GPs) to
-model the probability distributions underlying the data.
+Gaussian processes (GPs) model the output of an unknown, noisy function
+such that any set of samples from it has a joint multivariate Gaussian
+distribution \cite{gp}.  Given a set of observed samples from the function
+it can make predictions about a set of other locations and these
+predictions will be a multivariate Gaussian distribution.  An important
+feature of GPs is that they do not make parametric assumptions about the
+form of the function they are modeling and thus are well suited to
+nonlinear regression problems.
 
 GPs have been used successfully to describe a wide range of physical
 phenomena without having to assume a model of the underlying process, even
@@ -282,35 +268,6 @@ uncertainties surrounding that model, and the potential information to be
 gained from different follow-up observations.  These three inferences will
 be critical in an age of research with increasingly large models, but
 limited budgets for the observations needed to use them.
-
-%the identification and characterization of novel
-%sources requires sifting through millions of ``uninteresting'' objects
-%to locate those truly worth studying.  The next generation of
-%astronomy will be defined by large surveys such as
-%LSST\footnote{http://www.lsst.org}, each of which promises to yield
-%terabytes of data every night.  
-
-%These surveys will pose challenges not
-%only because of the volume of data they will provide, but the type, as
-%their repeated observations of the same regions of sky will finally
-%open detailed time-domain astronomy to physical scrutiny
-%\cite{sciencebook}.  Given the billion dollar investments being made
-%in these surveys, it is paramount that we develop techniques that can%
-%optimize their science output.
-
-\section{Probabilistic Framework for Scientific Inference}
-
-\subsection{Gaussian Processes}
-\label{sec:gppz}
-
-Gaussian processes (GPs) model the output of an unknown, noisy function
-such that any set of samples from it has a joint multivariate Gaussian
-distribution \cite{gp}.  Given a set of observed samples from the function
-it can make predictions about a set of other locations and these
-predictions will be a multivariate Gaussian distribution.  An important
-feature of GPs is that they do not make parametric assumptions about the
-form of the function they are modeling and thus are well suited to
-nonlinear regression problems.
 
 We now describe how the underlying function is modeled with a GP based on a
 sample of training data.  Assume that each training set datum is of the
@@ -353,51 +310,40 @@ result is a full covariance matrix for the query points.  Readers looking
 for a more detailed explanation of Gaussian processes should consult
 Rasmussen and Williams (2006).
 
-The proposed work in the rest of this section will be based on Gaussian
-processes.  We suggest methods of handling non-unimodal, posterior
-distributions and consider especially the scenario where a large gap is
-present in the training data, though not in the intended test data.  We
-propose the application of GPs for anomaly detection and classification.
-In the following section, we discuss active learning.  The algorithms will
-be described as they would be built on GPs, but are general enough that they
-may be used on any model that provides full predictive distributions.
+The inferences in equations \ref{eq:mean} and \ref{eq:cov} are non-parametric:
+they do not assume a form for the latent model they represent.  This means that
+Gaussian Processes can be used for model regression even in the cases of noisy,
+sparse data.  The returned inferences will not be constrained by any model
+assumptions, and the deleterious effects of noise will be propagated through
+$\Simga_q$.  We demonstrate this behavior on the following problem.
 
-\subsection{Inference in the Presence of Noise and Gaps in a Data
-  Stream}
-
-The non-parametric inferences produced by
-Gaussian Processes yield smooth functions which are sensitive to the
-correlations in the input data.  Because of this, Gaussian Processes are
-often used to solve regression problems in the case of
-sparsely sampled training data \cite{wang2011,wang2012}.  
-We intend to harness these features to produce classification algorithms that
-are resilient against noise and gaps in our training data.
-
-Figure \ref{fig:desert} compares a Gaussian Process classifier (the
-photometric redshift algorithm described in Section \ref{sec:photoz}) to 
-an artificial neural network when both are trained on
-data whose distribution does not match the true distribution of data.  
-The classification is a scalar function $f$.  
-The data points $\{\vec{\theta}\}$
-exist in a 6-dimensional space.  
-We treat the algorithms as returning a probability distribution over $f$.  The horizontal axis is
-the mode of these returned probability distributions (effectively, $f_q$ from equation
-\ref{eq:mean}).  The vertical axis is the value of the probability distribution returned at the
-true value of $f$.
-The thin lines are
-produced when all of the training data with values $1.4\le f\le
-2.5$ (between the vertical green lines).  In this case, the artificial neural network
-(red curves) does demonstrably better than the Gaussian Process classifier (black curves).
-The thick lines are produced when only 5\% of the excised training data is restored.
-Now we see that the Gaussian Process classifier learns much faster and does a much better job
-of classifying data in the presence of this sparse training distribution.
-
-This is a very basic test.  The Gaussian Process was not allowed to choose optimal observations or
-training data, nor was much thought given to selecting the appropriate cost function used when
-designing the Gaussian Process model.  Incorporation of active learning based on the information
-content encoded in the probability distributions returned by our Gaussian Process algorithm will
-yield further gains in performance over current classifiers (e.g. the artificial 
-neural network considered below).
+Imagine a scalar function $f$ distributed over a 6-dimensional parameter space.
+We would like to learn a model for this function by sampling a sub-set of that
+space and using a Gaussian Process to infer the value of $f$ at points we did
+not sampled.  Suppose, however, that we are unable to sample points from a given
+region of the parameter space.  This situation arises in many sciences due to
+the limitation of experimental apparatus.  It occurs in the case of astronomy,
+where cosmological Doppler shifting causes the identifying spectral features of
+galaxies to be shifted out of the observational range of most telescopes.
+We simulate this scenario in Figure \ref{fig:desert}.  Training data is taken
+from the parameter space according to a representative distribution of the
+truth, except that no training data is taken for values $1.4\le f\le 2.5$.
+This data is then fed through both a Gaussian Process based algorithm (black
+curves) and an artificial neural network (red curves).  The models learned by
+these algorithms are evaluated by considering the probability that they return
+the true value when sampled at points distributed throughout parameter space.
+The thin curves in Figure \ref{fig:desert} show that Gaussian Processes actually
+perform worse that neural networks in this case where no training data exists
+between $1.4\le f\le2.5$.  However, if we include training data in that region
+that is only 5\% as densely populated as the truth, we see a significant
+improvement in the performance of Gaussian Processes (the thick curve).  The
+Gaussian Processes realize that the training data is under-sampled and calibrate
+themselves accordingly.  We will harness this behavior in designing our active
+learning algorithms.   We will use the probabilistic nature of equations
+\ref{eq:mean} and \ref{eq:cov} to quantify the information contained in our
+Gaussian Process models and how that information is related to the observed
+data.  Thus we will optimize future observations constrained by limited
+follow-up budgets.
 
 \begin{figure}
 \centerline{\includegraphics[scale=0.3]{doe_desert_plot.png}}
