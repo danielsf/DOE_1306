@@ -305,7 +305,9 @@ probabilistic function on the $N_p$-dimensional space with some covariance
 function relating pairs of points on the function, such as a squared
 exponential covariance,
 $K_{ij}\equiv\text{Cov}\left[f(\vec{\theta}^{i}),f(\vec{\theta}^{j})\right]
-= \exp(-\frac{1}{2}|\vec{\theta}^{i} - \vec{\theta}^{j}|^2)$.  Under those
+= \exp(-\frac{1}{2}|\vec{\theta}^{i} - \vec{\theta}^{j}|^2/\ell^2)$ where $\ell$
+is a characteristic length scale set by cross-validation.  
+Under those
 assumptions, one can derive a posterior probability distribution for $f$
 at a new query point $\{\vec{\theta}_{q}\}$ by marginalizing over
 the measured points $\{\vec{\theta}\}$.  This gives a Gaussian distribution
@@ -392,9 +394,47 @@ that training data has been restored.
 \label{fig:desert}
 \end{figure}
 
-\subsection{Scalability of Gaussian Processes}
+\subsection{Optimizing Gaussian Processes}
+\label{sec:optgp}
 
-{\bf need to write something here}
+Despite the felicitous features already noted, we hope to improve the
+performance of our regression and classification
+algorithms by further optimizing the GPs
+themselves.  One obvious difficulty in impelementing GP
+regression is the need to invert the matrix $(K+\sigma^2 I)$ in equations
+(\ref{eq:mean}) and (\ref{eq:cov}).  This is straightforward in the case of
+small datasets, but represents a significant bottleneck in the case of big-data.
+Several solutions have been proposed.  Kaufman {\it et al}. (2011)
+design a covariance
+function $K$ with sparse support so that sparse matrix inversion methods may be
+used.  Foster {\it et al}. 2009 advocate an approximate Gaussian Process method
+in which the matrix to be inverted is decomposed via a QR decomposition and only the most
+signficant columns of Q are used to compute the actual GP.
+In the work presented above and below, we adopt a solution wherein, for any
+given unknown $\{\vec{\theta}_q\}$, the GP is only given the $k$ nearest
+neighbor data points as inputs, and $k$ is a parameter fixed for all
+$\{\vec{\theta}_q\}$ and optimized by
+cross-validation.  We have already shown that this method gives acceptable
+performance.  Significant gains, however, may be made by allowing $k$ to vary
+depending on the region of data space being probed.  One can imagine an
+algorithm in which many values of $k$ are tested for each $\{\vec{\theta}_q\}$
+and the one which minimizing the entropy of the output probability distribution
+is finally chosen.  This is another way in which we can use the non-parametric,
+probabilistic nature of GPs to optimize performance on our classification and
+regression problems.
+
+There is also the question of choosing the functional form of $K_{ij}$.
+We have adopted a squared-exponential form in our preliminary work, but this is
+not the only possible form for $K_{ij}$ and it does not have to be the most
+optimal choice.  In the era of big-data, it should be possible to learn the form
+of $K_{ij}$ directly from the data so that the covariances in our GP more truly
+reflect the covariances in the input data.  Indeed, in the photometric redshift
+problem considered in Section \ref{sec:photoz} below, we set the characteristic
+length scale $\ell$ in $K_{ij}$ dynamically so that different regions of data
+space imply different values of $\ell$ and the width of our posterior
+probability distributions is more responsive to the data.  Further research
+focusing on the root functional form of $K_{ij}$ as expressed in the data will
+likely yield additional improvements in performance.
 
 \section{Active learning: applications in cosmology}
 \label{sec:photoz}
@@ -947,6 +987,11 @@ Djorgovski,~S.~J., Donalek,~C., Mahabal,~A.~A., Moghaddam,~B., Turmon,~M.,
 Graham,~M.~J., Drake,~A.~J., Sharma,~N. and Chen,~Y. 2011
 [arXiv:1110.4655] to appear in Statistical Analysis and Data Mining, ref. proc.
 CIDU 2011 conf., eds. A. Srivastava and N. Chawla
+
+\bibitem[Foster \it{et al}. 2009]{foster}
+Foster, Leslie, Waagen, Alex, Aijaz, Nabeela, Hurley, Michael, Luis, Apolonio,
+Rinsky, Joel, Satyavolu, Chandrika, Way, Michael J., Gazis, Paul, Srivastava,
+Ashok 2009, Journal of Machine Learning Research {\bf 10} 857
 
 \bibitem[Garnett {\it et al}. 2011]{Garnett11}
 Garnett,~R., Krishnamurhty,~Y., Wang,~D., Schneider,~J., and Mann,~R. 2011,
