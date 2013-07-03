@@ -508,7 +508,7 @@ the measured points $\{\vec{\theta}\}$.  This gives a Gaussian distribution
 with mean:
 
 \begin{equation}
-f(\vec{\theta}_q)=K_q\left(K+\sigma^2 I\right)^{-1}\vec{y}
+f(\vec{\theta}_q)=\bar{y}+K_q\left(K+\sigma^2 I\right)^{-1}(\vec{y}-\bar{y})
 \label{eq:mean}
 \end{equation}
 
@@ -524,7 +524,8 @@ and variance:
 Here, $K$ is the matrix of
 covariances between all training points, $\sigma^2$ is the variance of
 Gaussian noise added to each observed value of $y$, $\vec{y}$
-is the training data outputs, and
+is the training data outputs, $\bar{y}$ is the algebraic mean of the elements of
+$\vec{y}$, and
 $K_q$ is the vector of covariances between the query point and all
 training points.  Eq. \ref{eq:cov} extends directly to the case of multiple
 query points by taking the variables as matrices where appropriate, and the
@@ -641,6 +642,42 @@ the felicitous results of GPs evinced above, further development of the
 framework will be required.
 
 \subsection{Fortifying Gaussian Processes against incomplete training data}
+
+GPs are, in some ways, already designed to handle input data that is sparsely
+sampled.  Equation \ref{eq:cov} gives the GP the freedom to declare a large
+uncertainty in regions of data space where there is no training data.  However,
+in order to deliver on the science results required by DES, LSST, and other
+big-data surveys, it is not enough that $\Sigma_q$ be large where the model is
+uncertain.  We require that $f_q$ in equation \ref{eq:mean} bear some
+resemblance to the true answer.  We propose to achieve this in several ways.
+\begin{itemize}
+\item New mean function models -- as presented,
+equation \ref{eq:mean} set the value of $\bar{y}$ to the algebraic mean of the
+training outputs $\vec{y}$.  This assumes that the GP for all $\vec{\theta}_q$
+start from the same value from which equation \ref{eq:mean} encodes the
+departures.  It is possible there is some model, more complex than the algebraic
+mean but simpler than the GP, which can be used to give a more informative value
+for $\bar{y}$ such that it interpolates over gaps in the training data.  We will
+experiment with such functions, attempting to find a more robust foundation off
+of which to build our GPs.
+
+\item Dynamic hyper parameters -- the value of $\ell$ in $K_{ij}$ is presented
+as a parameter to be optimized by cross-validation.  This, again, selects a
+single value for $\ell$ for all possible $\vec{\theta}_q$, regardless of
+$\vec{\theta}_q$'s position in the data space.  We will experiment with
+dynamic algorithms for setting $\ell$ so that highly-sampled training data will
+return small $\ell$ (tightly coupling the GP to the training data) and
+sparsely-sampled training data will give larger $\ell$, allowing for broader
+interpolation across gaps in the training data.
+
+\item Learned $K_{ij}$ -- in the above discussion, the functional form fo
+$K_{ij}$ was assumed.  While this certainly resulted in acceptable behavior in
+our test cases, it is by no means guaranteed that the choice we made (a Gaussian
+function in data space) will always be the best choice.  We will introduce
+algorithms to help the GP learn the most appropriate form of the covariogram
+based on the training data at hand, especially its distribution over the data
+space.
+\end{itemize}
 
 \subsection{Fortifying Gaussian Processes against degenerate training data}
 
