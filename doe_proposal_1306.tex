@@ -377,21 +377,24 @@ more...
 \section{A Probabilistic Framework for Scientific Inference}
 
 
-We propose to use Gaussian Processes to model the
-probability distributions underlying the data.  We believe that this framework
-is the most robust and informative available.  Gaussian Processes have already
-demonstrated their strength at inferring the form of the latent functions
-underlying data \cite{ericgp,psf,daniel2012}, even in cases of sparse
-measurements.  By using them to model the
-probabilistic nature of the data, we will harness that power to learn, not only
+Current state-of-the art regression algorithms attempt to learn a one-to-one
+relationship between the input data and the output function. Uncertainties are
+also learned, but these are usually heuristics derived by considering multiple
+attempts at regressionl such as by a committee of aritficial neural networks
+\cite{annz}.  We propose to replace this framework with one that directly models
+the probability distributions underlying the data.
+We believe that this framework
+is the most robust and informative available.  It will allow us
+to learn, not only
 the models underlying the data, but the uncertainties surrounding that model,
 and the potential information to be gained from different follow-up
 observations.  These three inferences will be critical in an age of
 research with low tolerance for uncertainty and limited budgets for
-follow-up observation. 
+follow-up observation and will allow us to extend our algorithms' application
+beyond realm of function regression and into that of object classification.
+We will build this new framework on the foundation of Gaussian Processes.  
 
 \subsection{Gaussian Processes}
-
 \label{sec:gp}
 
 
