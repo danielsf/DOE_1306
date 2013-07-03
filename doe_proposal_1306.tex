@@ -818,8 +818,13 @@ then grown by selecting new points either randomly (black curve) or according to
 the maximum value of $\left(-\ln[P(\text{mode})]\right)$ (red curve).  As you can see,
 assembling the training set with active learning leads to a significant
 improvement in the classifier's performance.
+This is just a toy model.  The learning algorithm illustrated operates in a high
+signal-to-noise regime.  It takes no account of the relative cost of doing one
+measurement or another.  No gaps exist in the available training data.
+These are all challenges that real-world machine learning algorithms will face.
+We propose to develop algorithms to overcome them.
 
-We will expand upon these approaches using
+We will expand upon
 our recent work on the problem of optimal surveying or polling
 (Garnett et al 2012a).  Rather than having a goal of correctly
 predicting the output for each point in a test set, the goal is to
