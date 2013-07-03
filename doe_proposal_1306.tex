@@ -686,6 +686,39 @@ space.
 
 \subsection{Fortifying Gaussian Processes against degenerate training data}
 
+Additionally, it will be necessary to build GPs that are robust against the
+possibility that degeneracies exist in the relationship between input and output
+data.  This pitfall can already be seen in the simulated photometric redshifts
+plotted in Figure \ref{subfig:gp}.  Note all of the high
+$z_\text{spectroscopic}$ galaxies that appear at low $z_\text{photometric}$ and
+vice-versa.  To correct for this error, we will harness the full probabilistic
+nature of GPs, building a system which tests the simplest, single-mode Gaussian
+model against multi-modal models.  The proposed algorithm will work as follows:
+\begin{itemize}
+\item (1) Fit the training data to a single-mode GP.
+
+\item (2) Use Bayesian model selection \cite{mackay}
+to compute the model likelihood of this single-mode GP.
+
+\item (3) Divide the training data into two sub-populations based on their output
+values.
+
+\item (4) Fit each sub-population to its own GP.
+
+\item (5) Compute the model likelihood of this two-mode model and compare to the
+model likelihood of the single-mode model.
+
+\item (6) Repreat steps 3-5 for three-mode, four-mode, etc. models until
+satisfied that you have found the best fit to the training data.
+\end{itemize}
+Through this iterative approach, we hope to build a GP such that, even when it
+succumbs to the degeneracies seen in Figure \ref{subfig:gp}, it will still place
+significant probability density at the true
+$z_\text{photometric}=z_\text{spectroscopic}$ value.  This will represent a
+signtificant improvement over current model-learning algorithms, which are
+principally concerned with returning a learned value for the model function and
+some heuristic estimate for the uncertainty (i.e. neural networks).
+
 \section{Active learning: applications in cosmology}
 
 
@@ -1238,6 +1271,9 @@ Ma,~Y., Garnett,~R., and Schneider,~J. 2012,
 on Gaussian Random Fields,''
 Neural Information Processing Systems 
 workshop on Discrete Optimization in Machine Learning
+
+\bibitem[MacKay 1992]{mackay}
+MacKay, David 1992, Neural Computation {\bf 4} 415
 
 \bibitem[Mahabal {\it et al}. 2008a]{mahabal2008a}
 Mahabal,~A., Djorgovski,~S.~G., Turmon,~M., Jewell,~J., Williams,~R.~R.,
