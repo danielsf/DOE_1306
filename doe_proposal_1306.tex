@@ -109,11 +109,11 @@ around the theme of active learning.
 
 {\it Active learning} algorithms iteratively decide which data
 points they will collect outputs on and add to a training set.  Their
-goal is to choose the points that will most improves the model being
+goal is to choose the points that will most improve the model being
 learned.  At each step, they consider the current training data, the
 potential data that might be obtained, and the current learned model,
 and evaluate what would be the best choice for the next observation,
-experiment, or feature such that it improve the our knowledge of the
+experiment, or feature such that it improves our knowledge of the
 overall system (according to some objective criterion). The potential
 impact of active learning algorithms is substantial (optimizing the
 scientific returns from billion dollar investments in observational
@@ -130,7 +130,7 @@ Figure 1 from Garnett {\it et al}. (2011) and Figures
 By addressing these challenges we propose to develop active learning
 algorithms that will scale to data sets with hundreds of millions of
 entries and petabytes of data. This work has the potential to impact
-many of the data intensive sciences.. For this proposal, however, we
+many of the data intensive sciences. For this proposal, however, we
 will focus our work in the context of DOE sponsored cosmology
 experiments (i.e.\ the Dark Energy
 Survey\footnote{http://www.darkenergysurvey.org}, and the Large
@@ -162,8 +162,10 @@ classification will maximize the improvement of the automatic
 classifiers.  We have already implemented a toy version of such a
 model on the problem of determing astronomical Doppler shifts (or
 redshifts) using broad-band photometric data.  Our results (shown in
-Figure \ref{fig:learning} below) give us hope that greater attention
-will significantly increase the efficiency of future experiments.
+Figure \ref{fig:learning} below) already show significant improvement over cases
+where the training data is randomly assembled.  We will build on them by
+optimizing the cost function used to drive active learning and incorporating the
+``look-ahead'' method advocated by Garnett {\it et al}. (2011,2012a).
 
 {\bf Active Feature Acquisition.}  Active Learning selects specific
 unknown events or objects for follow-up observation and classification
@@ -186,13 +188,14 @@ estimate class probabilities using Bayes rule for combining the prior
 probability for each class and how well the respective models fit the
 observations.  We will apply these techniques to the challenge of
 characterizing the light curves of supernovae (used in measuring the
-cosmic acceleration) from data with poor temporal sampling (i.e.\
+cosmic acceleration) from data with poor temporal sampling,
 increasing the number of supernovae that can be used for cosmological
-experiments by an order of magnitude).  The key advantage of this
+experiments by an order of magnitude.  The key advantage of this
 approach is that the GPs naturally provide a mean and covariance for
-future unobserved observations.  This uncertainty propagates through
+future unobserved observations (see Section \ref{sec:gp} for a more detailed
+discussion).  This uncertainty propagates through
 to class labels and we can use it to estimate the reduction in class
-uncertainty that will be gained by observing a given observation at a
+uncertainty that will be gained by making a given observation at a
 certain time.  The observation yielding the greatest reduction in
 entropy for the class and the light curves for this object will be
 taken.
@@ -200,7 +203,7 @@ taken.
 {\bf Active Search.}  Often, the bulk of data yielded by any experiment will be
 expected.  Ground-breaking research requires that we develop a method for
 rapdily identifying and classifying novel events and objects
-while staying within a
+while staying within a limited
 budget of follow-up observations.  This is an active search problem. The
 problem and the Bayesian optimal algorithm for it are described in our
 recent work \cite{Garnett11,Garnett12}.  As in active learning, the
@@ -208,11 +211,12 @@ acquisition of class labels is expensive and we need to learn a model to
 predict these labels from limited input data.  However, the final
 performance objective is not the accuracy of the classifier, but rather the
 number of positives (i.e. objects from interesting classes)
-identified. This previous work considered a binary classification problem: ``is
+identified. Our previous work considered a binary classification problem: ``is
 the object `interesting' or not?''  We will extend this work to allow for
-classification according to a continuous scalar function and multiple discrete
+classification according to a continuous scalar function or multiple discrete
 classes.  We will design an algorithm that considers probability distributions
-across all possible classes and how new observations will affect these
+across all possible classes and
+quantifies how new observations will affect these
 distributions with an eye towards reducing the entropy, or some other
 information-theoretical measure of uncertainty.
 
@@ -243,7 +247,8 @@ information-theoretical measure of uncertainty.
 Each of these goals will require us to develop algorithms to simultaneously
 learn the latent physical model underlying a given data set, the uncertainties
 around that model, and the potential information to be gained by futher studying
-a specific instance of the model (an event or object as described above).
+a specific instance of the model (an ``event'' or ``object'' in the 
+terminology above).
 We believe that this problem can be best addressed by treating our models
 non-parametrically and probabilistically, 
 i.e. by solving for the probability distribution over the data's features.
@@ -308,7 +313,7 @@ Astrophysics. Connolly recently completed a text book ``Statistics,
 Data Mining, and Machine Learning in Astronomy: A Practical Python
 Guide for the Analysis of Survey Data'' that will be published by
 Princeton University Press and provides a comprehensive introduction
-to the cutting-edge statistical methods together with the software
+to cutting-edge statistical methods together with the software
 associated with these techniques. On sabbatical at Google, Connolly led the
 development of Sky in Google Earth (aka Google Sky;
 http://earth.google.com/sky), which was similarly successful at
@@ -348,7 +353,7 @@ most compelling of all outstanding problems in physical science''.
 To address the question of the nature of dark energy a new generation
 of DOE sponsored experiments are entering service (e.g.\ the Dark
 Energy Survey, DES\footnote{http://www.darkenergysurvey.org} and the
-Large Synoptic Sky Survey, LSST\footnote{http://www.lsst.org}).  These
+Large Synoptic Survey Telescope, LSST\footnote{http://www.lsst.org}).  These
 surveys will represent a 40-fold increase in data rates over current
 experiments (generating over 100 Petabytes of data over a period of 10
 years) and decreasing the uncertainties on our measures of the
@@ -377,16 +382,17 @@ more...
 \section{A Probabilistic Framework for Scientific Inference}
 
 
-Current state-of-the art regression algorithms attempt to learn a one-to-one
+Current state-of-the art algorithms attempt to learn a 
+model as a one-to-one
 relationship between the input data and the output function. Uncertainties are
 also learned, but these are usually heuristics derived by considering multiple
-attempts at regressionl such as by a committee of aritficial neural networks
+attempts at model-fitting such as by a committee of aritficial neural networks
 \cite{annz}.  We propose to replace this framework with one that directly models
 the probability distributions underlying the data.
 We believe that this framework
 is the most robust and informative available.  It will allow us
 to learn, not only
-the models underlying the data, but the uncertainties surrounding that model,
+the models underlying the data, but the uncertainties surrounding these models,
 and the potential information to be gained from different follow-up
 observations.  These three inferences will be critical in an age of
 research with low tolerance for uncertainty and limited budgets for
@@ -402,8 +408,8 @@ Gaussian processes (GPs) model the output of an unknown, noisy function
 in multi-dimensional data space
 such that any set of samples from it has a joint multivariate Gaussian
 distribution \cite{gp}.  Given a set of observed samples from the function's
-data space,
-it can make predictions about a set of other locations and assign these
+data space, a GP
+can make predictions about a set of other locations and assign these
 predictions a multivariate Gaussian distribution.  An important
 feature of GPs is that they do not make parametric assumptions about the
 form of the function they are modeling and thus are well suited to
@@ -413,13 +419,13 @@ GPs have been used successfully to describe a wide range of physical
 phenomena without having to assume a model of the underlying process, even
 in the case of sparse measurements.  Examples in astrophysics include the
 expansion history of the universe \cite{ericgp} and interpolating point
-spread functions across large images \cite{psf}.  Mahabal {\it et al}. 2008b and
-Wang {\it et al}. (2011,
+spread functions across large images \cite{psf}.  Mahabal {\it et al}. (2008b) 
+and Wang {\it et al}. (2011,
 2012) use a mixture of Gaussian Processes to model light curves and
 identify periodically varying stars.  Huisje {\it et al}. (2011, 2012)
 improve upon their methods, using information-theoretical quantities to
-separate true period of these variations from systematics introduced by
-observing systems.  The PIs have used GPs to accelerate the search of
+separate the true period of these variations from systematics introduced by
+observational apparatus.  The PIs have used GPs to accelerate the search of
 high-dimensional likelihood functions on the cosmological parameters by
 efficiently selecting sample points \cite{daniel2012}, detect damped Lyman
 alpha systems in the spectra of quasars \cite{Garnett12a}, and optimize the
@@ -433,8 +439,8 @@ latent quantity (output) we are trying to infer.  $f$ is assumed to be a
 probabilistic function on the $N_p$-dimensional space with some covariance
 function relating pairs of points on the function, such as a squared
 exponential covariance,
-$K_{ij}\equiv\text{Cov}\left[f(\vec{\theta}^{i}),f(\vec{\theta}^{j})\right]
-= \exp(-\frac{1}{2}|\vec{\theta}^{i} - \vec{\theta}^{j}|^2/\ell^2)$ where $\ell$
+$K_{ij}\equiv\text{Cov}\left[f(\vec{\theta}_{i}),f(\vec{\theta}_{j})\right]
+= \exp(-\frac{1}{2}|\vec{\theta}_{i} - \vec{\theta}_{j}|^2/\ell^2)$ where $\ell$
 is a characteristic length scale set by cross-validation.  
 Under those
 assumptions, one can derive a posterior probability distribution for $f$
@@ -462,60 +468,60 @@ Gaussian noise added to each observed value of $y$, $\vec{y}$
 is the training data outputs, and
 $K_q$ is the vector of covariances between the query point and all
 training points.  Eq. \ref{eq:cov} extends directly to the case of multiple
-query points by making the variables as matrices where appropriate, and the
+query points by taking the variables as matrices where appropriate, and the
 result is a full covariance matrix for the query points.  Readers looking
-for a more detailed explanation of Gaussian processes should consult
+for a more detailed explanation of GPs should consult
 Rasmussen and Williams (2006).
 
 
 The inferences in equations \ref{eq:mean} and \ref{eq:cov} are non-parametric:
 they do not assume a form for the latent model they represent.  This means that
-Gaussian Processes can be used for model regression even in the cases of noisy,
+GPs can be used for model regression even in the cases of noisy,
 sparse data.  The returned inferences will not be constrained by any model
 assumptions, and the deleterious effects of noise will be propagated through
 $\Sigma_q$.  We demonstrate this behavior on the following problem.
 
-Imagine a scalar function $f$ distributed over a 6-dimensional parameter space.
+Imagine a scalar function $f$ distributed over a 6-dimensional data space.
 We would like to learn a model for this function by sampling a sub-set of that
-space and using a Gaussian Process to infer the value of $f$ at points we did
+space and using a GP to infer the value of $f$ at points we did
 not sample.  Suppose, however, that we are unable to sample points from a given
-region of the parameter space.  This situation arises in many sciences due to
+region of the data space.  This situation arises in many sciences due to
 the limitation of experimental apparatus.  It occurs in the case of astronomy,
-where cosmological Doppler shifting causes the identifying spectral features of
+where cosmological Doppler shifting causes identifying spectral features of
 galaxies to be shifted out of the observational range of most spectrographs.
 We simulate this scenario in Figure \ref{fig:desert}.  Training data is taken
-from the parameter space according to a representative distribution of the
+from the data space according to a representative distribution of the
 truth, except that no training data is taken for values $1.4\le f\le 2.5$.
-This data is then fed through both a Gaussian Process based algorithm (black
+This data is then fed through both a GP based algorithm (black
 curves) and an artificial neural network (red curves).  The models learned by
 these algorithms are evaluated by considering the probability that they return
 the true value when sampled at points distributed throughout parameter space.
-The thin curves in Figure \ref{fig:desert} show that Gaussian Processes
+The thin curves in Figure \ref{fig:desert} show that GPs
 perform worse that neural networks in the case where no training data exists
 between $1.4\le f\le2.5$.  However, if we include training data in that region
 that is only 5\% as densely populated as the truth, we see a significant
-improvement in the performance of Gaussian Processes (the thick curve).  The
-Gaussian Processes realize that the training data is under-sampled and calibrate
+improvement in the performance of GPs (the thick curve).  The
+GPs realize that the training data is under-sampled and calibrate
 themselves accordingly.  We will harness this behavior in designing our active
 learning algorithms.   
 Figure \ref{fig:desert} already shows (via the difference between the thin and
 thick curves) that the potential gain in performance from
 using active learning to select just a few new objects or follow-up observation
-is signitifcantly greater for a Gaussian Process than current state of the
-art classification and regression algorithms.
+is signitifcantly greater for a GP than current state-of-the-art 
+classification and regression algorithms.
 We will further use the probabilistic nature of equations
 \ref{eq:mean} and \ref{eq:cov} to quantify the information contained in the
-Gaussian Process models and guide the active learning selection
+GP models and guide the active learning selection
 process itself.  Thus we will optimize future observations constrained by limited
 follow-up budgets.
 
 \begin{figure}
 \centerline{\includegraphics[scale=0.3]{doe_desert_plot.png}}
 \caption{
-We compare the Gaussian Process algorithm outlined in Section \ref{sec:photoz}
+We compare the GP algorithm outlined in Section \ref{sec:photoz}
 to an artificial neural network in the case of sparse training data.  The red
 curves represent an artificial neural network scheme.  The black curves
-represent the Gaussian Process algorithm presented in Section \ref{sec:photoz}. 
+represent the GP algorithm presented in Section \ref{sec:photoz}. 
 The thin curves represent the case where all of the training data between the
 dashed lines has been excised.  The thick curves represent the case where 5\% of
 that training data has been restored.
@@ -536,18 +542,18 @@ small datasets, but represents a significant bottleneck in the case of big-data.
 Several solutions have been proposed.  Kaufman {\it et al}. (2011)
 design a covariance
 function $K$ with sparse support so that sparse matrix inversion methods may be
-used.  Foster {\it et al}. (2009) advocate an approximate Gaussian Process method
+used.  Foster {\it et al}. (2009) advocate an approximate GP method
 in which the matrix to be inverted is decomposed via a QR decomposition and only the most
 signficant columns of Q are used to compute the actual GP.
 In the work presented above and below, we adopt a solution wherein, for any
-given unknown $\{\vec{\theta}_q\}$, the GP is only given the $k$ nearest
+given $\{\vec{\theta}_q\}$, the GP is only given the $k$ nearest
 neighbor data points as inputs, and $k$ is a parameter fixed for all
 $\{\vec{\theta}_q\}$ and optimized by
 cross-validation.  We have already shown that this method gives acceptable
 performance.  Significant gains, however, may be made by allowing $k$ to vary
 depending on the region of data space being probed.  One can imagine an
 algorithm in which many values of $k$ are tested for each $\{\vec{\theta}_q\}$
-and the one which minimizing the entropy of the output probability distribution
+and the one which minimizes the entropy of the output probability distribution
 is finally chosen.  This is another way in which we can use the non-parametric,
 probabilistic nature of GPs to optimize performance on our classification and
 regression problems.
@@ -604,22 +610,22 @@ spectra of any galaxy.  These spectral models are
 redshifted and integrated over the profile of an experiment's
 photometric filters until a good fit to the observed photometric data is
 found.  The redshift of the galaxy is taken as that which produces the best fit
-between template and data.  Many publicly available codes such as 
+between model and data.  Many publicly available codes such as 
 EAZY \cite{eazy} implement this method.  
 While it is straightforward in principle, it requires
 accurate foreknowledge to select the appropriate rest frame 
 spectral models.  If the chosen
-spectra are not representative of the population of observed
+models are not representative of the population of observed
 galaxies, the algorithm will fail to give accurate redshifts and cosmological
 inferences will be inaccurate \cite{budavari2008}.  The effects of this
 shortcoming can be seen in Figure \ref{subfig:eazy}, which plots the results
-of running the publically available EAZY algorithm \cite{eazy} on a set of
+of running EAZY on a set of
 simulated galaxy observations designed to represent results expected from the
-Large Synoptic Survey Telescope (LSST\footnote{http://www.lsst.org}).
+LSST.
 While many of the galaxies fall near the
 $z_\text{photometric}=z_\text{spectroscopic}$ line, there is significant scatter
 in the results.  We propose to overcome this difficulty with an exclusively
-data-driven algorithm based on Gaussian Processes.
+data-driven algorithm based on GPs.
 
 \begin{figure}
 \subfigure[]{
@@ -636,15 +642,15 @@ against true spectroscopic redshift for 48,000 simulated LSST galaxy
 observations.  Photometric redshifts are derived using the
 EAZY template-fitting
 algorithm in Figure \ref{subfig:eazy} and
-our Gaussian Process based algorithm in Figure \ref{subfig:gp}.
+our GP based algorithm in Figure \ref{subfig:gp}.
 }
 \label{fig:scatter}
 \end{figure}
 
-Other works have already attempted to apply Gaussian Processes to the problem of
+Other works have already attempted to apply GPs to the problem of
 photometric redshfifts \cite{kaufman,bonfield}, however, they have treated the
 problem as one of learning the form of a one-to-one scalar function.  We propose
-to use the probabilistic nature of Gaussian Processes to learn the full
+to use the probabilistic nature of GPs to learn the full
 probability distribution that a given galaxy is at a given redshift.  
 This will produce an algorithm that is simultaneously more robust against
 sparse, noisy or degenerate training data and more amenable to improvement 
@@ -652,7 +658,10 @@ by the introduction of
 active learning.
 Figure \ref{subfig:gp} shows preliminary results from our
 algorithm when trained on spectroscopic data from 50,000 galaxies and tested
-on the same 48,000 galaxies as Figure \ref{subfig:eazy}.
+on the same 48,000 galaxies as Figure \ref{subfig:eazy}.  Here we see that
+the GP modeling yields significantly less scatter about the true
+$z_\text{photometric}=z_\text{spectroscopic}$ relationship.
+
 %We discuss specifically how we model $P(z_\text{photometric})$ below.
 
 %Galaxy observations are represented as vectors $\{\vec{\theta}_q\}$ of
@@ -703,9 +712,9 @@ Figure \ref{fig:gp} plots the mean value of $\ln[P(\text{truth})]$,
 i.e. the value of the logarithm $P(z_\text{photometric})$ at the point
 $z_\text{photometric}=z_\text{spectroscopic}$ 
 as a function
-of photometric redshift for EAZY, ANNz, and our Gaussian Process algorithm.
+of photometric redshift for EAZY, ANNz, and our GP algorithm.
 We see that both EAZY and ANNz consistently assign lower probabilities to
-$z_\text{photometric}=z_\text{spectroscopic}$ than does our Gaussian Process algorithm.
+$z_\text{photometric}=z_\text{spectroscopic}$ than does our GP algorithm.
 
 \subsection{Experimental Design and Optimization through Active Learning}
 
@@ -743,8 +752,8 @@ The algorithm considers the modeled galaxies and chooses the most uncertain for
 follow-up
 Figure \ref{fig:learning} demonstrates a variant of this scheme assigned to the
 problem presentedin Figure \ref{fig:desert}. From a total of 97,000 data points,
-we start with 20,000 training points and assess the efficacy of our Gaussian
-Process classifier by considering the mean value of $\ln[P(\text{truth})]$
+we start with 20,000 training points and assess the efficacy of our GP 
+classifier by considering the mean value of $\ln[P(\text{truth})]$
 as in Figure \ref{fig:gp}.  The training set is
 then grown by selecting new points either randomly (black curve) or according to
 the maximum value of $\left(-\ln[P(\text{mode})]\right)$ (red curve).  As you can see,
@@ -917,7 +926,7 @@ observations of a given object into $\{\Delta m,\Delta t\}$ pairs (where $m$
 is magnitude and $t$ is time) and use the density of observations in this 
 two-dimensional space as the basis for a Bayesian classification algorithm.
 Mahabal {\it et al}. (2008b) alternatively propose to use those same 
-$\{\Delta m,\Delta t\}$ pairs as the input to a Gaussian process regression
+$\{\Delta m,\Delta t\}$ pairs as the input to a GP regression
 by which they will reconstruct the object's entire light curve as a function
 of time, and then classify the object based on that reconstruction.
 Anomaly detection has been attempted by decomposing light curves into
