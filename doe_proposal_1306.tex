@@ -664,6 +664,14 @@ the figure of merit $\left(-\ln[P(\text{mode})]\right)$.
 Anomaly Detection and Classification in Massive Data
  Streams}
 
+While the problem of photometric redshift determination is fertile ground for
+the development of active learning algorithms, it poses little challenge for
+active feature acquisition: for a given experiment, the photometric filters are
+often immutable.  Fortunately, survey astronomy presents us with another 
+problem, the identification and classification of transient sources,
+which raises both the questions ``which objects should we
+follow-up?'' and ``what observations should we make of them?''
+
 The next generation of astrophysical surveys will visit the same
 region of sky many thousands of times. This opening of the temporal
 domain in astrophysics offers the potential to discover new classes of
@@ -817,9 +825,11 @@ and provide guidance for what can and should be attempted, however, they do not
 deliver the robust, probabilistic, multi-class identifiers that will be required
 by the rapid, big-data experiments of the next decades.
 
-\subsection{Proposed method for active learning classifier}
+\subsection{Active Feature Acquisition and Active Search
+for Transient Classification}
 
-The input features for transient object classification will be photometric
+The input features for transient object classification will be 
+a variable combination photometric
 and morphologic measures taken at different increments in time.  The output
 is a categorical variable indicating the class.
 Brink {\it et al}. (2012) and Richards {\it et al}. (2012b) consider this
@@ -827,7 +837,8 @@ diversity of features in designing automatic classifiers on static data sets.
 They use cross-validation to
 find that some features are more useful than others and that the inclusion
 of all features degrades the performance of their classifier.  This
-determination of optimal inputs is at the heart of machine learning.  Our
+determination of optimal inputs is at the heart of active feature
+acquisition.  Our
 intention is to introduce an information-theoretical approach 
 based on the output covariance matrix of equation \ref{eq:cov} which will allow
 us to perform a similar determination in real time as observations are made,
