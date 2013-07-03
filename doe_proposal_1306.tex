@@ -156,7 +156,7 @@ requirements and therefore we propose to build our framework around them.
 We divide our research program into the following objectives.
 
 {\bf Designing Robust Gaussian Processes.}  Figures \ref{fig:scatter}
-and \ref{fig:gp} below will demonstrate that, ``out of the box,'' Gaussian
+and \ref{fig:lnsum} below will demonstrate that, ``out of the box,'' Gaussian
 Processes already perform much better than other algorithms (both
 forward-fitting and data-driven) and model inference.  However, extending them
 to the future of big-data science will require confronting problems not yet
@@ -534,109 +534,23 @@ Rasmussen and Williams (2006).
 
 
 The inferences in equations \ref{eq:mean} and \ref{eq:cov} are non-parametric:
-they do not assume a form for the latent model they represent.  This means that
-GPs can be used for model regression even in the cases of noisy,
-sparse data.  The returned inferences will not be constrained by any model
-assumptions, and the deleterious effects of noise will be propagated through
-$\Sigma_q$.  We demonstrate this behavior on the following problem.
+they do not assume a form for the latent model they represent.  This makes GPs
+especially powerful at learning models over data
+with complex degeneracies.  We demonstrate this with the following problem.
 
-Imagine a scalar function $f$ distributed over a 6-dimensional data space.
-We would like to learn a model for this function by sampling a sub-set of that
-space and using a GP to infer the value of $f$ at points we did
-not sample.  Suppose, however, that we are unable to sample points from a given
-region of the data space.  This situation arises in many sciences due to
-the limitation of experimental apparatus.  It occurs in the case of astronomy,
-where cosmological Doppler shifting causes identifying spectral features of
-galaxies to be shifted out of the observational range of most spectrographs.
-We simulate this scenario in Figure \ref{fig:desert}.  Training data is taken
-from the data space according to a representative distribution of the
-truth, except that no training data is taken for values $1.4\le f\le 2.5$.
-This data is then fed through both a GP based algorithm (black
-curves) and an artificial neural network (red curves).  The models learned by
-these algorithms are evaluated by considering the probability that they return
-the true value when sampled at points distributed throughout parameter space.
-The thin curves in Figure \ref{fig:desert} show that GPs
-perform worse that neural networks in the case where no training data exists
-between $1.4\le f\le2.5$.  However, if we include training data in that region
-that is only 5\% as densely populated as the truth, we see a significant
-improvement in the performance of GPs (the thick curve).  The
-GPs realize that the training data is under-sampled and calibrate
-themselves accordingly.  We will harness this behavior in designing our active
-learning algorithms.   
-Figure \ref{fig:desert} already shows (via the difference between the thin and
-thick curves) that the potential gain in performance from
-using active learning to select just a few new objects or follow-up observation
-is signitifcantly greater for a GP than current state-of-the-art 
-classification and regression algorithms.
-We will further use the probabilistic nature of equations
-\ref{eq:mean} and \ref{eq:cov} to quantify the information contained in the
-GP models and guide the active learning selection
-process itself.  Thus we will optimize future observations constrained by limited
-follow-up budgets.
-
-\begin{figure}
-\centerline{\includegraphics[scale=0.3]{doe_desert_plot.png}}
-\caption{
-We compare the GP algorithm outlined in Section \ref{sec:photoz}
-to an artificial neural network in the case of sparse training data.  The red
-curves represent an artificial neural network scheme.  The black curves
-represent the GP algorithm presented in Section \ref{sec:photoz}. 
-The thin curves represent the case where all of the training data between the
-dashed lines has been excised.  The thick curves represent the case where 5\% of
-that training data has been restored.
-}
-\label{fig:desert}
-\end{figure}
-
-\subsection{Optimizing Gaussian Processes}
-\label{sec:optgp}
-
-Despite the felicitous features already noted, we hope to improve the
-performance of our regression and classification
-algorithms by further optimizing the GPs
-themselves.  One obvious difficulty in impelementing GP
-regression is the need to invert the matrix $(K+\sigma^2 I)$ in equations
-(\ref{eq:mean}) and (\ref{eq:cov}).  This is straightforward in the case of
-small datasets, but represents a significant bottleneck in the case of big-data.
-Several solutions have been proposed.  Kaufman {\it et al}. (2011)
-design a covariance
-function $K$ with sparse support so that sparse matrix inversion methods may be
-used.  Foster {\it et al}. (2009) advocate an approximate GP method
-in which the matrix to be inverted is decomposed via a QR decomposition and only the most
-signficant columns of Q are used to compute the actual GP.
-In the work presented above and below, we adopt a solution wherein, for any
-given $\{\vec{\theta}_q\}$, the GP is only given the $k$ nearest
-neighbor data points as inputs, and $k$ is a parameter fixed for all
-$\{\vec{\theta}_q\}$ and optimized by
-cross-validation.  We have already shown that this method gives acceptable
-performance.  Significant gains, however, may be made by allowing $k$ to vary
-depending on the region of data space being probed.  One can imagine an
-algorithm in which many values of $k$ are tested for each $\{\vec{\theta}_q\}$
-and the one which minimizes the entropy of the output probability distribution
-is finally chosen.  This is another way in which we can use the non-parametric,
-probabilistic nature of GPs to optimize performance on our classification and
-regression problems.
-
-There is also the question of choosing the functional form of $K_{ij}$.
-We have adopted a squared-exponential form in our preliminary work, but this is
-not the only possible form for $K_{ij}$ and it does not have to be the most
-optimal choice.  In the era of big-data, it should be possible to learn the form
-of $K_{ij}$ directly from the data so that the covariances in our GP more truly
-reflect the covariances in the input data.  Indeed, in the photometric redshift
-problem considered in Section \ref{sec:photoz} below, we set the characteristic
-length scale $\ell$ in $K_{ij}$ dynamically so that different regions of data
-space imply different values of $\ell$ and the width of our posterior
-probability distributions is more responsive to the data.  We will build on this
-ad hoc modification and develop a rigorous framework to determine the functional
-form of $K_{ij}$ from the relationships expressed in the GP's input data.
-
-\section{Active learning: applications in cosmology}
+\subsection{Photometric redshifts: a Gaussian Process case study}
 \label{sec:photoz}
 
-We will develop and test our basic active learning routines with an eye towards
-application to the astronomical 
-problem of determining photometric redshifts.
-
+One science use case for the algorithms proposed here is the problem of learning
+photometric redshifts.  Any attempt to solve the astrophysical problem of dark
+energy requires measuring the cosmological Doppler shift of light from tens of
+thousands of galaxies.  Directly measuring the spectra of these galaxies is
+prohibitively expensive.  Measuring their brightness in a handful of broadband
+filters (i.e., taking their photometry), is roughly one thousand times cheaper. 
+For this reason, surveys such as the DES and the LSST are designed to take
+exclusively photometric data and rely on algorithmic researchers to deliver ways
+of inferring a relationship between a galaxy's observed photometry (usually in five or
+six bands) and the it's true redshift.
 
 Photometric redshifts are principally determined using
 forward-fitting models.  Astronomers assume that they can model the rest frame
@@ -658,8 +572,10 @@ simulated galaxy observations designed to represent results expected from the
 LSST.
 While many of the galaxies fall near the
 $z_\text{photometric}=z_\text{spectroscopic}$ line, there is significant scatter
-in the results.  We propose to overcome this difficulty with an exclusively
-data-driven algorithm based on GPs.
+in the results.  Figure \ref{subfig:gp} plots the results from running the same
+simulated galaxies through GP-based algorithm that attempts to learn the full
+probability distribution $P(z_\text{photometric})$.  There is much less scatter
+in this case than in the case of the forward-fitting modeling of EAZY.
 
 \begin{figure}
 \subfigure[]{
@@ -680,6 +596,64 @@ our GP based algorithm in Figure \ref{subfig:gp}.
 }
 \label{fig:scatter}
 \end{figure}
+
+Other data-driven algorithms for photometric redshift determination do exist. 
+An example of these is the publically-available code ANNz \cite{annz},
+which is based on an artificial neural network scheme.
+In this case, the principal
+shortcoming the method is that the artificial neural network
+is designed only to return only a
+photometric redshift value and an uncertainty.
+This uncertainty is a heuristic combination of the uncertainties in the
+photometric data as well as the scatter in $z_\text{photometric}$ derived
+from multiple instantiations of ANNz.  There is no guarantee that it represents
+the true, probabilistic uncertainty in $z_\text{photometric}$.
+Figure \ref{fig:lnsum} plots the mean value of $\ln[P(\text{truth})]$,
+i.e. the value of the logarithm $P(z_\text{photometric})$ at the point
+$z_\text{photometric}=z_\text{spectroscopic}$, 
+as a function
+of photometric redshift for EAZY, ANNz, and our GP algorithm.
+We see that both EAZY and ANNz consistently assign lower probabilities to
+$z_\text{photometric}=z_\text{spectroscopic}$ than does our GP algorithm.
+
+\begin{figure}
+\centerline{\includegraphics[scale=0.3]{sdss_lnsum.png}}
+\caption{
+The mean value of
+$\ln[P(\text{truth})]$ as a function of photometric redshift (the vertical
+axes in Figures \ref{fig:scatter}) for all
+three algorithms under consideration using real
+data taken from the Sloan Digital Sky Survey \cite{Abazajian:2008wr}.  
+In this latter case, the
+algorithms are trained on 21,000 galaxies and tested on 191,000 galaxies.
+}
+\label{fig:lnsum}
+\end{figure}
+
+The tests considered above represent idealized cases.
+The algorithm resulting in Figure \ref{fig:scatter} was trained on high
+signal-to-noise data with a training set sampled everywhere in
+$z_\text{spectroscopic}$-space.  The algorithm resulting in Figure
+\ref{fig:lnsum} is well-behaved in that the low redshift regime considered
+exhibits no degeneracies in the photometry-to-redshift relationship.  This will
+not be the case for the large, deep surveys of the future.  In order to extend
+the felicitous results of GPs evinced above, further development of the
+framework will be required.
+
+\subsection{Fortifying Gaussian Processes against incomplete training data}
+
+\subsection{Fortifying Gaussian Processes against degenerate training data}
+
+\section{Active learning: applications in cosmology}
+
+
+We will develop and test our basic active learning routines with an eye towards
+application to the astronomical 
+problem of determining photometric redshifts.
+
+
+
+
 
 Other works have already attempted to apply GPs to the problem of
 photometric redshfifts \cite{kaufman,bonfield}, however, they have treated the
@@ -711,44 +685,8 @@ $z_\text{photometric}=z_\text{spectroscopic}$ relationship.
 %combination of these two hypotheses, weighted according to their respective
 %model likelihoods.
 
-\begin{figure}
-\subfigure[]{
-\includegraphics[scale=0.3]{lnsum_lsst.png}
-\label{subfig:lnsumlsst}
-}
-\subfigure[]{
-\includegraphics[scale=0.3]{sdss_lnsum.png}
-\label{subfig:lnsumsdss}
-}
-\caption{
-Figure \ref{subfig:lnsumlsst} shows the mean value of
-$\ln[P(\text{truth})]$ as a function of photometric redshift (the vertical
-axes in Figures \ref{fig:scatter}) for all
-three algorithms under consideration using simulated LSST data.  
-Figure \ref{subfig:lnsumsdss} considers real
-data taken from the Sloan Digital Sky Survey \cite{Abazajian:2008wr}.  
-In this latter case, the
-algorithms are trained on 21,000 galaxies and tested on 191,000 galaxies.
-}
-\label{fig:gp}
-\end{figure}
 
-Other data-driven algorithms for photometric redshift determination do exist. 
-An example of these is the publically-available code ANNz \cite{annz},
-which is based on an artificial neural network scheme.
-In this case, the principal
-shortcoming the method is that the artificial neural network
-is designed only to return only a
-photometric redshift value and an uncertainty.  This leaves its results
-sensitive to degeneracies in the photometric data whereby low redshift galaxies
-look similar to high redshift galaxies, confusing the algorithm. 
-Figure \ref{fig:gp} plots the mean value of $\ln[P(\text{truth})]$,
-i.e. the value of the logarithm $P(z_\text{photometric})$ at the point
-$z_\text{photometric}=z_\text{spectroscopic}$, 
-as a function
-of photometric redshift for EAZY, ANNz, and our GP algorithm.
-We see that both EAZY and ANNz consistently assign lower probabilities to
-$z_\text{photometric}=z_\text{spectroscopic}$ than does our GP algorithm.
+
 
 \subsection{Experimental Design and Optimization through Active Learning}
 
@@ -786,10 +724,10 @@ The algorithm considers the modeled galaxies and chooses the most uncertain for
 follow-up.
 Figure \ref{fig:learning} demonstrates a variant of this scheme assigned to the
 problem presented
-in Figure \ref{fig:desert}. From a total of 97,000 data points,
+in Figure \ref{fig:scatter}. From a total of 97,000 data points,
 we start with 20,000 training points and assess the efficacy of our GP 
 classifier by considering the mean value of $\ln[P(\text{truth})]$
-as in Figure \ref{fig:gp}.  The training set is
+as in Figure \ref{fig:lnsum}.  The training set is
 then grown by selecting new points either randomly (black curve) or according to
 the maximum value of $\left(-\ln[P(\text{mode})]\right)$ (red curve).  As you can see,
 assembling the training set with active learning leads to a significant
