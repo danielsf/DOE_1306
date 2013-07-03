@@ -107,9 +107,9 @@ proposal is to address these challenges through the development of a broad
 class of novel and scalable machine-learning techniques centered
 around the theme of active learning.
 
-{\it Active learning} algorithms iteratively decide on which data
+{\it Active learning} algorithms iteratively decide which data
 points they will collect outputs on and add to a training set.  Their
-goal is to choose the points that will most improve the model being
+goal is to choose the points that will most improves the model being
 learned.  At each step, they consider the current training data, the
 potential data that might be obtained, and the current learned model,
 and evaluate what would be the best choice for the next observation,
@@ -123,10 +123,11 @@ complexity of the data expected from the next generation of
 experiments.  For example, our inability to undertake a full look
 ahead to the end of all possible experiments results in the
 development of myopic heuristics that improve the speed of these
-approaches but at a substantial cost in performance.
+approaches but at a substantial cost in performance.  See, for example, Figures
+3 and 4 of Garnet {\it et al}. 2012a.
 
 By addressing these challenges we propose to develop active learning
-algorithms will scale to data sets with hundreds of millions of
+algorithms that will scale to data sets with hundreds of millions of
 entries and petabytes of data. This work has the potential to impact
 many of the data intensive sciences.. For this proposal, however, we
 will focus our work in the context of DOE sponsored cosmology
@@ -145,6 +146,7 @@ speed, and complexity beyond the capabilities of current automated
 machine learning methods.
 
 \subsection{Project Objectives}
+\label{sec:objectives}
 
 We divide the problem of on-line big-data analysis into the following three
 problems.
@@ -157,7 +159,7 @@ considerable.  We propose to develop algorithms to optimize the use of
 these resources by determining what events' or objects' human
 classification will maximize the improvement of the automatic
 classifiers.  We have already implemented a toy version of such a
-model on the problem of determing astronomical doppler shifts (or
+model on the problem of determing astronomical Doppler shifts (or
 redshifts) using broad-band photometric data.  Our results (shown in
 Figure \ref{fig:learning} below) give us hope that greater attention
 will significantly increase the efficiency of future experiments.
@@ -166,14 +168,16 @@ will significantly increase the efficiency of future experiments.
 unknown events or objects for follow-up observation and classification
 by human experts.  Active Feature Acquisition further refines our
 inquiry by asking what kinds of follow-up observations will yield the
-most information about the unknown datum.  We propose to extend our
+most information about the unknown object.  We propose to extend our
 recent work on using Gaussian Processes (GPs) to detect damped
 lyman-alpha (DLA) systems \cite{Garnett12a}.  In that work GP
 regression was used on each observed, noisy spectrum to infer the
 latent spectrum.  The single independent (input) variable was
 wavelength.  In other problems (such as the identification of
 astronomical transients) there will be several input variables which
-we can choose to observe or ignore.  In the DLA work, a different
+we can choose to observe or ignore.  
+We will build an information-theoretical framework to make this choice.
+In the DLA work, a different
 model was learned for spectra with and without a DLA.  DLAs were
 classified by recognizing which model fit best.  In the proposed work,
 we will learn a different model for each class of object and will
@@ -210,20 +214,7 @@ propose to develop {\bf something here}
 %computes the probability of each point belonging to the positive class and
 %chooses the largest.
 
-{\bf A combined streaming method.} The three goals above will be combined
-in a staged set of decisions.  When a new event or object is detected, the data
-will be used to provide estimated physical model for the object.
-These models are the input variables for this object in the active
-learning and active search algorithms.  In parallel, the active learning
-and active search methods will decide whether to follow up on this object.
-If either of them selects the object, it is advanced to active feature
-acquisition.  There additional observations on the object are selected and
-the process for this object repeats.  An object that initially seemed
-interesting to one algorithm may cease to be so after additional
-observations or may be adopted by the other one.  The process for one
-object terminates when neither active learning nor active search remains
-interested in it or the object class and light curves are characterized
-well enough that no more observations are required.
+
 
 %The active search and active learning algorithms each compute an objective
 %criterion score for each object.  For photometric redshifts the scores are
@@ -243,7 +234,7 @@ well enough that no more observations are required.
 %changed).
 
 Each of these goals will require us to develop algorithms to simultaneously
-learn the latent physical model underlying a given data, the uncertainties
+learn the latent physical model underlying a given data set, the uncertainties
 around that model, and the potential information to be gained by futher studying
 a specific instance of the model (an event or object as described above).
 We believe that this problem can be best addressed by treating our models
@@ -379,7 +370,7 @@ more...
 \section{A Probabilistic Framework for Scientific Inference}
 
 
-We propose to address these problems by using Gaussian Processes to model the
+We propose to use Gaussian Processes to model the
 probability distributions underlying the data.  We believe that this framework
 is the most robust and informative available.  Gaussian Processes have already
 demonstrated their strength at inferring the form of the latent functions
@@ -398,10 +389,12 @@ follow-up observation.
 
 
 Gaussian processes (GPs) model the output of an unknown, noisy function
+in multi-dimensional data space
 such that any set of samples from it has a joint multivariate Gaussian
-distribution \cite{gp}.  Given a set of observed samples from the function
-it can make predictions about a set of other locations and these
-predictions will be a multivariate Gaussian distribution.  An important
+distribution \cite{gp}.  Given a set of observed samples from the function's
+data space,
+it can make predictions about a set of other locations and assign these
+predictions a multivariate Gaussian distribution.  An important
 feature of GPs is that they do not make parametric assumptions about the
 form of the function they are modeling and thus are well suited to
 nonlinear regression problems.
@@ -410,10 +403,11 @@ GPs have been used successfully to describe a wide range of physical
 phenomena without having to assume a model of the underlying process, even
 in the case of sparse measurements.  Examples in astrophysics include the
 expansion history of the universe \cite{ericgp} and interpolating point
-spread functions across large images \cite{psf}.  Wang {\it et al}. (2011,
+spread functions across large images \cite{psf}.  Mahabal {\it et al}. 2008b and
+Wang {\it et al}. (2011,
 2012) use a mixture of Gaussian Processes to model light curves and
 identify periodically varying stars.  Huisje {\it et al}. (2011, 2012)
-improve upon their methods, using information theoretic quantities to
+improve upon their methods, using information-theoretical quantities to
 separate true period of these variations from systematics introduced by
 observing systems.  The PIs have used GPs to accelerate the search of
 high-dimensional likelihood functions on the cosmological parameters by
@@ -421,31 +415,25 @@ efficiently selecting sample points \cite{daniel2012}, detect damped Lyman
 alpha systems in the spectra of quasars \cite{Garnett12a}, and optimize the
 performance of complex robots \cite{Tesch11a,Tesch11b,Tesch13}.
 
-By using GPs to model the probabilistic nature of the data, we will harness
-their power to learn, not only the models underlying the data, but the
-uncertainties surrounding that model, and the potential information to be
-gained from different follow-up observations.  These three inferences will
-be critical in an age of research with increasingly large models, but
-limited budgets for the observations needed to use them.
-
 We now describe how the underlying function is modeled with a GP based on a
 sample of training data.  Assume that each training set datum is of the
 form $\{\vec{\theta},y\}$, where $\vec{\theta}$ is an $N_p$-dimensional
 vector representing the measured data (input) and $y = f(\theta)$ is the
 latent quantity (output) we are trying to infer.  $f$ is assumed to be a
 probabilistic function on the $N_p$-dimensional space with some covariance
-function relating pairs of points on the function,such as a squared
+function relating pairs of points on the function, such as a squared
 exponential covariance,
 $K_{ij}\equiv\text{Cov}\left[f(\vec{\theta}^{i}),f(\vec{\theta}^{j})\right]
-= \exp(-\frac{1}{2}|\vec{\theta}^{i} - \vec{\theta}^{j}|^2)$.  Under those
+= \exp(-\frac{1}{2}|\vec{\theta}^{i} - \vec{\theta}^{j}|^2/\ell^2)$ where $\ell$
+is a characteristic length scale set by cross-validation.  
+Under those
 assumptions, one can derive a posterior probability distribution for $f$
 at a new query point $\{\vec{\theta}_{q}\}$ by marginalizing over
 the measured points $\{\vec{\theta}\}$.  This gives a Gaussian distribution
 with mean:
 
 \begin{equation}
-f(\vec{\theta}_{q}) = \sum_{i=1}^n \
-\alpha_i k(\vec{\theta}^{i},\vec{\theta}_{q}^{i})
+f(\vec{\theta}_q)=K_q\left(K+\sigma^2 I\right)^{-1}\vec{y}
 \label{eq:mean}
 \end{equation}
 
@@ -458,7 +446,7 @@ and variance:
 \end{equation}
 
 \noindent
-$\vec{\alpha} = (K + \sigma^2 I)^{-1}\vec{y}$, $K$ is the matrix of
+Here, $K$ is the matrix of
 covariances between all training points, $\sigma^2$ is the variance of
 Gaussian noise added to each observed value of $y$, $\vec{y}$
 is the training data outputs, and
@@ -484,7 +472,7 @@ not sample.  Suppose, however, that we are unable to sample points from a given
 region of the parameter space.  This situation arises in many sciences due to
 the limitation of experimental apparatus.  It occurs in the case of astronomy,
 where cosmological Doppler shifting causes the identifying spectral features of
-galaxies to be shifted out of the observational range of most telescopes.
+galaxies to be shifted out of the observational range of most spectrographs.
 We simulate this scenario in Figure \ref{fig:desert}.  Training data is taken
 from the parameter space according to a representative distribution of the
 truth, except that no training data is taken for values $1.4\le f\le 2.5$.
@@ -492,17 +480,23 @@ This data is then fed through both a Gaussian Process based algorithm (black
 curves) and an artificial neural network (red curves).  The models learned by
 these algorithms are evaluated by considering the probability that they return
 the true value when sampled at points distributed throughout parameter space.
-The thin curves in Figure \ref{fig:desert} show that Gaussian Processes actually
-perform worse that neural networks in this case where no training data exists
+The thin curves in Figure \ref{fig:desert} show that Gaussian Processes
+perform worse that neural networks in the case where no training data exists
 between $1.4\le f\le2.5$.  However, if we include training data in that region
 that is only 5\% as densely populated as the truth, we see a significant
 improvement in the performance of Gaussian Processes (the thick curve).  The
 Gaussian Processes realize that the training data is under-sampled and calibrate
 themselves accordingly.  We will harness this behavior in designing our active
-learning algorithms.   We will use the probabilistic nature of equations
-\ref{eq:mean} and \ref{eq:cov} to quantify the information contained in our
-Gaussian Process models and how that information is related to the observed
-data.  Thus we will optimize future observations constrained by limited
+learning algorithms.   
+Figure \ref{fig:desert} already shows (via the difference between the thin and
+thick curves) that the potential gain in performance from
+using active learning to select just a few new objects or follow-up observation
+is signitifcantly greater for a Gaussian Process than current state of the
+art classification and regression algorithms.
+We will further use the probabilistic nature of equations
+\ref{eq:mean} and \ref{eq:cov} to quantify the information contained in the
+Gaussian Process models and guide the active learning selection
+process itself.  Thus we will optimize future observations constrained by limited
 follow-up budgets.
 
 \begin{figure}
@@ -519,6 +513,47 @@ that training data has been restored.
 \label{fig:desert}
 \end{figure}
 
+\subsection{Optimizing Gaussian Processes}
+\label{sec:optgp}
+
+Despite the felicitous features already noted, we hope to improve the
+performance of our regression and classification
+algorithms by further optimizing the GPs
+themselves.  One obvious difficulty in impelementing GP
+regression is the need to invert the matrix $(K+\sigma^2 I)$ in equations
+(\ref{eq:mean}) and (\ref{eq:cov}).  This is straightforward in the case of
+small datasets, but represents a significant bottleneck in the case of big-data.
+Several solutions have been proposed.  Kaufman {\it et al}. (2011)
+design a covariance
+function $K$ with sparse support so that sparse matrix inversion methods may be
+used.  Foster {\it et al}. 2009 advocate an approximate Gaussian Process method
+in which the matrix to be inverted is decomposed via a QR decomposition and only the most
+signficant columns of Q are used to compute the actual GP.
+In the work presented above and below, we adopt a solution wherein, for any
+given unknown $\{\vec{\theta}_q\}$, the GP is only given the $k$ nearest
+neighbor data points as inputs, and $k$ is a parameter fixed for all
+$\{\vec{\theta}_q\}$ and optimized by
+cross-validation.  We have already shown that this method gives acceptable
+performance.  Significant gains, however, may be made by allowing $k$ to vary
+depending on the region of data space being probed.  One can imagine an
+algorithm in which many values of $k$ are tested for each $\{\vec{\theta}_q\}$
+and the one which minimizing the entropy of the output probability distribution
+is finally chosen.  This is another way in which we can use the non-parametric,
+probabilistic nature of GPs to optimize performance on our classification and
+regression problems.
+
+There is also the question of choosing the functional form of $K_{ij}$.
+We have adopted a squared-exponential form in our preliminary work, but this is
+not the only possible form for $K_{ij}$ and it does not have to be the most
+optimal choice.  In the era of big-data, it should be possible to learn the form
+of $K_{ij}$ directly from the data so that the covariances in our GP more truly
+reflect the covariances in the input data.  Indeed, in the photometric redshift
+problem considered in Section \ref{sec:photoz} below, we set the characteristic
+length scale $\ell$ in $K_{ij}$ dynamically so that different regions of data
+space imply different values of $\ell$ and the width of our posterior
+probability distributions is more responsive to the data.  Further research
+focusing on the root functional form of $K_{ij}$ as expressed in the data will
+likely yield additional improvements in performance.
 
 \section{Active learning: applications in cosmology}
 \label{sec:photoz}
@@ -537,8 +572,9 @@ building three dimensional maps of the distribution of galaxies in the
 Universe.  Such maps will help and have helped us to constrain how
 galaxies formed over the history of the Universe, and thus can tell us
 much about how gravity operates at the largest scales and what the
-parameters are that govern the behavior of dark energy and the cosmic
-acceleration \cite{muvarpi2,roland,sudeep}.  Accurately determining the redshifts of
+parameters are that govern the behavior of dark energy, dark matter, 
+and the cosmic
+acceleration \cite{muvarpi2,roland,sudeep,linder2013}.  Accurately determining the redshifts of
 distant galaxies is a requirement if we are to answer some of the most
 vexing problems in fundamental physics today.
 
@@ -561,7 +597,8 @@ found.  The redshift of the galaxy is taken as that which produces the best fit
 between template and data.  Many publicly available codes such as 
 EAZY \cite{eazy} implement this method.  
 While it is straightforward in principle, it requires
-accurate foreknowledge to select the appropriate basis spectra.  If the chosen
+accurate foreknowledge to select the appropriate rest frame 
+spectral models.  If the chosen
 spectra are not representative of the population of observed
 galaxies, the algorithm will fail to give accurate redshifts and cosmological
 inferences will be inaccurate \cite{budavari2008}.  The effects of this
@@ -602,15 +639,7 @@ probability distribution that a given galaxy is at a given redshift.
 This will produce an algorithm that is simultaneously more robust against
 sparse, noisy or degenerate training data and more amenable to improvement 
 by the introduction of
-active learning.  We describe our method below.
-
-We will treat the photometric redshift problem probabilistically. 
-We will use Gaussian Processes to model a probability density
-function in $P(z_\text{photometric})$ which can characterize the probability that a
-given galaxy is at a given redshift.  This method will allow us
-to quantify the information content of our trainind data in such a way as to
-optimize the gathering of additional spectroscopic data to further improve on
-our results.  
+active learning.
 Figure \ref{subfig:gp} shows preliminary results from our
 algorithm when trained on spectroscopic data from 50,000 galaxies and tested
 on the same 48,000 galaxies as Figure \ref{subfig:eazy}.
@@ -642,9 +671,8 @@ on the same 48,000 galaxies as Figure \ref{subfig:eazy}.
 Figure \ref{subfig:lnsumlsst} shows the mean value of
 $\ln[P(\text{truth})]$ as a function of photometric redshift (the vertical
 axes in Figures \ref{fig:scatter}) for all
-three algorithms under consideration.  
-Figure \ref{subfig:lnsumsdss} compares our Gaussian Process method
-to the artificial neural network code ANNz \cite{annz} on real
+three algorithms under consideration using simulated LSST data.  
+Figure \ref{subfig:lnsumsdss} considers real
 data taken from the Sloan Digital Sky Survey \cite{Abazajian:2008wr}.  
 In this latter case, the
 algorithms are trained on 21,000 galaxies and tested on 191,000 galaxies.
@@ -666,8 +694,10 @@ i.e. the value of the logarithm $P(z_\text{photometric})$ at the point
 $z_\text{photometric}=z_\text{spectroscopic}$ 
 as a function
 of photometric redshift for EAZY, ANNz, and our Gaussian Process algorithm.
-We see that both EAZY and ANNz consistenly assign lower probabilities to
+We see that both EAZY and ANNz consistently assign lower probabilities to
 $z_\text{photometric}=z_\text{spectroscopic}$ than does our Gaussian Process algorithm.
+
+\subsection{Experimental Design and Optimization through Active Learning}
 
 The demands of next generation cosmological experiments will require
 that our photometric redshift determinations be accurate to within
@@ -688,25 +718,24 @@ required.
 How can we resolve these problems?  In both the empirical and template
 photometric redshift codes, biases arise from the fact that the
 training samples (templates) do not occupy the same color and redshift
-space as the data.  Improving on this through targeted observations
-is, however, expensive.  Simple sampling strategies (e.g. random or
+space as the data.  The solution, therefore, lies in correctly the choosing the
+most useful galaxies for follow-up spectroscopy.  
+Simple sampling strategies (e.g. random or
 stratefied) are not efficient.  We need a technique to identify the
 next best observation to take to best reduce the redshift estimation
 bias of our algorithm.  Active learning will provide this technique.
-
-
-\subsection{Experimental Design and Optimization through Active
-  Learning}
  
 A classic active learning method, called uncertainty sampling, uses
 the uncertainty of each test point as the criterion for choosing the
 next experiment (e.g.\ the next spectroscopic measurement of a source
 in the training sample).  
+Teh algorithm considers the modeled galaxies and chooses the most uncertain for
+follow-up
 Figure \ref{fig:learning} demonstrates a variant of this scheme assigned to the
 problem presentedin Figure \ref{fig:desert}. From a total of 97,000 data points,
 we start with 20,000 training points and assess the efficacy of our Gaussian
-Process classifier by considering the mean value of the probability distribution
-returned at the true value of the classifying function $f$.  The training set is
+Process classifier by considering the mean value of $\ln[P(\text{truth})]$
+as in Figure \ref{fig:gp}.  The training set is
 then grown by selecting new points either randomly (black curve) or according to
 the maximum value of $\left(-\ln[P(\text{mode})]\right)$ (red curve).  As you can see,
 assembling the training set with active learning leads to a significant
@@ -727,7 +756,8 @@ This result is consistent with the findings of Richards {\it et al.} (2012b),
 who consider a similar problem for a Random Forest classifier on 
 the static data set produced by the All Sky Automated Survey.
 Intuitively, it seems reasonable that considering the entire
-covariance matrix might lead to better performance than choosing only
+covariance matrix of the modeled data
+might lead to better performance than choosing only
 based on its diagonal.  We have, however, little theoretical understanding of
 why this is better than the trace criterion which directly optimizes
 the quantity on which we will ultimately measure performance.  We will
@@ -753,57 +783,66 @@ the figure of merit $\left(-\ln[P(\text{mode})]\right)$.
 Anomaly Detection and Classification in Massive Data
  Streams}
 
-The next generation of astrophysical surveys will open the time
-domain by visiting the same region of sky many thousands of times over
-a period of ten years\cite{tyson}. This temporal information offers
-the potential to discover new classes of physical phenomena while
-coming with many associated computational challenges. Variability
-within the universe is believed to be present on time scales of
-seconds to hundreds of years. The shortest time scales correspond to
-the explosion of the most massive stars within the universe which
-produce short but intense optical and gamma-ray flashes.  Intermediate
-timescale variability comes in the form of supernovae (SNe) which
-detonate, brighten and then dim. Long term variability comes from the
-fluctuations in the brightness of AGNs with timescales of over a year.
-%These standard
-%%candles can be used to determine the rate at which the universe
-%expands and thereby measure its mass and energy content
-%\cite{perlmutter99}. 
 
-%Surveys, such as the LSST, will survey%
-%half the sky every three nights detecting 250,000 SNe per year.
+While the problem of photometric redshift determination is fertile ground for
+the development of active learning algorithms, it poses little challenge for
+active feature acquisition: for a given experiment, the photometric filters are
+often immutable.  Fortunately, survey astronomy presents us with another 
+problem, the identification and classification of transient sources,
+which raises both the questions ``which objects should we
+follow-up?'' and ``what observations should we make of them?''
 
-% increasing the
-%accuracy of measures of the energy content of the universe by an order
-%of magnitude.
+The next generation of astrophysical surveys will visit the same
+region of sky many thousands of times. This opening of the temporal
+domain in astrophysics offers the potential to discover new classes of
+physical phenomena while coming with many associated computational
+challenges. Variability within the universe is believed to be present
+on time scales of seconds through to tens of years. The shortest time
+scales correspond to the explosion of the most massive stars within
+the universe which produce short but intense optical and gamma-ray
+flashes. These outbursts provide direct tests of General Relativity
+and of high energy physical processes (at energies far beyond those
+accessible on the Earth). For example the rate at which these events
+occur constrains the age at which the first stars within the universe
+came into being. Intermediate timescale variability comes in the form
+of supernovae (SNe) which detonate, brighten and then dim. These
+exploding stars are known to have a narrow range of intrinsic
+brightnesses; they act as standard candles that can be used to
+determine the rate at which the universe expands and thereby measure
+its mass and energy content \cite{perlmutter99}. 
+%Longer time scale
+%variablity (including variability due to the velocity of sources)
+%comes from variations in the luminosity of acretion disks around black
+%holes, the motion of stars throughout our Galaxy and the motion of
+%asteroids within the local solar system. These...
+With surveys such as the LSST we will detect 250,000 SNe per year
+increasing the accuracy of measures of the energy content of the
+universe by an order of magnitude.
 
-To identify, classify and report anomalies in time for followup
-observations, detection and classification must be undertaken in
-almost real-time (e.g.\ within 60 seconds of an LSST observation). We
-require these classifications to be probabilistic, to incorporate
-uncertainties about the classification and to have the ability for
-algorithms to learn based on {\it a posteriori} information from
-earlier classifications.
-% It
-%must be able to predict what additional information might be needed to
-%improve (or exclude) the likelihood of a given classification and to
-%specify which parameters led to the source being classified as
-%anomalous. 
-Small errors in the identification and classification of these
-anomalous sources will swamp any underlying signal. The LSST will
-detect 7.5x10$^8$ sources {\bf every night}. Even for the most
-numerous transient events (SNe), with 250,000 identified a year, this
-detected on an image. For the most energetic bursters the magnitude of
-the challenge is 500-times larger.  Algorithms for identifying
-anomalies and variability must, therefore, be robust to false
-positives and missing data
-% and the fact that we observe sources at different
-%wavelengths at different times 
-and must account for the cadence in how
-we sample the time domain and variations in the quality of the data
-due to atmospheric conditions.
-% as well as changes in the
-%performance of the telescope and camera.
+With timescales as short as seconds to hours we need to be able to
+identify, classify and report any detection in time to allow for
+follow-up observations before the initial outburst
+fades. Identification and classification must, therefore, be
+undertaken in almost real-time with probabilistic classifications that
+incorporate our uncertainties about our classification together with
+the ability for algorithms to learn based on a posteriori information
+from earlier classifications. It must be able to predict what
+additional information might be needed to improved (or exclude) the
+likelihood of a given classification and to specify which parameters
+led to the source being classified as anomalous. Small errors in the
+identification and classification of these anomalous sources will
+swamp any underlying signal. The LSST will detect 7.5x10$^8$ sources
+{\bf every night}. Even for the most numerous transient events (SNe)
+this corresponds to less than 10$^{-5}$ of the total number of sources
+identified being transient. For the most energetic bursters the
+magnitude of the challenge is 500-fold larger.  Algorithms for
+identifying anomalies and variability must, therefore, be robust to
+false positives and missing data and must account for the cadence in
+how we sample the time domain, variations in the quality of the data
+due to atmospheric conditions, changes in the performance of the
+telescope and camera and the possibility that we observe sources at
+different wavelengths at different times.
+
 
 
 
@@ -907,9 +946,11 @@ and provide guidance for what can and should be attempted, however, they do not
 deliver the robust, probabilistic, multi-class identifiers that will be required
 by the rapid, big-data experiments of the next decades.
 
-\subsection{Proposed method for active learning classifier}
+\subsection{Active Feature Acquisition and Active Search
+for Transient Classification}
 
-The input features for transient object classification will be photometric
+The input features for transient object classification will be 
+a variable combination photometric
 and morphologic measures taken at different increments in time.  The output
 is a categorical variable indicating the class.
 Brink {\it et al}. (2012) and Richards {\it et al}. (2012b) consider this
@@ -917,25 +958,44 @@ diversity of features in designing automatic classifiers on static data sets.
 They use cross-validation to
 find that some features are more useful than others and that the inclusion
 of all features degrades the performance of their classifier.  This
-determination of optimal inputs is at the heart of machine learning.  Our
-intention is to introduce an information-theoretic approach 
+determination of optimal inputs is at the heart of active feature
+acquisition.  Our
+intention is to introduce an information-theoretical approach 
 based on the output covariance matrix of equation \ref{eq:cov} which will allow
 us to perform a similar determination in real time as observations are made,
-directing experiments as they are performed.  This sort of information theoretic
-approach has already been tried in the static dataset case by Huisje {\it et al}. 
+directing experiments as they are performed.  An 
+information-theoretical
+approach has already been tried in the case of a static (i.e. off-line)
+dataset by Huisje {\it et al}. 
 (2011, 2012) who use a the correntropy to determine a light curve's 
 true period.  The method should be successful when extended to the case of
 multiple observed and latent quantities.
 
-The active learning problem for transient objects contains three
-subproblems, active learning, active search, and active feature
-acquisition all of which must be made in an online, streaming fashion.  
+The active learning, active search, and active feature
+acquisition choices for transient classification
+all must be made in an online, streaming fashion.  
 Rather than
 considering an entire pool of test objects, they appear one at a time as
 they are detected and the algorithm must decide whether and how to follow
-up on each immediately as they are detected.  We first describe algorithms
-for each of the three pieces and then how to combine them into a single
-algorithm for streaming transient detections.
+up on each immediately as they are detected.  The culmination of our proposed
+program of research will be to combine the methods devised above into a single
+combined streaming algorithm as described below.
+
+The three goals of active learning, active search, and active feature
+acquisition will be combined
+in a staged set of decisions.  When a new event or object is detected, the data
+will be used to provide and estimated physical model for the object.
+These models are the input variables for this object in the active
+learning and active search algorithms.  In parallel, the active learning
+and active search methods will decide whether to follow-up on this object.
+If either of them selects the object, it is advanced to active feature
+acquisition.  There additional observations on the object are selected and
+the process for this object repeats.  An object that initially seemed
+interesting to one algorithm may cease to be so after additional
+observations or may be adopted by the other one.  The process for one
+object terminates when neither active learning nor active search remains
+interested in it or the object class and light curves are characterized
+well enough that no more observations are required.
 
 \section{Timetable of Activities}
 
@@ -1060,6 +1120,11 @@ Graham,~M.~J., Drake,~A.~J., Sharma,~N. and Chen,~Y. 2011
 [arXiv:1110.4655] to appear in Statistical Analysis and Data Mining, ref. proc.
 CIDU 2011 conf., eds. A. Srivastava and N. Chawla
 
+\bibitem[Foster \it{et al}. 2009]{foster}
+Foster, Leslie, Waagen, Alex, Aijaz, Nabeela, Hurley, Michael, Luis, Apolonio,
+Rinsky, Joel, Satyavolu, Chandrika, Way, Michael J., Gazis, Paul, Srivastava,
+Ashok 2009, Journal of Machine Learning Research {\bf 10} 857
+
 \bibitem[Garnett {\it et al}. 2011]{Garnett11}
 Garnett,~R., Krishnamurhty,~Y., Wang,~D., Schneider,~J., and Mann,~R. 2011,
 ``Bayesian Optimal Active Search on Graphs,'' KDD Workshop on Mining and
@@ -1104,6 +1169,10 @@ Roni, and Trichas, Markos 2011, arXiv:1101.3316
 \bibitem[Kitching {\it et al}. 2008]{kitching}
 Kitching,~T.~D., Taylor,~A.~N., and Heavens,~A.~F. 2008,
 Monthly Notices of the Royal Astronomical Society {\bf 389} 173
+
+\bibitem[Linder 2013]{linder2013}
+Linder, Eric V. 2013, Journal of Cosmology and Astropartical Physics {\bf 1304}
+031
 
 \bibitem[Long {\it et al}. 2012]{long2012}
 Long,~J.~P., El Karoui,~N., Rice,~J.~A., Richards,~J.~W., and Bloom,~J.~S. 2012,
