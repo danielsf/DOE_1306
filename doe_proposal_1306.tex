@@ -133,6 +133,94 @@ capabilities of current automated machine learning methods.
 
 \subsection{Project Objectives}
 
+We divide the problem of on-line big-data analysis into the following three
+problems.
+
+{\bf Active Learning.} Automatic regression and classification algorithms
+require input from human experts against which to calibrate themselves.
+Often, the resources required to generate this input (both in terms of
+human-hours and experimental apparatus) are considerable.  We propose to develop
+algorithms to optimize the use of these resources by 
+what events' or objects' human classification
+will maximize the improvement of the automatic classifiers.  We have already
+implemented a toy version of such a model on the problem of determing
+astronomical Doppler shits using broad-band photometric data.  Our results
+(shown in Figure \ref{fig:learning} below) give us hope that greater attention
+will significantly increase the efficiency of future experiments.
+
+{\bf Active Feature Acquisition.}  Active Learning selects specific unknown
+events or objects for follow-up observation and classification by human 
+experts.  Active
+Feature Acquisition further refines our inquiry by asking what kinds of
+follow-up observations will yield the most information about the unknown datum.
+We propose to extend our recent work on 
+using Gaussian Processes (GPs) to detect damped
+lyman-alpha (DLA) systems \cite{Garnett12a}.  In that work GP regression
+was used on each observed, noisy spectrum to infer the latent spectrum.
+The single independent (input) variable was wavelength.  
+In other problems (such as the identification of astronomical transients) there
+will be several input variables which we can choose to observe or ignore.
+In the DLA work, a different model was learned for
+spectra with and without a DLA.  DLAs were classified by recognizing which
+model fit best.  In the proposed work, we will learn a different model for
+each class of object and will estimate class probabilities using Bayes rule
+for combining the prior probability for each class and how well the
+respective models fit the observations.  The key advantage of this approach
+is that the GPs naturally provide a mean and covariance for future
+unobserved colors.  This uncertainty propagates through to class labels and
+we can use it to estimate the reduction in class uncertainty that will be
+gained by observing a certain color at a certain time.  The observation
+yielding the greatest reduction in entropy for the class and the light
+curves for this object will be taken.
+
+{\bf Active Search.}  Often, the bulk of data yielded by any experiment will be
+expected.  Ground-breaking research requires that we develop a method for
+rapdily identifying and classifuing novel events and objects
+while staying within a
+budget of follow-up observations.  This is an active search problem. The
+problem and the Bayesian optimal algorithm for it are described in our
+recent work \cite{Garnett11,Garnett12}.  As in active learning, the
+acquisition of class labels is expensive and we need to learn a model to
+predict these labels from limited input data.  However, the final
+performance objective is not the accuracy of the classifier, but rather the
+number of positives (i.e. objects from interesting classes) identified.  We
+propose to use the simple myopic algorithm described in that work.  It
+computes the probability of each point belonging to the positive class and
+chooses the largest.
+
+{\bf A combined streaming method.} The three goals above will be combined
+in a staged set of decisions.  When a new event or object is detected, the data
+will be used to provide estimated physical model for the object.
+These models are the input variables for this object in the active
+learning and active search algorithms.  In parallel, the active learning
+and active search methods will decide whether to follow up on this object.
+If either of them selects the object, it is advanced to active feature
+acquisition.  There additional observations on the object are selected and
+the process for this object repeats.  An object that initially seemed
+interesting to one algorithm may cease to be so after additional
+observations or may be adopted by the other one.  The process for one
+object terminates when neither active learning nor active search remains
+interested in it or the object class and light curves are characterized
+well enough that no more observations are required.
+
+The active search and active learning algorithms each compute an objective
+criterion score for each object.  For photometric redshifts the scores are
+used to create a ranked list and observations are scheduled proceeding down
+the list.  When a budget is given for follow-ups on each batch of newly
+detected transients, going down a ranked list in each batch until that
+budget is exhausted is appropriate.
+
+However, when the budget is an aggregate over a longer time period a
+streaming decision on how much of the budget to spend on each batch must be
+made on that batch in isolation.  This will be done by choosing a score
+threshold.  The threshold will be set by evaluating the historical stream
+and setting it at a value that would yield a number of follow ups equal to
+an available budget for following up.  The threshold will be adjusted
+continuously as more observations are taken and the models and scientific
+goals change (e.g. the object types designated as ``interesting'' are
+changed).
+
+
 \subsection{The Collaboration}
 
 \section{The Need for Active Learning in Cosmology}
@@ -567,92 +655,6 @@ they are detected and the algorithm must decide whether and how to follow
 up on each immediately as they are detected.  We first describe algorithms
 for each of the three pieces and then how to combine them into a single
 algorithm for streaming transient detections.
-
-{\bf Active Learning.} In order to get a ground-truth class for a transient
-object, repeated observations are taken to estimate a full light curve.  A
-human expert then assigns a class label.  Both the repeated telescope
-observations and human time are expensive and thus we want to learn a good
-classification model using limited training data.  We propose a
-corresponding trace and survey criteria for active learning on transients
-as in Section \ref{sec:mlpz}.
-
-{\bf Active Feature Acquisition.}  We propose to extend our recent work on 
-using Gaussian Processes to detect damped
-lyman-alpha (DLA) systems \cite{Garnett12a}.  In that work GP regression
-was used on each observed, noisy spectrum to infer the latent spectrum.
-The single independent (input) variable was wavelength.  For transient
-objects we will have 5 color magnitudes that are a function of time and are
-coupled to each other.  In the DLA work, a different model was learned for
-spectra with and without a DLA.  DLAs were classified by recognizing which
-model fit best.  In the proposed work, we will learn a different model for
-each class of object and will estimate class probabilities using Bayes rule
-for combining the prior probability for each class and how well the
-respective models fit the observations.  The key advantage of this approach
-is that the GPs naturally provide a mean and covariance for future
-unobserved colors.  This uncertainty propagates through to class labels and
-we can use it to estimate the reduction in class uncertainty that will be
-gained by observing a certain color at a certain time.  The observation
-yielding the greatest reduction in entropy for the class and the light
-curves for this object will be taken.
-
-{\bf Active Search.} Many transient objects will be from common and/or 
-well-understood classes that do not have much observational value.  The ultimate
-objective in following up detected transients is to maximize the number of
-interesting transients classified and characterized while staying within a
-budget of follow-up observations.  This is an active search problem. The
-problem and the Bayesian optimal algorithm for it are described in our
-recent work \cite{Garnett11,Garnett12}.  As in active learning, the
-acquisition of class labels is expensive and we need to learn a model to
-predict these labels from limited input data.  However, the final
-performance objective is not the accuracy of the classifier, but rather the
-number of positives (i.e. objects from interesting classes) identified.  We
-propose to use the simple myopic algorithm described in that work.  It
-computes the probability of each point belonging to the positive class and
-chooses the largest.
-
-
-{\bf A combined streaming method.} The three goals above will be combined
-in a staged set of decisions.  When a new transient is detected, the light
-curve model will be used to provide estimated light curves for the object.
-Those light curves are the input variables for this object in the active
-learning and active search algorithms.  In parallel, the active learning
-and active search methods will decide whether to follow up on this object.
-If either of them selects the object, it is advanced to active feature
-acquisition.  There additional observations on the object are selected and
-the process for this object repeats.  An object that initially seemed
-interesting to one algorithm may cease to be so after additional
-observations or may be adopted by the other one.  The process for one
-object terminates when neither active learning nor active search remains
-interested in it or the object class and light curves are characterized
-well enough that no more observations are required.
-
-The active search and active learning algorithms each compute an objective
-criterion score for each object.  For photometric redshifts the scores are
-used to create a ranked list and observations are scheduled proceeding down
-the list.  When a budget is given for follow-ups on each batch of newly
-detected transients, going down a ranked list in each batch until that
-budget is exhausted is appropriate.
-
-However, when the budget is an aggregate over a longer time period a
-streaming decision on how much of the budget to spend on each batch must be
-made on that batch in isolation.  This will be done by choosing a score
-threshold.  The threshold will be set by evaluating the historical stream
-and setting it at a value that would yield a number of follow ups equal to
-an available budget for following up.  The threshold will be adjusted
-continuously as more observations are taken and the models and scientific
-goals change (e.g. the object types designated as ``interesting'' are
-changed).
-
-Since all of the algorithm components are based on GP models, it is
-possible to merge them together into a single model.  We hypothesize that
-additional performance improvements can be made through an integrated model
-and decision algorithm.  For example, an object with a modest active
-learning score that can be easily characterized with only one more follow
-up might be promoted over one with a higher score that can not be easily
-characterized even with many more observations.  After we have implemented
-the staged method described above, we will investigate and compare an
-integrated model.
-
 
 
 \subsection{Active learning for calibrating cosmology}
