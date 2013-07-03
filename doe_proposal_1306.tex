@@ -140,11 +140,11 @@ problems.
 require input from human experts against which to calibrate themselves.
 Often, the resources required to generate this input (both in terms of
 human-hours and experimental apparatus) are considerable.  We propose to develop
-algorithms to optimize the use of these resources by 
+algorithms to optimize the use of these resources by determining
 what events' or objects' human classification
 will maximize the improvement of the automatic classifiers.  We have already
 implemented a toy version of such a model on the problem of determing
-astronomical Doppler shits using broad-band photometric data.  Our results
+astronomical Doppler shifts using broad-band photometric data.  Our results
 (shown in Figure \ref{fig:learning} below) give us hope that greater attention
 will significantly increase the efficiency of future experiments.
 
@@ -203,22 +203,22 @@ object terminates when neither active learning nor active search remains
 interested in it or the object class and light curves are characterized
 well enough that no more observations are required.
 
-The active search and active learning algorithms each compute an objective
-criterion score for each object.  For photometric redshifts the scores are
-used to create a ranked list and observations are scheduled proceeding down
-the list.  When a budget is given for follow-ups on each batch of newly
-detected transients, going down a ranked list in each batch until that
-budget is exhausted is appropriate.
+%The active search and active learning algorithms each compute an objective
+%criterion score for each object.  For photometric redshifts the scores are
+%used to create a ranked list and observations are scheduled proceeding down
+%the list.  When a budget is given for follow-ups on each batch of newly
+%detected transients, going down a ranked list in each batch until that
+%budget is exhausted is appropriate.
 
-However, when the budget is an aggregate over a longer time period a
-streaming decision on how much of the budget to spend on each batch must be
-made on that batch in isolation.  This will be done by choosing a score
-threshold.  The threshold will be set by evaluating the historical stream
-and setting it at a value that would yield a number of follow ups equal to
-an available budget for following up.  The threshold will be adjusted
-continuously as more observations are taken and the models and scientific
-goals change (e.g. the object types designated as ``interesting'' are
-changed).
+%However, when the budget is an aggregate over a longer time period a
+%streaming decision on how much of the budget to spend on each batch must be
+%made on that batch in isolation.  This will be done by choosing a score
+%threshold.  The threshold will be set by evaluating the historical stream
+%and setting it at a value that would yield a number of follow ups equal to
+%an available budget for following up.  The threshold will be adjusted
+%continuously as more observations are taken and the models and scientific
+%goals change (e.g. the object types designated as ``interesting'' are
+%changed).
 
 Each of these goals will require us to develop algorithms to simultaneously
 learn the latent physical model underlying a given data, the uncertainties
@@ -320,7 +320,7 @@ $\Sigma_q$.  We demonstrate this behavior on the following problem.
 Imagine a scalar function $f$ distributed over a 6-dimensional parameter space.
 We would like to learn a model for this function by sampling a sub-set of that
 space and using a Gaussian Process to infer the value of $f$ at points we did
-not sampled.  Suppose, however, that we are unable to sample points from a given
+not sample.  Suppose, however, that we are unable to sample points from a given
 region of the parameter space.  This situation arises in many sciences due to
 the limitation of experimental apparatus.  It occurs in the case of astronomy,
 where cosmological Doppler shifting causes the identifying spectral features of
@@ -589,7 +589,7 @@ the figure of merit $\left(-\ln[P(\text{mode})]\right)$.
 \label{fig:learning}
 \end{figure}
 
-\subsection{Active Feature Acquisition:
+\section{Active Feature Acquisition:
 Anomaly Detection and Classification in Massive Data
  Streams}
 
