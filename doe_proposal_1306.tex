@@ -212,7 +212,7 @@ identified. This previous work considered a binary classification problem: ``is
 the object `interesting' or not?''  We will extend this work to allow for
 classification according to a continuous scalar function and multiple discrete
 classes.  We will design an algorithm that considers probability distributions
-across these classifications and how new observations affects these
+across all possible classes and how new observations will affect these
 distributions with an eye towards reducing the entropy, or some other
 information-theoretical measure of uncertainty.
 
@@ -561,9 +561,9 @@ reflect the covariances in the input data.  Indeed, in the photometric redshift
 problem considered in Section \ref{sec:photoz} below, we set the characteristic
 length scale $\ell$ in $K_{ij}$ dynamically so that different regions of data
 space imply different values of $\ell$ and the width of our posterior
-probability distributions is more responsive to the data.  Further research
-focusing on the root functional form of $K_{ij}$ as expressed in the data will
-likely yield additional improvements in performance.
+probability distributions is more responsive to the data.  We will build on this
+ad hoc modification and develop a rigorous framework to determine the functional
+form of $K_{ij}$ from the relationships expressed in the GP's input data.
 
 \section{Active learning: applications in cosmology}
 \label{sec:photoz}
