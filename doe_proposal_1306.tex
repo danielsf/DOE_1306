@@ -94,10 +94,10 @@ Co-PI & Jeff Schneider & Carnegie Mellon U & \$170K & \$170K & \$170K & \$510K \
 
 \section{Introduction:}
 A new generation of DOE sponsored data intensive experiments and
-surveys, designed to address fundamental questions in physics and
-biology, will come on-line over the next decade. These experiments
-share many similar challenges in the field of statistics and
-machine-learning: how can we choose the next experiment or observation
+surveys, designed to address fundamental questions in physics, materials, and
+biology will come on-line over the next decade. These experiments
+share many similar challenges in the fields of statistics and
+machine-learning: how do we choose the next experiment or observation
 to make in order that we maximize our scientific returns; how can we
 identify anomalous sources (that may be indicative of new events or
 potential systematics within our experiments) from a continuous stream
@@ -111,25 +111,36 @@ around the theme of active learning.
 points they will collect outputs on and add to a training set.  Their
 goal is to choose the points that will most improve the model being
 learned.  At each step, they consider the current training data, the
-potential training data that could be collected, and the current
-learned model, and evaluate what would be the best choice for the next
-observation, experiment, or feature such that it improve the our
-knowledge of the system (according to some objective criterion).
-% something more on their use and potential
+potential data that might be obtained, and the current learned model,
+and evaluate what would be the best choice for the next observation,
+experiment, or feature such that it improve the our knowledge of the
+overall system (according to some objective criterion). The potential
+impact of active learning algorithms is substantial (optimizing the
+scientific returns from billion dollar investments in observational
+facilities) While the basic formalism for active learning is well
+understood there are many challenges associated with scaling these
+techniques to the size and complexity of the next generation of data
+streams. For example, our inability to undertake a full look ahead to
+the end of all possible experiments results in the development of
+myopic heuristics that improve the speed of these approaches but at a
+substantial cost in performance.
 
-% While the basic formalism for active learning is well understood
-% there are many challenges associated with data streams...
-
-While the algorithms and methodologies we propose will impact many of
-the data intensive sciences, we will focus our work in the context of
-DOE sponsored cosmology experiments (i.e.\ the Dark Energy Survey, and
-the Large Synoptic Survey Telescope). These surveys are ideal proxies
-as their bandwidth (terabytes of data per night and petabytes of data
-every couple of months) will enable high precision studies impacting
-the understanding of cosmology, particle physics, and potentially
-theories of gravity.  Our ability to achieve these scientific goals
-relies on analyses at a scale, speed, and complexity beyond the
-capabilities of current automated machine learning methods.
+By addressing these challenges we propose to develop active learning
+algorithms will scale to data sets with hundreds of millions of
+entries and petabytes of data. This work has the potential to impact
+many of the data intensive sciences.. For this proposal, however, we
+will focus our work in the context of DOE sponsored cosmology
+experiments (i.e.\ the Dark Energy Survey\footnote{http://www.darkenergysurvey.org}, and the Large Synoptic
+Survey Telescope\footnote{http://www.lsst.org}). These surveys are
+ideal proxies as their bandwidth (terabytes of data per night and
+petabytes of data every couple of months) will enable high precision
+studies of cosmology. Our ability to achieve an order of magnitude
+improvement in our constraints on dark energy will, however, depend on
+how well we can calibrate and classify the physical properties of
+sources using data that are inherently noisy and incomplete. This will
+require developing fundamentally new approaches to the analysis of
+data at a scale, speed, and complexity beyond the capabilities of
+current automated machine learning methods.
 
 
 \section{The Need for Active Learning in Cosmology}
@@ -143,7 +154,7 @@ universe there is no compelling theory that explains the energy
 density nor the properties of the dark energy. Understanding the
 nature of dark energy remains as one of the most fundamental questions
 in Physics today, impacting our understanding of cosmology, particle
-physics, and potentially theories of gravity itself.  As noted in the draft
+physics, and potentially theories of gravity itself.  As noted in the 
 report of the Dark Energy Task Force (DETF; constituted jointly by
 DOE, NSF and NASA), ``the nature of dark energy ranks among the very
 most compelling of all outstanding problems in physical science''.
@@ -151,21 +162,39 @@ most compelling of all outstanding problems in physical science''.
 
 To address the question of the nature of dark energy a new generation
 of DOE sponsored experiments are entering service (e.g.\ the Dark
-Energy Survey, DES\footnote{http://www.darkenergysurvey.org} and the
-Large Synoptic Sky Survey, LSST\footnote{http://www.lsst.org}).  These
-surveys will represent a 40-fold increase in data rates over current
+Energy Survey, DES, and the Large Synoptic Sky Survey, LSST).  These
+surveys represent a 40-fold increase in data rates over current
 experiments (generating over 100 Petabytes of data over a period of 10
-years) and decreasing the uncertainties on our measures of the
+years) and will decrease the uncertainties on our measures of the
 underlying properties of dark energy by more than a factor of ten. On
 these scales, statistical noise will no longer determine the accuracy
-to which we can measure cosmological parameters. The control and
-correction of systematics will ultimately determine our final
-figure-of-merit. Prime amongst these systematics is the estimation of
-distances to extragalactic sources, the identification of anomalous
-events within the temporal universe (e.g.\ detecting optical flashes
-and supernovae at cosmological distances), and the real time
-classification of data in the presence of uncertainties and gaps
-within the data stream.
+to which we can measure cosmological parameters. How well we can
+control and correct for systematic uncertainties and biases will
+ultimately determine our final figure-of-merit. Prime amongst the
+challenges are the identification and characterization of novel
+sources from data streams with millions of ``uninteresting'' objects
+in order to locate those truly worth studying (e.g.\ identifying the
+1000 Type Ia supernovae expected to be detected each night by the LSST
+from a background of 10$^8$ sources) and inferring distances to
+extragalactic sources from noisy and incomplete data.
+
+
+
+%  The next generation of
+%astronomy will be defined by large surveys such as
+%LSST\footnote{http://www.lsst.org}, each of which promises to yield
+%terabytes of data every night.  
+
+%These surveys will pose challenges not
+%only because of the volume of data they will provide, but the type, as
+%their repeated observations of the same regions of sky will finally
+%open detailed time-domain astronomy to physical scrutiny
+%\cite{sciencebook}.  Given the billion dollar investments being made
+%in these surveys, it is paramount that we develop techniques that can%
+%optimize their science output.
+
+\section{A Probabilistic Framework for Scientific Inference}
+
 
 We propose to address these problems by using Gaussian Processes to model the
 probability distributions underlying the data.  We believe that this framework
@@ -179,23 +208,6 @@ and the potential information to be gained from different follow-up
 observations.  These three inferences will be critical in an age of
 research with low tolerance for uncertainty and limited budgets for
 follow-up observation. 
-
-%the identification and characterization of novel
-%sources requires sifting through millions of ``uninteresting'' objects
-%to locate those truly worth studying.  The next generation of
-%astronomy will be defined by large surveys such as
-%LSST\footnote{http://www.lsst.org}, each of which promises to yield
-%terabytes of data every night.  
-
-%These surveys will pose challenges not
-%only because of the volume of data they will provide, but the type, as
-%their repeated observations of the same regions of sky will finally
-%open detailed time-domain astronomy to physical scrutiny
-%\cite{sciencebook}.  Given the billion dollar investments being made
-%in these surveys, it is paramount that we develop techniques that can%
-%optimize their science output.
-
-\section{Probabilistic Framework for Scientific Inference}
 
 \subsection{Gaussian Processes}
 \label{sec:gppz}
@@ -212,20 +224,21 @@ process \cite{ericgp}, of interpolating point spread functions across large
 images \cite{psf}, and of accelerating the search of high-dimensional
 likelihood functions on the cosmological parameters by efficiently
 selecting sample points \cite{daniel2012}.  
+% too much astronomy use cases
 
 Assume that each training set datum is of the form
-$\{\vec{\theta},y\}$, where $\vec{\theta}$ is an $N_p$-dimensional vector
-respresenting the measured data and $y = f(\theta)$ is
-the latent quantity we are trying to infer.  Gaussian
-processes assume that $f$ is a probabilistic function on the
-$N_p$-dimensional space with some covariance function such as a squared
-exponential covariance,
+$\{\vec{\theta},y\}$, where $\vec{\theta}$ is an $N_p$-dimensional
+vector representing the measured data and $y = f(\theta)$ is the
+latent quantity we are trying to infer.  Gaussian processes assume
+that $f$ is a probabilistic function on the $N_p$-dimensional space
+with some covariance function such as a squared exponential
+covariance,
 $K_{ij}\equiv\text{Cov}\left[f(\vec{\theta}^{i}),f(\vec{\theta}^{j})\right]
-= \exp(-\frac{1}{2}|\vec{\theta}^{i} - \vec{\theta}^{j}|^2)$.
-Under those assumptions, one can derive a posterior probability distribution
-for the redshift at a new query point $\{\vec{\theta}_{q}\}$ by marginalizing
-over the measured points $\{\vec{\theta}\}$.  
-This gives a Gaussian distribution with mean 
+= \exp(-\frac{1}{2}|\vec{\theta}^{i} - \vec{\theta}^{j}|^2)$.  Under
+those assumptions, one can derive a posterior probability distribution
+for the redshift at a new query point $\{\vec{\theta}_{q}\}$ by
+marginalizing over the measured points $\{\vec{\theta}\}$.  This gives
+a Gaussian distribution with mean
 
 \begin{equation}
 f(\vec{\theta}_{q}) = \sum_{i=1}^n \
@@ -274,43 +287,47 @@ will also allow
 us to project the impact of such follow-up on the model of the entire 
 data set \cite{Garnett11,Garnett12}.
 
+we propose to
+....
 
 \subsection{Inference in the Presence of Noise and Gaps in a Data
   Stream}
 
-The non-parametric inferences produced by
-Gaussian Processes yield smooth functions which are sensitive to the
-correlations in the input data.  Because of this, Gaussian Processes are
-often used to solve regression problems in the case of
-sparsely sampled training data \cite{wang2011,wang2012}.  
-We intend to harness these features to produce classification algorithms that
-are resilient against noise and gaps in our training data.
+The non-parametric inferences produced by Gaussian Processes yield
+smooth functions which are sensitive to the correlations in the input
+data.  Because of this, Gaussian Processes are often used to solve
+regression problems in the case of sparsely sampled training data
+\cite{wang2011,wang2012}.  We intend to harness these features to
+produce classification algorithms that are resilient against noise and
+gaps in our training data.
 
 Figure \ref{fig:desert} compares a Gaussian Process classifier (the
-photometric redshift algorithm described in Section \ref{sec:photoz}) to 
-an artificial neural network when both are trained on
-data whose distribution does not match the true distribution of data.  
-The classification is a scalar function $f$.  
-The data points $\{\vec{\theta}\}$
-exist in a 6-dimensional space.  
-We treat the algorithms as returning a probability distribution over $f$.  The horizontal axis is
-the mode of these returned probability distributions (effectively, $f_q$ from equation
-\ref{eq:mean}).  The vertical axis is the value of the probability distribution returned at the
-true value of $f$.
-The thin lines are
-produced when all of the training data with values $1.4\le f\le
-2.5$ (between the vertical green lines).  In this case, the artificial neural network
-(red curves) does demonstrably better than the Gaussian Process classifier (black curves).
-The thick lines are produced when only 5\% of the excised training data is restored.
-Now we see that the Gaussian Process classifier learns much faster and does a much better job
-of classifying data in the presence of this sparse training distribution.
+photometric redshift algorithm described in Section \ref{sec:photoz})
+to an artificial neural network when both are trained on data whose
+distribution does not match the true distribution of data.  The
+classification is a scalar function $f$.  The data points
+$\{\vec{\theta}\}$ exist in a 6-dimensional space.  We treat the
+algorithms as returning a probability distribution over $f$.  The
+horizontal axis is the mode of these returned probability
+distributions (effectively, $f_q$ from equation \ref{eq:mean}).  The
+vertical axis is the value of the probability distribution returned at
+the true value of $f$.  The thin lines are produced when all of the
+training data with values $1.4\le f\le 2.5$ (between the vertical
+green lines).  In this case, the artificial neural network (red
+curves) does demonstrably better than the Gaussian Process classifier
+(black curves).  The thick lines are produced when only 5\% of the
+excised training data is restored.  Now we see that the Gaussian
+Process classifier learns much faster and does a much better job of
+classifying data in the presence of this sparse training distribution.
 
-This is a very basic test.  The Gaussian Process was not allowed to choose optimal observations or
-training data, nor was much thought given to selecting the appropriate cost function used when
-designing the Gaussian Process model.  Incorporation of active learning based on the information
-content encoded in the probability distributions returned by our Gaussian Process algorithm will
-yield further gains in performance over current classifiers (e.g. the artificial 
-neural network considered below).
+This is a very basic test.  The Gaussian Process was not allowed to
+choose optimal observations or training data, nor was much thought
+given to selecting the appropriate cost function used when designing
+the Gaussian Process model.  Incorporation of active learning based on
+the information content encoded in the probability distributions
+returned by our Gaussian Process algorithm will yield further gains in
+performance over current classifiers (e.g. the artificial neural
+network considered below).
 
 \begin{figure}
 \centerline{\includegraphics[scale=0.3]{doe_desert_plot.png}}
