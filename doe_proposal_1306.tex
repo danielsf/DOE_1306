@@ -498,8 +498,12 @@ latent quantity (output) we are trying to infer.  $f$ is assumed to be a
 probabilistic function on the $N_p$-dimensional space with some covariance
 function relating pairs of points on the function, such as a squared
 exponential covariance,
-$K_{ij}\equiv\text{Cov}\left[f(\vec{\theta}_{i}),f(\vec{\theta}_{j})\right]
-= \exp(-\frac{1}{2}|\vec{\theta}_{i} - \vec{\theta}_{j}|^2/\ell^2)$ where $\ell$
+\begin{equation}
+\label{eq:covariogram}
+K_{ij}\equiv\text{Cov}\left[f(\vec{\theta}_{i}),f(\vec{\theta}_{j})\right]
+= \exp(-\frac{1}{2}|\vec{\theta}_{i} - \vec{\theta}_{j}|^2/\ell^2)
+\end{equation}
+where $\ell$
 is a characteristic length scale set by cross-validation.  
 Under those
 assumptions, one can derive a posterior probability distribution for $f$
@@ -670,8 +674,9 @@ return small $\ell$ (tightly coupling the GP to the training data) and
 sparsely-sampled training data will give larger $\ell$, allowing for broader
 interpolation across gaps in the training data.
 
-\item Learned $K_{ij}$ -- in the above discussion, the functional form fo
-$K_{ij}$ was assumed.  While this certainly resulted in acceptable behavior in
+\item Learned $K_{ij}$ -- in the above discussion, the functional form of
+$K_{ij}$ in equation \ref{eq:covariogram}
+was assumed.  While this certainly resulted in acceptable behavior in
 our test cases, it is by no means guaranteed that the choice we made (a Gaussian
 function in data space) will always be the best choice.  We will introduce
 algorithms to help the GP learn the most appropriate form of the covariogram
