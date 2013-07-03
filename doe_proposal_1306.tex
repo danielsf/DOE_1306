@@ -123,8 +123,9 @@ complexity of the data expected from the next generation of
 experiments.  For example, our inability to undertake a full look
 ahead to the end of all possible experiments results in the
 development of myopic heuristics that improve the speed of these
-approaches but at a substantial cost in performance.  See, for example, Figures
-3 and 4 of Garnet {\it et al}. 2012a.
+approaches but at a substantial cost in performance.  See, for example, 
+Figure 1 from Garnett {\it et al}. (2011) and Figures
+3 and 4 of Garnett {\it et al}. (2012a).
 
 By addressing these challenges we propose to develop active learning
 algorithms that will scale to data sets with hundreds of millions of
@@ -198,7 +199,7 @@ taken.
 
 {\bf Active Search.}  Often, the bulk of data yielded by any experiment will be
 expected.  Ground-breaking research requires that we develop a method for
-rapdily identifying and classifuing novel events and objects
+rapdily identifying and classifying novel events and objects
 while staying within a
 budget of follow-up observations.  This is an active search problem. The
 problem and the Bayesian optimal algorithm for it are described in our
@@ -207,8 +208,14 @@ acquisition of class labels is expensive and we need to learn a model to
 predict these labels from limited input data.  However, the final
 performance objective is not the accuracy of the classifier, but rather the
 number of positives (i.e. objects from interesting classes)
-identified. Starting from the myopic algorithms in our earlier work we
-propose to develop {\bf something here}
+identified. This previous work considered a binary classification problem: ``is
+the object `interesting' or not?''  We will extend this work to allow for
+classification according to a continuous scalar function and multiple discrete
+classes.  We will design an algorithm that considers probability distributions
+across these classifications and how new observations affects these
+distributions with an eye towards reducing the entropy, or some other
+information-theoretical measure of uncertainty.
+
 % We
 %propose to use the simple myopic algorithm described in that work.  It
 %computes the probability of each point belonging to the positive class and
@@ -407,7 +414,7 @@ small datasets, but represents a significant bottleneck in the case of big-data.
 Several solutions have been proposed.  Kaufman {\it et al}. (2011)
 design a covariance
 function $K$ with sparse support so that sparse matrix inversion methods may be
-used.  Foster {\it et al}. 2009 advocate an approximate Gaussian Process method
+used.  Foster {\it et al}. (2009) advocate an approximate Gaussian Process method
 in which the matrix to be inverted is decomposed via a QR decomposition and only the most
 signficant columns of Q are used to compute the actual GP.
 In the work presented above and below, we adopt a solution wherein, for any
