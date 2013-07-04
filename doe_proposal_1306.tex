@@ -92,20 +92,22 @@ Co-PI & Jeff Schneider & Carnegie Mellon U & \$170K & \$170K & \$170K & \$510K \
 {\bf \Large Learning in an Era of Uncertainty}
 \end{center}
 
-\section{Introduction:}
-A new generation of DOE sponsored data intensive experiments and
-surveys, designed to address fundamental questions in physics, materials, and
-biology will come on-line over the next decade. These experiments
-share many similar challenges in the fields of statistics and
-machine-learning: how do we choose the next experiment or observation
-to make in order that we maximize our scientific returns; how can we
-identify anomalous sources (that may be indicative of new events or
-potential systematics within our experiments) from a continuous stream
-of data; how do we characterize and classify correlations and events
-within data streams that are noisy and incomplete. The goal of this
-proposal is to address these challenges through the development of a broad
-class of novel and scalable machine-learning techniques centered
-around the theme of active learning.
+\section{Introduction}
+
+A new generation of DOE sponsored data intensive experiments and surveys,
+designed to address fundamental questions in physics, materials, and
+biology will come on-line over the next decade. These experiments share
+many similar challenges in the fields of statistics and machine-learning:
+how do we choose the next experiment or observation to make in order that
+we maximize our scientific returns; how can we identify anomalous sources
+(that may be indicative of new events or potential systematics within our
+experiments) from a continuous stream of data; how do we characterize and
+classify correlations and events within data streams that are noisy and
+incomplete. The goal of this proposal is to address these challenges
+through the development of machine learning models that better quantify the
+uncertainty in their predictions and corresponding active experiment
+selection algorithms that utilize those uncertainties to get the most
+scientific information out of limited data collelction budgets.
 
 {\it Active learning} algorithms iteratively decide which data
 points they will collect outputs on and add to a training set.  Their
@@ -149,11 +151,13 @@ machine learning methods.
 \subsection{Project Objectives}
 \label{sec:objectives}
 
-On-line, data-driven analysis will require model-fitting and classifications
-that are non-parametric and probabilistic in the way they treat their outputs.
-Gaussian Processes represent a class of algorithms consistent with these
-requirements and therefore we propose to build our framework around them.
-We divide our research program into the following objectives.
+On-line, data-driven analysis will require model-fitting and
+classifications that are non-parametric and probabilistic.  Gaussian
+Processes meet these requirements and therefore we will build our methods
+around them.  We note, however, that all the active experiment selection
+algorithms we will develop will work with any alternative model that also
+provides appropriate distributions with its predictions.  We divide our
+research program into the following objectives.
 
 {\bf Designing Robust Gaussian Processes.}  Figures \ref{fig:scatter}
 and \ref{fig:lnsum} below will demonstrate that, ``out of the box,'' Gaussian
@@ -182,20 +186,20 @@ modeling and we propose additional modifications that will enhance their
 robustness against such incomplete training data.
 \end{itemize}
 
-{\bf Active Learning.} Automatic regression and classification
-algorithms require input from human experts against which to calibrate
-themselves.  Often, the resources required to generate this input
-(both in terms of human-hours and experimental apparatus) are
-considerable.  We propose to develop algorithms to optimize the use of
-these resources by determining what events' or objects' human
-classification will maximize the improvement of the automatic
-classifiers.  We have already implemented a toy version of such a
-model on the problem of determing astronomical Doppler shifts (or
-redshifts) using broad-band photometric data.  Our results (shown in
-Figure \ref{fig:learning} below) already show significant improvement over cases
-where the training data is randomly assembled.  We will build on them by
-optimizing the cost function used to drive active learning and incorporating the
-``look-ahead'' method advocated by Garnett {\it et al}. (2011,2012a).
+{\bf Active Learning.} Supervised regression and classification algorithms
+require labeled data points for training.  These output labels are obtained
+through labeling by human experts and/or additional data collection.
+Often, the resources required (both in terms of human-hours and
+experimental apparatus) are considerable.  We propose to develop new
+algorithms to optimize the use of these resources by determining what event
+or object labels will maximize the improvement to models from supervised
+learning algorithms.  Our preliminary implementation using a classical
+heuristic on the problem of determing astronomical Doppler shifts (or
+redshifts) from broad-band photometric data already shows the promise of
+active learning in cosmology.  We propose novel algorithms based on new
+myopic criteria and increasing the computational scalability of lookahead
+methods that will greatly improve the accuracy and coverage of learned
+models.
 
 {\bf Active Feature Acquisition.}  Active Learning selects specific
 unknown events or objects for follow-up observation and classification
@@ -274,23 +278,22 @@ information-theoretical measure of uncertainty.
 %goals change (e.g. the object types designated as ``interesting'' are
 %changed).
 
-{\bf Science Outcomes.}  Data from the Dark Energy Survey will become publically
-available over the term of this project.  We hope to use the algorithms
-developed above to achieve significant improvement in the determination of
-photometric redshifts (explained in Section \ref{sec:photoz} below) and
-classification of transient astronomical objects.  We also hope to initiate a
-dialog whereby our algorithms may be spread to other science -- such as
-climatology and microbiology -- wherein complex systems can be modeled 
-or measured at great
-expense and algorithms are required to determine which models
-and experiments are actually worth performing.
+{\bf Science Outcomes.}  Data from the Dark Energy Survey will become
+publically available over the term of this project.  We will demonstrate
+the algorithms developed above to improve the determination of photometric
+redshifts (see Section \ref{sec:photoz}) and classification and online
+follow-up of transient astronomical objects.  We will release our software
+publicly and seek collaborations where our algorithms may be spread to
+other sciences -- such as climatology and microbiology -- wherein complex
+systems can be modeled or measured at great expense and algorithms are
+required to determine which models and experiments are actually worth
+performing.
 
 Each of these goals will require us to develop algorithms to simultaneously
-learn the latent physical model underlying a given data set, the uncertainties
-around that model, and the potential information to be gained by futher studying
-a specific instance of the model (an ``event'' or ``object'' in the 
-terminology above).
-We describe how we will meet this challenge below.
+learn the latent physical model underlying a given data set, the
+uncertainties around that model, and the potential information to be gained
+by futher studying a specific instance of the model (``event'' or
+``object'').
 
 \subsection{The Collaboration}
 
@@ -368,8 +371,6 @@ engaging the public.
 %new types of data sets and by inference new scientific fields to the
 %list that can benefit from active learning of models.
 
-
-
 \section{The Role of Active Learning in Cosmology}
 
 Over the last decade a concordance model has emerged for the universe
@@ -444,9 +445,23 @@ efficient that spectroscopic observations). Our task, then, is to
 construct algorithms whereby we can convert these much cheaper
 photometric data into accurate redshifts (i.e. photometric redshifts).
 
+The demands of next generation cosmological experiments will require
+that our photometric redshift determinations be accurate to within
+$\le 2\times 10^{-3}(1+z)$ \cite{desc}.  This is a hard limit, as a
+bias in redshift determination of just 0.01 can degrade dark energy
+constraints by as much as 50\%
+\cite{kitching,huterer2006,nakajima2011}.  Testing present forward-fitting
+and empirical methods on a sample of 5,482 galaxies from the 2df-SDSS
+LRG and Quasar survey, Abdalla {\it et al}. (2011) find biases of
+order 0.05 (see their Figure 4).  This level of bias can degrade dark
+energy constraints by as much as a factor of 3 \cite{Ma2006}.
+Considering 3,000 galaxies from the DEEP2 EGS and zCOSMOS surveys and
+using Bayesian methods, Mandelbaum {\it et al}.  (2008) find a bias in
+redshift determination of order 0.01 (see their Table 2).  While this
+is an improvement, it still an order of magnitude larger than what is
+required.
 
 \section{A Probabilistic Framework for Scientific Inference}
-
 
 Current state-of-the art algorithms attempt to learn a 
 model as a one-to-one
@@ -562,7 +577,7 @@ filters (i.e., taking their photometry), is roughly one thousand times cheaper.
 For this reason, surveys such as the DES and the LSST are designed to take
 exclusively photometric data and rely on algorithmic researchers to deliver ways
 of inferring a relationship between a galaxy's observed photometry (usually in five or
-six bands) and the it's true redshift.
+six bands) and it's true redshift.
 
 Photometric redshifts are principally determined using
 forward-fitting models.  Astronomers assume that they can model the rest frame
@@ -627,6 +642,20 @@ as a function
 of photometric redshift for EAZY, ANNz, and our GP algorithm.
 We see that both EAZY and ANNz consistently assign lower probabilities to
 $z_\text{photometric}=z_\text{spectroscopic}$ than does our GP algorithm.
+
+Other works have already attempted to apply GPs to the problem of
+photometric redshfifts \cite{kaufman,bonfield}, however, they have treated
+the problem as one of learning the form of a one-to-one scalar function.
+We propose to use the probabilistic nature of GPs to learn the full
+probability distribution that a given galaxy is at a given redshift.  The
+resulting prediction is simultaneously more robust against sparse, noisy or
+degenerate training data, more usable in follow-on scientific analyses, and
+more amenable to model improvement by the introduction of active learning.
+% Figure \ref{subfig:gp} shows preliminary results from our algorithm when
+% trained on spectroscopic data from 50,000 galaxies and tested on the same
+% 48,000 galaxies as Figure \ref{subfig:eazy}.  Here we see that the GP
+% modeling yields significantly less scatter about the true
+% $z_\text{photometric}=z_\text{spectroscopic}$ relationship.
 
 \begin{figure}
 \centerline{\includegraphics[scale=0.3]{sdss_lnsum.png}}
@@ -701,21 +730,21 @@ $z_\text{spectroscopic}$ galaxies that appear at low $z_\text{photometric}$ and
 vice-versa.  To correct for this error, we will harness the full probabilistic
 nature of GPs, building a system which tests the simplest, single-mode Gaussian
 model against multi-modal models.  The proposed algorithm will work as follows:
-\begin{itemize}
-\item (1) Fit the training data to a single-mode GP.
+\begin{enumerate}
+\item Fit the training data to a single-mode GP.
 
-\item (2) Use Bayesian model selection \cite{mackay}
+\item Use Bayesian model selection \cite{mackay}
 to compute the model likelihood of this single-mode GP.
 
-\item (3) Divide the training data into two sub-populations based on their output
+\item Divide the training data into two sub-populations based on their output
 values.
 
-\item (4) Fit each sub-population to its own GP.
+\item Fit each sub-population to its own GP.
 
-\item (5) Compute the model likelihood of this two-mode model and compare to the
+\item Compute the model likelihood of this two-mode model and compare to the
 model likelihood of the single-mode model.
 
-\item (6) Repreat steps 3-5 for three-mode, four-mode, etc. models until
+\item Repreat steps 3-5 for three-mode, four-mode, etc. models until
 satisfied that you have found the best fit to the training data.
 \end{itemize}
 Through this iterative approach, we hope to build a GP such that, even when it
@@ -726,31 +755,34 @@ signtificant improvement over current model-learning algorithms, which are
 principally concerned with returning a learned value for the model function and
 some heuristic estimate for the uncertainty (i.e. neural networks).
 
-\section{Active learning: applications in cosmology}
+\section{Active Learning}
 
+A generic active learning algorithm takes the following form:
 
-We will develop and test our basic active learning routines with an eye towards
-application to the astronomical 
-problem of determining photometric redshifts.
+\begin{enumerate}
 
+\item Learn a model (e.g. a Gaussian process) using the current set of
+  labeled training data.
 
+\item Evaluate the set or space of unlabeled data according to some active
+  learning criterion, usually beginning by requesting the predictive
+  distribution from the learned model.
 
+\item Choose the data point/experiment with the highest evaluation and
+  obtain the label for it (e.g. by requesting a data collection experiment
+  and/or asking a human expert to provide the label).
 
+\item Add the resulting data to the training data and repeat.
 
-Other works have already attempted to apply GPs to the problem of
-photometric redshfifts \cite{kaufman,bonfield}, however, they have treated the
-problem as one of learning the form of a one-to-one scalar function.  We propose
-to use the probabilistic nature of GPs to learn the full
-probability distribution that a given galaxy is at a given redshift.  
-This will produce an algorithm that is simultaneously more robust against
-sparse, noisy or degenerate training data and more amenable to improvement 
-by the introduction of
-active learning.
-Figure \ref{subfig:gp} shows preliminary results from our
-algorithm when trained on spectroscopic data from 50,000 galaxies and tested
-on the same 48,000 galaxies as Figure \ref{subfig:eazy}.  Here we see that
-the GP modeling yields significantly less scatter about the true
-$z_\text{photometric}=z_\text{spectroscopic}$ relationship.
+\end{enumerate}
+
+The performance of an active learning algorithm is evaluated by some
+measure of the model's quality (e.g. accuracy or log-likelihood on a test
+set of data) as a function of the number of data points collected for the
+training set.  The key algorithmic components are the model used in step 1
+and the selection criterion used in step 2.  The previous section proposed
+work on improving GP models.  In this section we propose new selection
+criteria.
 
 %We discuss specifically how we model $P(z_\text{photometric})$ below.
 
@@ -767,83 +799,103 @@ $z_\text{photometric}=z_\text{spectroscopic}$ relationship.
 %combination of these two hypotheses, weighted according to their respective
 %model likelihoods.
 
+\subsection{Novel active learning criteria}
 
+\begin{figure}[t]
+\centerline{\includegraphics[scale=0.4]{searchtree.png}}
+\caption{The search tree for an optimal active learning algorithm that will
+  be allowed to choose two more data points.}
+\label{fig:searchtree}
+\end{figure}
 
+It is useful to see the challenges involved in developing good active
+learning criteria by considering what an optimal algorithm might need to
+do.  Figure \ref{fig:searchtree} shows the computation it would require.
+The root of the tree contains the current decision on which point to choose
+and an optimal algorithm would consider them all.  For each choice, it
+would then consider every possible outcome (label) that might be obtained
+and weight them by the estimated probability of each outcome.  For each
+outcome, it would then consider what next point it would choose if it
+received that outcome.  The tree expands down to a depth equal to the
+number of data points that will be chosen and at the leaf every possible
+model would be learned and evaluated.  Since the number of leaves is
+exponential in the depth of the tree, this quickly become intractable.  A
+typical solution (referred to as myopic) is to truncate the tree to zero or
+one level.  A second speedup is often obtained by replacing a full model
+evaluation with a fast heuristic (see \cite{Settles09} for a summary of
+common heuristics).
 
-\subsection{Experimental Design and Optimization through Active Learning}
+The evaluation of the model, whether in a full or truncated tree, is also a
+challenge.  If we knew the true labels in our test set, we could use them
+to evaluate the accuracy or log-likelihood of the true labels.  In a
+simulated problem this is possible, but in a real application we do not
+have the labels.  The usual alternative is to consider the uncertainty in
+the predictions on the test points.  In the case of basic GPs, the
+distribution is a multivariate Gaussian with covariance $\Sigma_q$ from
+equation \ref{eq:cov} and the query is the entire test set.
 
-The demands of next generation cosmological experiments will require
-that our photometric redshift determinations be accurate to within
-$\le 2\times 10^{-3}(1+z)$ \cite{desc}.  This is a hard limit, as a
-bias in redshift determination of just 0.01 can degrade dark energy
-constraints by as much as 50\%
-\cite{kitching,huterer2006,nakajima2011}.  Testing present forward-fitting
-and empirical methods on a sample of 5,482 galaxies from the 2df-SDSS
-LRG and Quasar survey, Abdalla {\it et al}. (2011) find biases of
-order 0.05 (see their Figure 4).  This level of bias can degrade dark
-energy constraints by as much as a factor of 3 \cite{Ma2006}.
-Considering 3,000 galaxies from the DEEP2 EGS and zCOSMOS surveys and
-using Bayesian methods, Mandelbaum {\it et al}.  (2008) find a bias in
-redshift determination of order 0.01 (see their Table 2).  While this
-is an improvement, it still an order of magnitude larger than what is
-required.
+A myopic information gain (change in entropy) strategy looks ahead one step
+and chooses the data point that minimizes the expected entropy (monotonic
+in $\det(\Sigma_q)$).  Even this can be expensive since it requires the
+computation of the determinant.  An alternative is minimizing the average
+variance ($tr(\Sigma_q)$, also known as V-optimality).  A further
+approximation is to do no look ahead and simply choose the data point
+corresponding to the largest diagonal element in $tr(\Sigma_q)$.  This is
+known as uncertainty sampling.
 
-How can we resolve these problems?  In both the empirical and forward-fitting
-photometric redshift codes, biases arise from the fact that the
-training samples (templates) do not occupy the same color and redshift
-space as the data.  The solution, therefore, lies in correctly the choosing the
-most useful galaxies for follow-up spectroscopy.  
-Simple sampling strategies (e.g. random or
-stratefied) are not efficient.  We need a technique to identify the
-next observation to take to best reduce the redshift estimation
-bias of our algorithm.  Active learning will provide this technique.
- 
-A classic active learning method, called uncertainty sampling, uses
-the uncertainty of each test point as the criterion for choosing the
-next experiment (e.g.\ the next spectroscopic measurement of a source
-to add to the training sample).  
-The algorithm considers the modeled galaxies and chooses the most uncertain for
-follow-up.
-Figure \ref{fig:learning} demonstrates a variant of this scheme assigned to the
-problem presented
-in Figure \ref{fig:scatter}. From a total of 97,000 data points,
-we start with 20,000 training points and assess the efficacy of our GP 
-classifier by considering the mean value of $\ln[P(\text{truth})]$
-as in Figure \ref{fig:lnsum}.  The training set is
-then grown by selecting new points either randomly (black curve) or according to
-the maximum value of $\left(-\ln[P(\text{mode})]\right)$ (red curve).  As you can see,
-assembling the training set with active learning leads to a significant
-improvement in the classifier's performance.
-This is just a toy model.  The learning algorithm illustrated operates in a high
-signal-to-noise regime.  It takes no account of the relative cost of doing one
-measurement or another.  No gaps exist in the available training data.
-These are all challenges that real-world machine learning algorithms will face.
-We propose to develop algorithms to overcome them.
+We propose the following new methods:
 
-We will expand upon
-our recent work on the problem of optimal surveying or polling
-(Garnett et al 2012a).  Rather than having a goal of correctly
-predicting the output for each point in a test set, the goal is to
-predict the average output (or the class proportions in classification
-problems) over the test set.  This dramatically increases the
-efficiency of the active learning.  In preliminary experiments on
-graphs and other domains, minimizing this survey variance not only
-performs well on the surveying problem, but also outperforms the trace
-criterion and other popular active learning methods such as
-uncertainty and density sampling on active learning problems.
-This result is consistent with the findings of Richards {\it et al.} (2012b),
-who consider a similar problem for a Random Forest classifier on 
-the static data set produced by the All Sky Automated Survey.
-Intuitively, it seems reasonable that considering the entire
-covariance matrix of the modeled data
-might lead to better performance than choosing only
-based on its diagonal.  We have, however, little theoretical understanding of
-why this is better than the trace criterion which directly optimizes
-the quantity on which we will ultimately measure performance.  We will
-seek a better theoretical understanding of this phenomenon as part of
-this work.
+\begin{itemize}
 
-\begin{figure}
+\item The usual implementations of the criteria listed above are based on
+  Gaussian predictive distributions which means only the covariance need be
+  considered.  We will develop efficient ways to estimate these quantities
+  from our improved models non-Guassian distributions.
+
+\item Our preliminary experiments on classification in graphs indicate that
+  the sum of all entries in the covariance matrix is a better criterion
+  than the trace \cite{YifeiMa12}.  We propose to develop an analogous
+  criterion for euclidean spaces and for regression problems.  This
+  criterion has not been previously proposed in the experiment design
+  literature and we will also analyze theoretically when and why it
+  outperforms the alternatives.
+
+\item It is clear that we can improve performance by looking ahead further
+  (e.g. see \cite{Garnett12}).  We propose to develop pruning rules that
+  will allow us to look ahead further using our improved models.  The rules
+  will have the ability to trade off the aggressiveness of pruning, and
+  thus the amount of look ahead allowed, against the approximation
+  accuracy.  We will investigate when the additional look ahead allowed
+  more than compensates for the errors induced by pruning.
+
+\end{itemize}
+
+% We will expand upon
+% our recent work on the problem of optimal surveying or polling
+% (Garnett et al 2012a).  Rather than having a goal of correctly
+% predicting the output for each point in a test set, the goal is to
+% predict the average output (or the class proportions in classification
+% problems) over the test set.  This dramatically increases the
+% efficiency of the active learning.  In preliminary experiments on
+% graphs and other domains, minimizing this survey variance not only
+% performs well on the surveying problem, but also outperforms the trace
+% criterion and other popular active learning methods such as
+% uncertainty and density sampling on active learning problems.
+% This result is consistent with the findings of Richards {\it et al.} (2012b),
+% who consider a similar problem for a Random Forest classifier on 
+% the static data set produced by the All Sky Automated Survey.
+% Intuitively, it seems reasonable that considering the entire
+% covariance matrix of the modeled data
+% might lead to better performance than choosing only
+% based on its diagonal.  We have, however, little theoretical understanding of
+% why this is better than the trace criterion which directly optimizes
+% the quantity on which we will ultimately measure performance.  We will
+% seek a better theoretical understanding of this phenomenon as part of
+% this work.
+
+\subsection{Active learning for photometric redshifts}
+
+\begin{figure}[t]
 \centerline{
 \includegraphics[scale=0.3]{learning_curve.png}
 }
@@ -857,6 +909,34 @@ the figure of merit $\left(-\ln[P(\text{mode})]\right)$.
 }
 \label{fig:learning}
 \end{figure}
+
+In both empirical and forward-fitting photometric redshift codes, biases
+arise from the fact that the distribution of training samples (templates)
+is not the same in color and redshift space as the data the model will be
+applied to.  Additional issues include the fact that some regions of color
+space and some redshifts are more difficult to learn (require more training
+samples).  We will show how our novel active learning algorithms can
+achieve further improvements by choosing the most useful galaxies for
+follow-up spectroscopy.
+
+In a preliminary study we used a fully labeled data set containing galaxies
+with both color measurements and true (spectroscopically determined)
+redshift labels.  We simulated active learning by hiding the labels from
+the GP learner and then providing them as requested by an active learning
+algorithm.  We compared uniform random selection against uncertainty
+sampling.  Figure \ref{fig:learning} demonstrates the results using the
+problem presented in Figure \ref{fig:scatter}. From a total of 97,000 data
+points, we start with 20,000 training points and assess the efficacy of our
+GP classifier by considering the mean value of $\ln[P(\text{truth})]$ as in
+Figure \ref{fig:lnsum}.  Assembling the training set with active learning
+leads to a significant improvement in the classifier's performance.
+
+This study was done in a high signal-to-noise regime.  It takes no account
+of the relative cost of doing one measurement or another.  No gaps exist in
+the available training data.  These are all challenges that real-world
+machine learning algorithms will face.  We will demonstrate our novel
+methods on real data sets that contain all these additional challenges.
+
 
 \section{Active Feature Acquisition:
 Anomaly Detection and Classification in Massive Data
