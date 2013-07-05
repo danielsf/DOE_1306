@@ -1172,14 +1172,7 @@ full range of classifications.
   real-time classification}
 \label{sec:computationalefficiency}
 
-
-The active learning, active search, and active feature
-acquisition choices for transient classification
-all must be made in an online, streaming fashion.  
-Rather than
-considering an entire pool of test objects, they appear one at a time as
-they are detected and the algorithm must decide whether and how to follow
-up on each immediately as they are detected.   Given the size and dimensionality of data from the next generation of
+Given the size and dimensionality of data from the next generation of
 surveys efficient caching and search techniques are required for both
 anomaly detection and classification and to optimize sampling
 strategies whose cost function is, effectively, our ability to
@@ -1244,30 +1237,36 @@ standard cloud computing paradigms \cite{gard07} and expect our
 efforts on efficient algorithms and parallelization to yield speedups
 that compound.
 
-\section{Timeline and Development Plan}
+\section{Timeline, Development Plan, and Responsibilities}
 
 We will focus on multiple projects in each of the three years of this
 program.  Algorithms will be released as they are developed in a
 twice-yearly release cycle.  Algorithm development will be undertaken
 using data from the SDSS, the DES survey, and  a series of detailed
-simulations developed for the LSST \cite{connolly10}.
+simulations developed for the LSST \cite{connolly10}.  Each
+item below will indicate which of the PIs will take the lead in that stage
+of the program.
 
 \noindent {\bf Year 1:} 
 
 \begin{itemize}
 
-\item Develop GP algorithms that are robust against sparse training data and
+\item (Schneider) Develop GP algorithms that are robust against sparse training data and
 capable of modeling multi-modal probability
-distributions.  Build a photometric redshift algorithm based on these next generation
+distributions.  
+
+\item (Connolly) Build a photometric redshift algorithm based on these next generation
 GPs.  Test the algorithm against data from the SDSS, DES, and simulated LSST.
 
-\item Develop active learning methods optimized for our next generation GPs.
+\item (Schneider) Develop active learning methods optimized for our next generation GPs.
 We will initially develop myopic criteria, selecting data for follow up whose classification
 considered in a vacuum is the most advantages.  We will then develop methods to implement
-one- and two-step-look-ahead criteria.  We will test these algorithms in the case of
-photometric redshifts.
+one- and two-step-look-ahead criteria.
 
-\item Develop a software package that provides access to our next generation GPs for
+\item (Connolly) Test the developed active learning methods on photometric redshift data.
+
+\item (Schneider) 
+Develop a software package that provides access to our next generation GPs for
 any researcher using any data set.
 
 \end{itemize}
@@ -1276,24 +1275,26 @@ any researcher using any data set.
 
 \begin{itemize}
 
-\item Develop active feature acquisition algorithms based on the probability distributions
+\item (Schneider)
+Develop active feature acquisition algorithms based on the probability distributions
 output by our next generation GPs.  We will use them to determine what additional
 information (e.g., morphological or angular correlation function) provides the most
 helpful supplement information in the case of photometric redshifts.
 
-\item Extend our next generation GPs to the problem of 
+\item (Connolly) Extend our next generation GPs to the problem of 
 transient-classification.  Analyze stellar
  sources where there are known populations with defined variability
  signatures (e.g.\ Cepheid variables) to provide validation for the
  analysis.
 
-\item Extend the active feature acquisition algorithms developed for photometric
+\item (Connolly) Extend the active feature acquisition algorithms developed for photometric
 redshifts to the problem of determining the next best measurement for transient
 classification.
 Validate these algorithms on SDSS, DES, and simulated LSST observations, witholding
 data from the algorithm to simulate the case of incomplete, ongoing observations.
 
-\item Generalize our active learning and active feature acquisition algorithms so that
+\item (Schneider) 
+Generalize our active learning and active feature acquisition algorithms so that
 they can accept output from any model-fitting algorithm, not just our next-generation
 GPs.  Develop a software package providing access to these algorithms.
 
@@ -1303,12 +1304,13 @@ GPs.  Develop a software package providing access to these algorithms.
 
 \begin{itemize}
 
-\item Integrate our active learning and active feature acquisition algorithms to
+\item (Connolly)
+Integrate our active learning and active feature acquisition algorithms to
 produce an active search algorithm that can identify interesting objects and optimize
 their follow-up in real time data streams.  Begin running this algorithm on DES data
 as it is made public.
 
-\item Develop a software package that will provide access to all of our
+\item (Schneider) Develop a software package that will provide access to all of our
 developed algorithms in a general way so that researchers can provide input and output
 data from any experiment and receive appropriate follow-up recommendations.
 
