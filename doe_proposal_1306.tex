@@ -129,8 +129,9 @@ scientific returns from billion dollar investments in observational
 facilities). To achieve these breakthroughs requires that we address
 the challenge of how to scale active learning to the size and
 complexity of the data expected from this next generation of
-experiments.  For example, our inability to undertake a full look
-ahead to the end of all possible experiments results in the
+experiments.  For example, our inability to undertake a full 
+lookahead, predicting the impact of all future active learning choices
+on our learned model, results in the
 development of myopic heuristics that improve the speed of these
 learning techniques but at a substantial cost in how well they perform
 on real data.  See, for example, 
@@ -148,7 +149,7 @@ Synoptic Survey Telescope\footnote{http://www.lsst.org}). These
 surveys are ideal proxies as their bandwidth (terabytes of data per
 night and petabytes of data every couple of months) will enable high
 precision studies of cosmology. The ability to use these data sets to
-achieve an order of magnitude improvement in our constraints on our
+achieve an order of magnitude improvement in constraints on our
 understanding of cosmology and dark energy will, however, depend on
 how well we can analyze, optimize, and calibrate data streams that are
 noisy and incomplete. This will require the development of
@@ -162,7 +163,8 @@ machine learning methods.
 On-line, data-driven analysis will require model-fitting and
 classifications that are non-parametric and probabilistic.  Gaussian
 Processes meet these requirements and we will, therefore, build our methods
-around them.  We note, however, objectives 2-4 below will result in algorithms that do
+around them.  We note, however, objectives 2-4 below will result in 
+active learning algorithms that do
 not depend on this choice, and should be applicable to any
 regression or classification method that yields a probability distribution
 over outcomes.  We divide our
@@ -198,7 +200,8 @@ Often, the resources required (both in terms of human-hours and
 experimental apparatus) are considerable.  We propose to develop new
 algorithms to optimize the use of these resources by determining what event
 or object labels will maximize the improvement to models from supervised
-learning algorithms.  Our prototype implementation using a classical
+learning algorithms.  Our prototype implementation (see Figure \ref{fig:learning}) 
+using a classical
 heuristic on the problem of determing astronomical Doppler shifts (or
 redshifts) from broad-band photometric data already shows the promise of
 active learning in cosmology.  We propose novel algorithms based on new
@@ -476,7 +479,7 @@ the probability distributions underlying the data.
 We believe that this framework
 is the most robust and informative available.  It will allow us
 to learn, not only
-the models underlying the data, but the uncertainties surrounding these models,
+the models underlying the data, but the uncertainties surrounding those models,
 and the potential information to be gained from different follow-up
 observations.  These three inferences will be critical in an age of
 research with low tolerance for uncertainty and limited budgets for
@@ -489,10 +492,10 @@ We will build this new framework on the foundation of Gaussian Processes.
 
 
 Gaussian processes (GPs) model the output of an unknown, noisy function
-in multi-dimensional data space
+in multi-dimensional input space
 such that any set of samples from it has a joint multivariate Gaussian
 distribution \cite{gp}.  Given a set of observed samples from the function's
-data space, a GP
+input space, a GP
 can make predictions about a set of other locations and assign these
 predictions a multivariate Gaussian distribution.  An important
 feature of GPs is that they do not make parametric assumptions about the
@@ -506,7 +509,7 @@ expansion history of the universe \cite{ericgp} and interpolating point
 spread functions across large images \cite{psf}.  Mahabal {\it et al}. (2008b) 
 and Wang {\it et al}. (2011,
 2012) use a mixture of Gaussian Processes to model light curves and
-identify periodically varying sources.  Huisje {\it et al}. (2011, 2012)
+identify periodically varying sources.  Huijse {\it et al}. (2011, 2012)
 improve upon their methods, using information-theoretical quantities to
 separate the true period of these variations from systematics introduced by
 observational apparatus.  The PIs have used GPs to accelerate the search of
@@ -521,7 +524,7 @@ form $\{\vec{\theta},y\}$, where $\vec{\theta}$ is an $N_p$-dimensional
 vector representing the measured data (input) and $y = f(\vec{\theta})$ is the
 latent quantity (output) we are trying to infer.  $f$ is assumed to be a
 probabilistic function on the $N_p$-dimensional space with some covariance
-function relating pairs of points on the function, such as a squared
+function relating pairs of points on the input space, such as a squared
 exponential covariance,
 \begin{equation}
 \label{eq:covariogram}
@@ -605,7 +608,8 @@ $z_\text{photometric}=z_\text{spectroscopic}$ line, there is significant scatter
 in the results due to degeneracies between the color and redshift of a
 galaxy.  Figure \ref{subfig:gp} plots the results from running the same
 simulated galaxies through GP-based algorithm that attempts to learn the full
-probability distribution $P(z_\text{photometric})$.  There is much less scatter
+probability distribution $P(z_\text{photometric})$ over the output.  
+There is much less scatter
 in this case than in the case of the forward-fitting modeling of EAZY.
 
 \begin{figure}[th]
@@ -622,14 +626,14 @@ Photometric redshift plotted
 against true spectroscopic redshift for 48,000 simulated LSST galaxy
 observations.  Photometric redshifts are derived using the
 EAZY template-fitting
-algorithm (a forward model) in Figure \ref{subfig:eazy} and
+algorithm (a forward-fitting model) in Figure \ref{subfig:eazy} and
 our GP based algorithm in Figure \ref{subfig:gp}.
 }
 \label{fig:scatter}
 \end{figure}
 
 Other data-driven algorithms for photometric redshift determination do exist. 
-An example of these is the publically-available code ANNz \cite{annz},
+An example of these is the publicly-available code ANNz \cite{annz},
 which is based on an artificial neural network scheme.
 In this case, the principal
 shortcoming the method is that the artificial neural network
@@ -691,11 +695,11 @@ framework will be required.
 
 GPs are already designed to handle input data that is sparsely
 sampled.  Equation \ref{eq:cov} gives the GP the freedom to declare a large
-uncertainty in regions of data space where there is no training data.  However,
+uncertainty in regions of input space where there is no training data.  However,
 in order to deliver on the science results required by DES, LSST, and other
 big-data surveys, it is not enough that $\Sigma_q$ be large where the model is
 uncertain.  We require that the inferred 
-value $f_q$ in equation \ref{eq:mean} be an accurate
+value $f(\vec{\theta}_q)$ in equation \ref{eq:mean} be an accurate
 representation of the true underlying model.  
 We propose to achieve this in several ways.
 
@@ -703,17 +707,17 @@ We propose to achieve this in several ways.
 \item New mean function models -- as presented,
 equation \ref{eq:mean} sets the value of $\bar{y}$ to the algebraic mean of the
 training outputs $\vec{y}$.  This assumes that the GP for all 
-parameters $\vec{\theta}_q$
+query inputs $\vec{\theta}_q$
 starts from the same value and equation \ref{eq:mean} expands the
-departures from that value.  
+departures about that value.  
 We will evaluate models more complex than the algebraic
 mean but simpler than the GP, which can be used to give a more informative value
 for $\bar{y}$ such that it interpolates over gaps in the training data.  We propose
 to experiment with such functions including the development of a basis
-function representation of the function models. A preliminary analysis using
+function representation of the $\bar{y}$ models. A preliminary analysis using
  principal component
 analysis on the input $\{\vec{\theta}\}$ to set $\bar{y}$ according to a linear
-regression on the principal components most correlated with the outputs $\vec{y}$.
+regression on the principal components most correlated with the outputs $\vec{y}$
 gives an slight improvement on the peformance of
 GP as a function regressor.
 
@@ -721,9 +725,9 @@ GP as a function regressor.
 length scale $\ell$ in the covariance function $K_{ij}$ is presented
 as a parameter to be optimized by cross-validation.  This, again, selects a
 single value for $\ell$ for all possible $\vec{\theta}_q$, regardless of
-$\vec{\theta}_q$'s position in the data space.  We will develop 
+$\vec{\theta}_q$'s position in the input space.  We will develop 
 dynamic algorithms based on the covariance
-structure present within the input $\{\vec{\theta}\,y\}$  
+structure present within the input $\{\vec{\theta},y\}$  
 for setting $\ell$ so that highly-sampled 
 training data will
 return small $\ell$ (tightly coupling the GP to the training data) and
@@ -737,10 +741,10 @@ was assumed.
 %While this certainly resulted in acceptable behavior in
 %our test cases, 
 It is, however, by no means guaranteed that the choice we made (a Gaussian
-function in data space) will always be the best.  
+function in input space) will always be the best.  
 We will explore ways
 to enable the GP to learn the most appropriate form of 
-the covariogram
+the covariance function
 based on the training data at hand. Examples of this include setting the
 form of the covariance function
 using cross-validation and information-theoretical
@@ -776,13 +780,15 @@ model likelihood of the single-mode model.
 \item Repeat steps 3-5 for three-mode, four-mode, etc. models until
   the system converges to the best fit to the training data.
 \end{enumerate}
-Through this iterative approach, we expect to build  GPs such that, even when it
-succumbs to the degeneracies seen in Figure \ref{subfig:gp}, it will still place
+Through this iterative approach, we expect to build  GPs such that, even when they
+succumb to the degeneracies seen in Figure \ref{subfig:gp}, they will still place
 significant probability density at the true
 $z_\text{photometric}=z_\text{spectroscopic}$ value.  This will represent a
-signtificant improvement over current model-learning algorithms, which are
-principally concerned with returning a learned value for the model function and
-some heuristic estimate for the uncertainty (i.e. neural networks).
+signtificant improvement over current model-learning algorithms (i.e. neural networks), 
+which are
+principally concerned with returning a learned value $f(\vec{\theta}_q)$ 
+for the model function and
+some heuristic estimate for the uncertainty $\Sigma_q$.
 
 \section{Active Learning}
 
@@ -847,7 +853,12 @@ and weight them by the estimated probability of each outcome.  For each
 outcome, it would then consider what next point it would choose if it
 received that outcome.  The tree expands down to a depth equal to the
 number of data points that will be chosen and at the leaf every possible
-model would be learned and evaluated.  Since the number of leaves is
+model would be learned and evaluated.  
+The algorithm does not actually choose a new point to label (i.e., make the
+decision signified by the root of the tree) until
+it has extrapolated all possible choices out to every possible leaf 
+and determined which of the original choices is optimal.
+Since the number of leaves is
 exponential in the depth of the tree, this quickly become intractable.  A
 typical solution (referred to as myopic) is to truncate the tree to zero or
 one level.  A second speedup is often obtained by replacing a full model
@@ -867,8 +878,8 @@ A myopic information gain (change in entropy) strategy looks ahead one step
 and chooses the data point that minimizes the expected entropy (monotonic
 in $\det(\Sigma_q)$).  Even this can be expensive since it requires the
 computation of the determinant.  An alternative is minimizing the average
-variance $\text{tr}(\Sigma_q)$, also known as V-optimality).  A further
-approximation is to do no look ahead and simply choose the data point
+variance $\text{tr}(\Sigma_q)$ (also known as V-optimality).  A further
+approximation is to do no lookahead and simply choose the data point
 corresponding to the largest diagonal element in $\text{tr}(\Sigma_q)$.  This is
 known as uncertainty sampling.
 
@@ -893,11 +904,11 @@ We propose the following new methods:
   outperforms the alternatives.
 
 \item It is clear that we can improve performance by looking ahead further
-  (e.g. see \citet{Garnett12}).  We propose to develop pruning rules that
-  will allow us to look ahead further using our improved models.  The rules
+  (e.g. see Garnett {\it et al}. (2012a)).  We propose to develop pruning rules that
+  will allow us to lookahead further using our improved models.  The rules
   will have the ability to trade off the aggressiveness of pruning, and
   thus the amount of look ahead allowed, against the approximation
-  accuracy.  We will investigate when the additional look ahead allowed
+  accuracy.  We will investigate when the additional lookahead allowed
   more than compensates for the errors induced by pruning.
 
 \end{itemize}
@@ -932,10 +943,11 @@ We propose the following new methods:
 \includegraphics[scale=0.4]{learning_curve.png}
 }
 \caption{
-Active learning applied to classification according to a scalar function on a
-6-dimensional data space.  The horizontal axis is the size of the training data
+Active learning applied to classification according to photometric redshifts, 
+i.e. a scalar function on a
+6-dimensional input space.  The horizontal axis is the size of the training data
 set.  The vertical axis is the mean value of the output probability distribution
-at the true value of the scalar function.  The black curve assembles the
+at the true value of the redshift.  The black curve assembles the
 training set randomly.  The red curve selects new training points that maximize
 the figure of merit $\left(-\ln[P(\text{mode})]\right)$.
 }
@@ -943,7 +955,7 @@ the figure of merit $\left(-\ln[P(\text{mode})]\right)$.
 \end{figure}
 
 In both empirical and forward-fitting photometric redshift codes, biases
-arise from the fact that the distribution of training samples (templates)
+arise from the fact that the distribution of training samples (or templates)
 is not the same in color and redshift space as the data the model will be
 applied to.  Additional issues include the fact that some regions of color
 space and some redshifts are more difficult to learn (require more training
@@ -969,7 +981,8 @@ leads to a significant improvement in the classifier's performance.
 This study was done in a high signal-to-noise regime.  It takes no account
 of the relative cost of doing one measurement or another.  No gaps exist in
 the available training data.  These are all challenges that real-world
-machine learning algorithms will face (see Section~\ref{sec:sparse}.  We will demonstrate our novel
+machine learning algorithms will face (see Section~\ref{sec:sparse}). 
+We will demonstrate our novel
 methods on real data sets that contain all these additional challenges.
 
 
@@ -1263,7 +1276,7 @@ GPs.  Test the algorithm against data from the SDSS, DES, and simulated LSST.
 \item (Schneider) Develop active learning methods optimized for our next generation GPs.
 We will initially develop myopic criteria, selecting data for follow up whose classification
 considered in a vacuum is the most advantages.  We will then develop methods to implement
-one- and two-step-look-ahead criteria.
+one- and two-step-lookahead criteria.
 
 \item (Connolly) Test the developed active learning methods on photometric redshift data.
 
