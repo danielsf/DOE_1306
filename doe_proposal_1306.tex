@@ -159,13 +159,13 @@ machine learning methods.
 On-line, data-driven analysis will require model-fitting and
 classifications that are non-parametric and probabilistic.  Gaussian
 Processes meet these requirements and therefore we will build our methods
-around them.  We note, however, that all the active experiment selection
-algorithms we will develop will be applicable to any other alternative models that also
-provide appropriate distributions with its predictions{\bf XXX not
-  sure what this means}.  We divide our
+around them.  We note, however, objectives 2-4 below will result in algorithms that do
+not depend on this choice, and should be applicable to any
+regression or classification method that yields a probability distribution
+over outcomes.  We divide our
 research program into the following objectives.
 
-{\bf Designing Robust Gaussian Processes.}  Figures \ref{fig:scatter}
+{\bf (1) Designing Robust Gaussian Processes.}  Figures \ref{fig:scatter}
 and \ref{fig:lnsum} below will demonstrate that, ``out of the box,'' Gaussian
 Processes can already perform much better than other algorithms (both
 forward-fitting and data-driven) for model inference. Extending them
@@ -188,7 +188,7 @@ non-parametric design, Gaussian Processes are amenable to this kind of
 modeling and we propose additional modifications that will enhance their
 robustness against such incomplete training data.
 
-{\bf Active Learning.} Supervised regression and classification algorithms
+{\bf (2) Active Learning.} Supervised regression and classification algorithms
 require labeled data points for training.  These output labels are obtained
 through labeling by human experts and/or additional data collection.
 Often, the resources required (both in terms of human-hours and
@@ -203,7 +203,7 @@ myopic criteria and increasing the computational scalability of lookahead
 methods that will greatly improve the accuracy and coverage of learned
 models.
 
-{\bf Active Feature Acquisition.}  Active Learning selects specific
+{\bf (3) Active Feature Acquisition.}  Active Learning selects specific
 unknown events or objects for follow-up observation and classification
 by human experts.  Active Feature Acquisition further refines our
 inquiry by asking what kinds of follow-up observations will yield the
@@ -237,7 +237,7 @@ specific time.  The observation yielding the greatest reduction in
 entropy for the class and the light curves for this object will be
 taken.
 
-{\bf Active Search.} Often it is the anomalous events within large
+{\bf (3) Active Search.} Often it is the anomalous events within large
 streams of data that lead to fundamental breakthroughs. We, therefore, require
 methods for
 rapidly identifying and classifying potentially novel events and objects
@@ -283,7 +283,7 @@ information-theoretical measure of uncertainty.
 %goals change (e.g. the object types designated as ``interesting'' are
 %changed).
 
-{\bf Science Outcomes.}  Data from the Dark Energy Survey will become
+{\bf (5) Science Outcomes.}  Data from the Dark Energy Survey will become
 publicly available over the term of this project (together with
 detailed simulations of the expected data flow from the LSST).  We
 will, therefore, use these data to demonstrate
@@ -690,41 +690,54 @@ sampled.  Equation \ref{eq:cov} gives the GP the freedom to declare a large
 uncertainty in regions of data space where there is no training data.  However,
 in order to deliver on the science results required by DES, LSST, and other
 big-data surveys, it is not enough that $\Sigma_q$ be large where the model is
-uncertain.  We require that $f_q$ in equation \ref{eq:mean} bear some
-resemblance to the true answer {\bf XXX what does this mean}.  We propose to achieve this in several ways.
-{\bf XXX for the bits below can you say in words what K$_{ij}$, theta, l etc
-  mean - e.g. This assumes that the GP for all parameters ($\theta$)...} 
+uncertain.  We require that the inferred 
+value $f_q$ in equation \ref{eq:mean} be an accurate
+representation of the true underlying model.  
+We propose to achieve this in several ways.
 
 \begin{itemize}
 \item New mean function models -- as presented,
-equation \ref{eq:mean} set the value of $\bar{y}$ to the algebraic mean of the
-training outputs $\vec{y}$.  This assumes that the GP for all $\vec{\theta}_q$
-start from the same value from which equation \ref{eq:mean} encodes the
-departures.  We will evaluate models more complex than the algebraic
+equation \ref{eq:mean} sets the value of $\bar{y}$ to the algebraic mean of the
+training outputs $\vec{y}$.  This assumes that the GP for all 
+parameters $\vec{\theta}_q$
+starts from the same value and equation \ref{eq:mean} expands the
+departures from that value.  
+We will evaluate models more complex than the algebraic
 mean but simpler than the GP, which can be used to give a more informative value
 for $\bar{y}$ such that it interpolates over gaps in the training data.  We propose
 to experiment with such functions, attempting to find a more robust foundation off
-of which to build our GPs.
-{\bf XXX do you have an example of one such function?}
+of which to build our GPs.  One proposal would be to performa principal component
+analysis on the input $\{\vec{\theta}\}$ and set $\bar{y}$ according to a linear
+regression on the principal component most correlated with the outputs $\vec{y}$.
+Preliminary results indicate that this gives a slight improvement on the peformance of
+GP as a function regressor.
 
-
-\item Dynamic hyper parameters -- the value of $\ell$ in $K_{ij}$ is presented
+\item Dynamic hyper parameters -- the value of the characteristic
+length scale $\ell$ in the covariance function $K_{ij}$ is presented
 as a parameter to be optimized by cross-validation.  This, again, selects a
 single value for $\ell$ for all possible $\vec{\theta}_q$, regardless of
 $\vec{\theta}_q$'s position in the data space.  We will develop 
-dynamic algorithms, based on {\bf XXX ??}  for setting $\ell$ so that highly-sampled training data will
+dynamic algorithms again based on the covariance
+structure present within the input $\{\vec{\theta}\,y\}$  
+for setting $\ell$ so that highly-sampled 
+training data will
 return small $\ell$ (tightly coupling the GP to the training data) and
 sparsely-sampled training data will give larger $\ell$, allowing for broader
 interpolation across gaps in the training data.
 
 \item Learned $K_{ij}$ -- in the above discussion, the functional form of
+the covariance function
 $K_{ij}$ in equation \ref{eq:covariogram}
 was assumed.  While this certainly resulted in acceptable behavior in
 our test cases, it is by no means guaranteed that the choice we made (a Gaussian
-function in data space) will always be the best choice.  We will introduce
-algorithms {\bf XXX such as?} to help the GP learn the most appropriate form of the covariogram
-based on the training data at hand, especially its distribution over the data
-space.
+function in data space) will always be the best choice.  We will explore ways
+to help the GP learn the most appropriate form of 
+the covariogram
+based on the training data at hand..  The simplest such possibility is to set the 
+form of the covariance function
+using cross-validation.  We will also experiment with information-theoretical
+approaches in an attempt to find a relationship between the form of the covariance
+function and the entropy of the distribution produced by the GP.
 \end{itemize}
 
 \subsection{Fortifying Gaussian Processes against degenerate training data}
