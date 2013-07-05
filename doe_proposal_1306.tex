@@ -956,7 +956,7 @@ Anomaly Detection and Classification in Massive Data
 While the problem of photometric redshift determination is fertile ground for
 the development of active learning algorithms, it poses little challenge for
 active feature acquisition: for a given experiment, the photometric filters are
-often immutable.  Fortunately, survey astronomy presents us with another 
+often immutable. Survey cosmology, however, presents us with another 
 problem, the identification and classification of transient sources,
 which raises both the questions ``which objects should we
 follow-up?'' and ``what observations should we make of them?''
@@ -1020,15 +1020,14 @@ different wavelengths at different times.
 \centerline{
 \includegraphics[scale=1.0]{rrlyrae.png}
 }
-\caption{
-Taken from \citet{rrlyrae} the left panels shows the expected
-sampling of
-a light curve by the LSST at its main survey cadence (top left) and
-for a higher sampling rate that will be employed for 10\% of the LSST
-survey (bottom left). The right panels shows a measure of the  how well
-the light curves can be phased (i.e.\ combining the observations while solving
-for the periodicity of the data). This illustrates the significant effect
-on scientific output of more and more targeted data.}
+\caption{ Taken from \citet{rrlyrae} the left panels shows the
+  expected sampling (for one year of data) of a light curve by the
+  LSST at its main survey cadence (top left) and for a higher sampling
+  rate that will be employed for 10\% of the LSST survey (bottom
+  left). The right panels shows a measure of the how well the light
+  curves can be phased (i.e.\ combining the observations while solving
+  for the periodicity of the data). This illustrates the significant
+  effect on scientific output of more and more targeted data.}
 
 \label{fig:RRLyrae}
 \end{figure}
@@ -1036,26 +1035,23 @@ on scientific output of more and more targeted data.}
 
 
 
-\subsection{Active Learning for Transient Classification}
+\subsection{Active Learning for Transient Classification}   {\bf
+
+  Real-time automatic classification of objects is already widely
+  acknowledged as a necessary support technology for the forthcoming
+  age of survey cosmology
+  \cite{djorgovski2011,richards2011,richards2012,graham2012,mahabal2008a,mahabal2011a}.
+  A great deal of work has already been accomplished developing
+  algorithms that can learn the classification of an object given
+  data that are well sampled. For the DES and the LSST the data
+  streams are, however, poorly sampled in the temporal
+  domain. Figure~\ref{fig:RRLyrae} shows the expected sampling of data
+  from the LSST and how, using current techniques, these translates
+  into the ability to classify and characterize the light curves of
+  astrophysical sources.
 
 
-{\bf I have just copied-and-pasted the ``active learning for transients''
-paragraphs from the previous draft}
 
-
-Real-time automatic classification of objects is already widely acknowledged as a
-necessary support technology for the forthcoming age of survey astronomy
-\cite{djorgovski2011,richards2011,richards2012,graham2012,mahabal2008a,mahabal2011a}.
-Objects will need to be categorized into known science classes so that novel
-or rare objects can be flagged for detailed follow-up observations.
-For transient events, algorithms must be able to make rapid
-decisions so that sources can be targeted for follow-up 
-and classifications learned before
-objects return to their quiescent phases.  
-
-A great deal of work has
-already been done developing algorithms that can learn the classification of an
-object given a fixed set of observations and training data.  
 Mahabal {\it et al}. (2008a,2011a,2011b) propose to break down the
 observations of a given object into $\{\Delta m,\Delta t\}$ pairs (where $m$
 is magnitude and $t$ is time) and use the density of observations in this 
@@ -1067,69 +1063,40 @@ of time, and then classify the object based on that reconstruction.
 Anomaly detection has been attempted by decomposing light curves into
 basis functions of different timescales and looking for events that occur
 more rapidly than some fit baseline \cite{preston2009,blocker2013}.
-Richards {\it et al}. (2011) use observations of transient objects to extract
-periodic (e.g. the amplitude and frequency of the first two Fourier modes of
-the object's light curve) and non-periodic (e.g. the variance and skewness of
-all of the magnitude observations taken, regardless of their separation in
-time) and feed those features into several tree-based classifiers.
+
 They find misclassification rates lower than 30\% with their best method yielding a
-misclassification rate of 22.8\%.  Using only non-periodic features, which will be
-especially easy for survey telescopes to gather, rather than
-full light curves, they 
-find a misclassification rate of
-between 26\% and 28\%.
-Bloom {\it et al}. (2011) also use a tree-based automatic classifier on
-Palomar Transient Factory data and find a 3.8\% error rate when
-discriminating between four major classifications.  Richards {\it et al}.
-consider a more complete set of 25 possible classifications.
-Clearly, many possibile approaches are available for the automated
-classification of transient objects, and not all of them rely upon highly
-detailed observations to function.  
-None of the above algorithms, however, make
-any promises regarding their ability to deliver rapid recommendations for
-optimum follow-up observations in real time.  This will be a significant
-contribution to all time-sensitive sciences.
+misclassification rate of 22.8\%.  
 
-Similarly, a large number of classifiers have been developed which are optimized
-for the case of binary classifications: ``Is something a quasar, or is it not?''
-\cite{kim2011,pichara2012}, ``Is an object at redshift greater than 4 or is it
-not?'' \cite{morgan2011}, ``Is an object a real astrophysical transient, or is
-it an instrumental artifact?'' \cite{brink2012}.  The methods developed
-(Random Forests; Support Vector Machiens; etc.) are all useful
-and provide guidance for what can and should be attempted, however, they do not
-deliver the robust, probabilistic, multi-class identifiers that will be required
-by the rapid, big-data experiments of the next decades.
 
-\subsection{Active Feature Acquisition and Active Search
+The limitations of these existing approaches are that they are
+optimized for the case of binary classifications: ``Is something a
+quasar, or is it not?''  \cite{kim2011,pichara2012}, ``Is an object at
+redshift greater than 4 or is it not?'' \cite{morgan2011}, ``Is an
+object a real astrophysical transient, or is it an instrumental
+artifact?''  \cite{brink2012} rather than learning a model over the
+full range of classifications. They are also undertaken as a batch or
+off-line process (which will not scale to the real-time classification
+required for next generation surveys)
+
+
+\subsection{Group-based Active Feature Acquisition and Active Search
 for Transient Classification}
 
 The input features for transient object classification will be 
 a variable combination photometric
-and morphologic measures taken at different increments in time.  The output
-is a categorical variable indicating the class.
-Brink {\it et al}. (2012) and Richards {\it et al}. (2012b) consider this
-diversity of features in designing automatic classifiers on static data sets. 
-They use cross-validation to
-find that some features are more useful than others and that the inclusion
-of all features degrades the performance of their classifier (see Figure 4 of
-both references).  This
-determination of optimal inputs is at the heart of active feature
-acquisition.  Our
-intention is to introduce an information-theoretical approach 
+and morphologic measures taken at different increments in time. With
+this proposal we will  introduce an information-theoretical approach 
 based on the output covariance matrix of equation \ref{eq:cov} which will allow
 us to perform a similar determination in real time as observations are made,
 directing experiments as they are performed.
 We will not choose our follow-up observations based on cross-validation testing,
 but rather based on which observations we expect to yield the most significant
 decreases in the entropy of our probabilistic model.
-An information-theoretical
-approach has already been tried in the case of a static (i.e. off-line)
-dataset by Huisje {\it et al}. 
-(2011, 2012) who use a the correntropy as a measure of the
+Examples of this include the use of correntropy as a measure of the
 correlation between observed intensities at different time lags in already
-observed light curves.  We will consider the effect on entropy of as-of-yet
-untaken observations.  This will be a significant development towards the goal
-of real-time object classification.
+observed light curves and the entropy of as-of-yet
+untaken observations.  
+
 
 The active learning, active search, and active feature
 acquisition choices for transient classification
@@ -1137,7 +1104,13 @@ all must be made in an online, streaming fashion.
 Rather than
 considering an entire pool of test objects, they appear one at a time as
 they are detected and the algorithm must decide whether and how to follow
-up on each immediately as they are detected.  The culmination of our proposed
+up on each immediately as they are detected.  
+
+
+
+
+
+The culmination of our proposed
 program of research will be to combine the methods devised above into a single
 combined streaming algorithm as described below.
 
@@ -1156,6 +1129,85 @@ observations or may be adopted by the other one.  The process for one
 object terminates when neither active learning nor active search remains
 interested in it or the object class and light curves are characterized
 well enough that no more observations are required.
+
+\subsubsection{Caching structures for computational efficiency for
+  real-time classification}}
+\label{sec:computationalefficiency}
+
+Given the size and dimensionality of data from the next generation of
+surveys efficient caching and search techniques are required for both
+anomaly detection and classification and to optimize sampling
+strategies whose cost function is, effectively, our ability to
+constrain the underlying cosmological model. We will address these
+computational issues with a set of caching, sampling, and search
+techniques.
+
+\vspace{-4mm}
+\paragraph{AD-Trees.}
+The AD-Tree \cite{Moore97a} caching structure has the feature that it can
+answer any count query (i.e. how many records match query X?) in time
+independent of the number of records.  It is similar to an OLAP datacube,
+except that it caches the answer to all possible queries in a single
+structure rather than requiring the building of many cubes.  Specialized
+pruning tricks keep its memory footprint modest.  Our algorithms will rely
+heavily on this structure.
+
+An extension called TCube stores time series in the AD-Tree
+\cite{Sabhnani06}.  This allows queries of the form: {\it return the
+ aggregated time series of counts for all records matching query X}.
+Additional pruning tricks based on sparse vector representations allow this
+to be memory efficient.  The TCube structure will be used primarily for
+identifying time-varying anomalies, and will be extended to images.
+
+We propose additional modifications that will cache sufficient
+statistics.  In addition to the counts of records matching a query, it will
+store means and covariances of continuous-valued attributes of those
+records.  This is especially useful for search-based comparison techniques
+because those sufficient statistics can be used to build classifiers
+such as LDA or QDA, which can quickly assess whether there is a difference
+between two populations of objects.  This allows an efficient rule-based
+search for sub-populations with differences between them in the same way it
+was done in the Radsearch algorithm \cite{Moore02}.
+
+\vspace{-4mm}
+\paragraph{KD-Trees.}
+KD-Trees are classic data structures used extensively in
+machine learning and N-body simulations.  A traditional use is to retrieve
+nearest neighbors in {\it log N} time.  By storing sufficient statistics at
+the internal nodes of the trees, one can retrieve the
+statistics needed for operations such as kernel regression very efficiently
+\cite{Moore97}.  
+% These also take {\it log N} time in all but pathological cases.  
+A more interesting extension for this work is the use of KD-Trees
+to speed up the EM-based mixture model algorithm, which achieved as much as
+three orders of magnitude speedup over previous methods \cite{Moore99}.  We
+will modify this approach to speed up the EM algorithm proposed for
+learning dynamical models.
+
+\vspace{-4mm}
+\paragraph{N-trees.}  The use of multiple trees simultaneously was demonstrated
+to yield orders of magnitude speedups when computing n-point correlations
+\cite{gry:nbdy,kubicaKDD2005}.  At its core, these amount to template
+matching problems and we plan to generalize these for pattern discovery
+with missing data.
+
+\vspace{-4mm}
+\paragraph{Hierarchical search structures.}  
+The field of scan statistics \cite{Kulldorf97,Neill03} has developed a set
+of hierarchical structures specially designed for spatial-temporal data.
+We will extend these for use in identifying interesting space-varying and
+time-varying phenomenon.  The key feature is that when searching for
+spatio-temporal anomalies or matches to patterns, the right choice of
+scoring metric makes it possible to significantly prune the search space
+(i.e. based on the sufficient statistics for this region, I can determine
+that no sub-region will fit my criteria).
+
+The algorithms we propose may be further sped up by parallelizing
+across CPUs on a grid.  We will use this technique when possible using
+standard cloud computing paradigms \cite{gard07} and expect our
+efforts on efficient algorithms and parallelization to yield speedups
+that compound.
+
 
 \section{Timeline and Development Plan}
 
