@@ -1,4 +1,4 @@
-\documentclass[useAMS,usenatbib,tightenlines,11pt,preprint]{aastex}
+\documentclass[prd,nofootbib,floatfix,11pt,tightenlines]{revtex4}
 %\documentclass[useAMS,usenatbib,tightenlines,11pt,preprint]{aastex}
 \usepackage[paperwidth=8.5in,paperheight=11in,centering,margin=1in]{geometry}
 
@@ -9,6 +9,7 @@
 \usepackage{amsmath}
 \usepackage{amsbsy}
 
+
 \input epsf
 \usepackage{amsmath,amssymb,subfigure}
 \usepackage{graphicx}
@@ -17,7 +18,9 @@
 %\usepackage{ulem}
 %\usepackage{epstopdf}
 
-\usepackage{multicol}
+%commented out the line below to get rid of citations that run into margins
+%\usepackage{multicol}
+
 %\usepackage{etoolbox}
 
 \pagestyle{empty}
@@ -340,8 +343,7 @@ complex models with only a small amount of training data
 \cite{YiZhangICML2010,YiZhangSDM2010,YiZhangMultitask2010,YiZhang2011multiECOC,YiZhang2012},
 for non-parametric estimators for divergences and dependencies
 \cite{poczos11alphadiv,Poczos2011UAI,poczos12CVPR}, and for graphical
-models for finding groups of collectively anomalous records
-\cite{Xiong2011gad,xiong2011fgm}.
+models for finding groups of collectively anomalous records \cite{Xiong2011gad,xiong2011fgm}.
  
 Connolly leads the University of Washington data management group that
 develops the algorithms and techniques for the real-time analysis of
@@ -608,11 +610,11 @@ in this case than in the case of the forward-fitting modeling of EAZY.
 
 \begin{figure}[th]
 \subfigure[]{
-\includegraphics[scale=0.3]{eazy_scatter_plot.png}
+\includegraphics[scale=0.25]{eazy_scatter_plot.png}
 \label{subfig:eazy}
 }
 \subfigure[]{
-\includegraphics[scale=0.3]{gp_scatter_plot.png}
+\includegraphics[scale=0.25]{gp_scatter_plot.png}
 \label{subfig:gp}
 }
 \caption{
