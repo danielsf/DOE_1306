@@ -684,6 +684,7 @@ the favorable results of GPs above, further development of the
 framework will be required.
 
 \subsection{Fortifying Gaussian Processes against incomplete training data}
+\label{sec:sparse}
 
 GPs are already designed to handle input data that is sparsely
 sampled.  Equation \ref{eq:cov} gives the GP the freedom to declare a large
@@ -741,6 +742,7 @@ function and the entropy of the distribution produced by the GP.
 \end{itemize}
 
 \subsection{Fortifying Gaussian Processes against degenerate training data}
+\label{sec:multimode}
 
 Additionally, it will be necessary to build GPs that are robust against the
 possibility that degeneracies exist in the relationship between input and output
@@ -858,9 +860,9 @@ A myopic information gain (change in entropy) strategy looks ahead one step
 and chooses the data point that minimizes the expected entropy (monotonic
 in $\det(\Sigma_q)$).  Even this can be expensive since it requires the
 computation of the determinant.  An alternative is minimizing the average
-variance ($tr(\Sigma_q)$, also known as V-optimality).  A further
+variance $\text{tr}(\Sigma_q)$, also known as V-optimality).  A further
 approximation is to do no look ahead and simply choose the data point
-corresponding to the largest diagonal element in $tr(\Sigma_q)$.  This is
+corresponding to the largest diagonal element in $\text{tr}(\Sigma_q)$.  This is
 known as uncertainty sampling.
 
 We propose the following new methods:
@@ -870,7 +872,10 @@ We propose the following new methods:
 \item The usual implementations of the criteria listed above are based on
   Gaussian predictive distributions which means only the covariance need be
   considered.  We will develop efficient ways to estimate these quantities
-  from our improved models of non-Guassian distributions.
+  from our improved models of non-Guassian distributions.  Two obvious criteria to try
+  are the entropy of the output distribution or the logarithm of the probability
+  distribution evaluated at its peak (which we use in the toy model
+  generating Figure \ref{fig:learning}).
 
 \item Our preliminary experiments on classification in graphs indicate that
   the sum of all entries in the covariance matrix is a better criterion
@@ -1187,13 +1192,11 @@ capable of modeling multi-modal probability
 distributions.  Build a photometric redshift algorithm based on these next generation
 GPs.  Test the algorithm against data from the SDSS, DES, and simulated LSST.
 
-\item Develop active learning algorithms to discover the optimum follow-up strategy
-for our photometric redshift algorithms.  We will initially base these algorithms on
-myopic, single-step criteria (i.e., choosing the object whose follow-up, independent
-of all other galaxies, yields the greates scientific pay-off).  
-We will move on to modeling one- and
-two-step-look-ahead methods to quantify the effect of follow-up observations on the
-entire learned photometric redshift model.
+\item Develop active learning methods optimized for our next generation GPs.
+We will initially develop myopic criteria, selecting data for follow up whose classification
+considered in a vacuum is the most advantages.  We will then develop methods to implement
+one- and two-step-look-ahead criteria.  We will test these algorithms in the case of
+photometric redshifts.
 
 \item Develop a software package that provides access to our next generation GPs for
 any researcher using any data set.
@@ -1204,9 +1207,10 @@ any researcher using any data set.
 
 \begin{itemize}
 
-\item Develop active feature acquisition algorithms to determine what additional
+\item Develop active feature acquisition algorithms based on the probability distributions
+output by our next generation GPs.  We will use them to determine what additional
 information (e.g., morphological or angular correlation function) provides the most
-helpful supplement to traditional photometric measurements.
+helpful supplement information in the case of photometric redshifts.
 
 \item Extend our next generation GPs to the problem of 
 transient-classification.  Analyze stellar
