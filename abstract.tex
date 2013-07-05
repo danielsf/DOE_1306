@@ -1,0 +1,95 @@
+\documentclass[useAMS,usenatbib,tightenlines,11pt,preprint]{aastex}
+%\documentclass[useAMS,usenatbib,tightenlines,11pt,preprint]{aastex}
+\usepackage[paperwidth=8.5in,paperheight=11in,centering,margin=1in]{geometry}
+
+\usepackage{parskip}
+%\setlength{\parskip}{\baselineskip}
+\parskip=5pt
+
+\usepackage{amsmath}
+\usepackage{amsbsy}
+
+\input epsf
+\usepackage{amsmath,amssymb,subfigure}
+\usepackage{graphicx}
+\usepackage{epsfig}
+\usepackage{color}
+%\usepackage{ulem}
+%\usepackage{epstopdf}
+
+\usepackage{multicol}
+\usepackage{etoolbox}
+
+\pagestyle{empty}
+
+\renewcommand{\baselinestretch}{0.99}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document} 
+
+\noindent {\bf Project Title: }  Learning in an Era of Uncertainty \\
+{\bf Principal Investigator: } Andrew Connolly (University of Washington)\\
+{\bf Major Participants: }  Jeff Schneider (Carnegie Mellon University) \\
+
+\noindent{\bf Project Objectives:} Due to the scale and complexity of
+the next generation of physical and biological experiments we require
+new techniques and algorithms that can characterize and classify data
+in a way that is inherently probabilistic and data-centric.  The goal
+of this proposal is approach this challenge through the development of
+new methodologies, centered around the theme of active learning, that
+can optimize the scientific returns of petascale experiments. Our
+primary objectives are: the design of techniques using Gaussian
+processes that are robust to missing data and non-Gaussian errors; the
+development of active learning and active feature selection techniques
+that can identify the next measurement or observation to make in order 
+improve the overall classification or calibration of a data set; and the application
+of these techniques to cosmological surveys in order to improve our
+constraints of dark energy.
+
+\noindent{\bf Project Description:} A new generation of DOE sponsored
+data intensive experiments and surveys, designed to address
+fundamental questions in physics, materials and biology, will come
+on-line over the next decade. These experiments share a set of common
+challenges: how do we choose the next experiment or observation to
+maximize our scientific returns; how do we the identify anomalous
+sources that may be indicative of new classes of object from a
+continuous stream of data; and how do we characterize and classify
+events within data streams that are inherently noisy and
+incomplete. This proposal addresses these challenges through the
+development of a broad class of novel and scalable machine-learning
+techniques centered around the theme of active learning.
+
+Active learning algorithms iteratively decide which data points they
+will collect outputs on and add to a training set.  Their goal is to
+choose the points that will most improve the model being learned.  At
+each step, they consider the current training data, the potential data
+that might be obtained, and the current learned model, and evaluate
+what would be the best choice for the next observation, experiment, or
+feature such that it improves our knowledge of the overall system
+(according to some objective criterion).  In so doing they can
+optimize the speed and performance of a classification algorithm over
+simpler sampling strategies.
+
+The algorithms and methodologies we propose to develop here will
+initially focus on DOE sponsored cosmology experiments (i.e.\ the Dark
+Energy Survey, and the Large Synoptic Survey Telescope). These surveys
+are ideal proxies as their bandwidth (terabytes of data per night and
+petabytes of data every couple of months) will enable high precision
+studies impacting the understanding of cosmology, particle physics,
+and potentially theories of gravity.  Our ability to achieve these
+scientific goals relies on analyses at a scale, speed, and complexity
+beyond the capabilities of current automated machine learning methods.
+
+\noindent{\bf Project Outcomes:}
+The potential impact of active learning algorithms that scale to the
+size and complexity of petascale data sets is substantial. The
+development of our proposed techniques will enable the optimization of
+the scientific returns from billion dollar investments in
+observational facilities. Achieving these breakthroughs will enable
+advances and new methodologies for scaling active learning that will
+be applicable to experiments from physics, to biology, to climatology.
+
+\end{document}
