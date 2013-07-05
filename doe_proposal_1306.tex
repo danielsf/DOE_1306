@@ -1175,24 +1175,28 @@ well enough that no more observations are required.
 We will focus on multiple projects in each of the three years of this
 program.  Algorithms will be released as they are developed in a
 twice-yearly release cycle.  Algorithm development will be undertaken
-using data from the DES survey together with a series of detailed
+using data from the SDSS, the DES survey, and  a series of detailed
 simulations developed for the LSST \cite{connolly10}.
 
 \noindent {\bf Year 1:} 
 
 \begin{itemize}
 
-\item Develop search based single-record and group-based anomaly detection
-algorithms and apply them to single epoch SDSS data.  Anomalies identified
-through this process will be released using an interface to Google Sky and
-be based on the VOEvent protocols.
+\item Develop GP algorithms that are robust against sparse training data and
+capable of modeling multi-modal probability
+distributions.  Build a photometric redshift algorithm based on these next generation
+GPs.  Test the algorithm against data from the SDSS, DES, and simulated LSST.
 
-\item Develop sampling strategies for photometric redshift
- methods. Simulate the strategies and test them with different photometric
- redshift estimators.  Perform various cosmological analyses over the
- samples based on different sampling strategies, and estimate the
- sensitivity of the cosmological analyses to the details of the sampling
- strategies.
+\item Develop active learning algorithms to discover the optimum follow-up strategy
+for our photometric redshift algorithms.  We will initially base these algorithms on
+myopic, single-step criteria (i.e., choosing the object whose follow-up, independent
+of all other galaxies, yields the greates scientific pay-off).  
+We will move on to modeling one- and
+two-step-look-ahead methods to quantify the effect of follow-up observations on the
+entire learned photometric redshift model.
+
+\item Develop a software package that provides access to our next generation GPs for
+any researcher using any data set.
 
 \end{itemize}
 
@@ -1200,17 +1204,25 @@ be based on the VOEvent protocols.
 
 \begin{itemize}
 
-\item Extend the anomaly detection algorithms to consider repeated
- observations of the same part of the sky.  We will analyze stellar
+\item Develop active feature acquisition algorithms to determine what additional
+information (e.g., morphological or angular correlation function) provides the most
+helpful supplement to traditional photometric measurements.
+
+\item Extend our next generation GPs to the problem of 
+transient-classification.  Analyze stellar
  sources where there are known populations with defined variability
  signatures (e.g.\ Cepheid variables) to provide validation for the
- analysis.  The algorithms will be applied to the larger SDSS data set to
- detect new time varying objects.
+ analysis.
 
-\item Improve classifiers for AGNs, asteroids, variable, and low mass stars
- based on using anomaly detection to identify mistakes and apply them to
- CFHLS and SDSS data.  We will implement an annotation service based on
- Galaxy Zoo to train the classifiers using labeled data.
+\item Extend the active feature acquisition algorithms developed for photometric
+redshifts to the problem of determining the next best measurement for transient
+classification.
+Validate these algorithms on SDSS, DES, and simulated LSST observations, witholding
+data from the algorithm to simulate the case of incomplete, ongoing observations.
+
+\item Generalize our active learning and active feature acquisition algorithms so that
+they can accept output from any model-fitting algorithm, not just our next-generation
+GPs.  Develop a software package providing access to these algorithms.
 
 \end{itemize}
 
@@ -1218,18 +1230,14 @@ be based on the VOEvent protocols.
 
 \begin{itemize}
 
-\item Develop search based systems modeling and apply it to characterizing
-the relationship between measured attributes of stars and galaxies within
-the SDSS data.
+\item Integrate our active learning and active feature acquisition algorithms to
+produce an active search algorithm that can identify interesting objects and optimize
+their follow-up in real time data streams.  Begin running this algorithm on DES data
+as it is made public.
 
-\item Develop and apply a search-based system for identifying differences
-between simulations of galaxy evolution, observational data, and models
-we learned from observations.
-
-\item Based on the simulations for the optimal sampling, and our algorithms
- for machine learning for photometric redshifts, develop the next
- generation photometric redshift technique, apply it to emerging
- photometric peta-catalogs, and make the results publicly available.
+\item Develop a software package that will provide access to all of our
+developed algorithms in a general way so that researchers can provide input and output
+data from any experiment and receive appropriate follow-up recommendations.
 
 \end{itemize}
 
