@@ -1016,36 +1016,20 @@ different wavelengths at different times.
 
 
 
-\begin{figure}
+\begin{figure}[th]
 \centerline{
-\subfigure[]{
-\includegraphics[scale=1.0]{becker_rrlyrae_uc.png}
-\label{subfig:uc}
-}
-\subfigure[]{
-\includegraphics[scale=1.0]{becker_rrlyrae_dd.png}
-\label{subfig:dd}
-}
-}
-\centerline{
-\subfigure[]{
-\includegraphics[scale=1.0]{becker_rrlyrae_year_1.png}
-\label{subfig:year1}
-}
-\subfigure[]{
-\includegraphics[scale=1.0]{becker_rrlyrae_year_5.png}
-\label{subfig:year5}
-}
+\includegraphics[scale=1.0]{rrlyrae.png}
 }
 \caption{
-Taken from \cite{rrlyrae}.  Figure \ref{subfig:uc} shows the sampling of
-a template RR Lyrae light curve at the LSST Universal Cadence.
-Figure \ref{subfig:dd} shows the same for the 
-Deep Drilling Cadence.  Figures \ref{subfig:year1} and \ref{subfig:year5} compare the scatter
-in determining the phase of an RR Lyrae light curve after 1 year of Universal Cadence
-data and 5 years of Universal Cadence data.  This illustrates the significant effect
-on scientific output of more and more targeted data.
-}
+Taken from \citet{rrlyrae} the left panels shows the expected
+sampling of
+a light curve by the LSST at its main survey cadence (top left) and
+for a higher sampling rate that will be employed for 10\% of the LSST
+survey (bottom left). The right panels shows a measure of the  how well
+the light curves can be phased (i.e.\ combining the observations while solving
+for the periodicity of the data). This illustrates the significant effect
+on scientific output of more and more targeted data.}
+
 \label{fig:RRLyrae}
 \end{figure}
 
@@ -1175,15 +1159,11 @@ well enough that no more observations are required.
 
 \section{Timeline and Development Plan}
 
-We will focus on multiple projects in each of the four years of this
+We will focus on multiple projects in each of the three years of this
 program.  Algorithms will be released as they are developed in a
-twice-yearly release cycle.  Algorithm development will be undertaken using
-data from current astronomical imaging surveys together with a series of
-cosmological N-body simulations.  The time
-dependent imaging data will be taken from the SDSS survey (including a 300
-sq degree region observed 40+ times over the period of 10 years) and the
-deep imaging data (to study the evolution of galaxies) from the Canada
-France Legacy survey (CFHLS; \cite{hoekstra06}).
+twice-yearly release cycle.  Algorithm development will be undertaken
+using data from the DES survey together with a series of detailed
+simulations developed for the LSST \cite{connolly10}.
 
 \noindent {\bf Year 1:} 
 
