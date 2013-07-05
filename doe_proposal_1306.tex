@@ -986,7 +986,7 @@ undertaken in almost real-time with probabilistic classifications that
 incorporate our uncertainties about our classification together with
 the ability for algorithms to learn based on a posteriori information
 from earlier classifications. It must be able to predict what
-additional information might be needed to improved (or exclude) the
+additional information might be needed to improve (or exclude) the
 likelihood of a given classification and to specify which parameters
 led to the source being classified as anomalous. Small errors in the
 identification and classification of these anomalous sources will
@@ -1121,6 +1121,14 @@ by the rapid, big-data experiments of the next decades.
 \subsection{Active Feature Acquisition and Active Search
 for Transient Classification}
 
+The active learning, active search, and active feature
+acquisition choices for transient classification
+all must be made in an online, streaming fashion.  
+Rather than
+considering an entire pool of test objects, they appear one at a time as
+they are detected and the algorithm must decide whether and how to follow
+up on each immediately as they are detected. 
+
 The input features for transient object classification will be 
 a variable combination photometric
 and morphologic measures taken at different increments in time.  The output
@@ -1149,16 +1157,9 @@ observed light curves.  We will consider the effect on entropy of as-of-yet
 untaken observations.  This will be a significant development towards the goal
 of real-time object classification.
 
-The active learning, active search, and active feature
-acquisition choices for transient classification
-all must be made in an online, streaming fashion.  
-Rather than
-considering an entire pool of test objects, they appear one at a time as
-they are detected and the algorithm must decide whether and how to follow
-up on each immediately as they are detected.  The culmination of our proposed
+The culmination of our proposed
 program of research will be to combine the methods devised above into a single
 combined streaming algorithm as described below.
-
 The three goals of active learning, active search, and active feature
 acquisition will be combined
 in a staged set of decisions.  When a new event or object is detected, the data
@@ -1769,7 +1770,7 @@ by which they will reconstruct the object's entire light curve as a function
 of time, and then classify the object based on that reconstruction.
 Richards {\it et al}. (2011) use observations of transient objects to extract
 periodic (e.g. the amplitude and frequency of the first two Fourier modes of
-the object's light curve) and non-periodic (e.g. the variance and skewness of
+the object's light curve) and non-periodic features (e.g. the variance and skewness of
 all of the magnitude observations taken, regardless of their separation in
 time) and feed those features into several tree-based classifiers.
 They find misclassification rates lower than 30\% with their best method yielding a
