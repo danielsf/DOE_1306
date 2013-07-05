@@ -683,9 +683,9 @@ not be the case for the large, deep surveys of the future.  In order to extend
 the favorable results of GPs above, further development of the
 framework will be required.
 
-\subsection{Fortifying Gaussian Processes against incomplete training
-  data}
-\label{sec:missing}
+\subsection{Fortifying Gaussian Processes against incomplete training data}
+\label{sec:sparse}
+
 
 GPs are already designed to handle input data that is sparsely
 sampled.  Equation \ref{eq:cov} gives the GP the freedom to declare a large
@@ -747,6 +747,7 @@ function and the entropy of the distribution produced by the GP.
 \end{itemize}
 
 \subsection{Fortifying Gaussian Processes against degenerate training data}
+\label{sec:multimode}
 
 It will be necessary to build GPs that are robust against degeneracies
 that exist in the relationship between input and output
@@ -864,9 +865,9 @@ A myopic information gain (change in entropy) strategy looks ahead one step
 and chooses the data point that minimizes the expected entropy (monotonic
 in $\det(\Sigma_q)$).  Even this can be expensive since it requires the
 computation of the determinant.  An alternative is minimizing the average
-variance ($tr(\Sigma_q)$, also known as V-optimality).  A further
+variance $\text{tr}(\Sigma_q)$, also known as V-optimality).  A further
 approximation is to do no look ahead and simply choose the data point
-corresponding to the largest diagonal element in $tr(\Sigma_q)$.  This is
+corresponding to the largest diagonal element in $\text{tr}(\Sigma_q)$.  This is
 known as uncertainty sampling.
 
 We propose the following new methods:
@@ -876,7 +877,10 @@ We propose the following new methods:
 \item The usual implementations of the criteria listed above are based on
   Gaussian predictive distributions which means only the covariance need be
   considered.  We will develop efficient ways to estimate these quantities
-  from our improved models of non-Guassian distributions.
+  from our improved models of non-Guassian distributions.  Two obvious criteria to try
+  are the entropy of the output distribution or the logarithm of the probability
+  distribution evaluated at its peak (which we use in the toy model
+  generating Figure \ref{fig:learning}).
 
 \item Our preliminary experiments on classification in graphs indicate that
   the sum of all entries in the covariance matrix is a better criterion
@@ -963,7 +967,7 @@ leads to a significant improvement in the classifier's performance.
 This study was done in a high signal-to-noise regime.  It takes no account
 of the relative cost of doing one measurement or another.  No gaps exist in
 the available training data.  These are all challenges that real-world
-machine learning algorithms will face (see Section~\ref{sec:missing}.  We will demonstrate our novel
+machine learning algorithms will face (see Section~\ref{sec:sparse}.  We will demonstrate our novel
 methods on real data sets that contain all these additional challenges.
 
 
@@ -988,7 +992,7 @@ undertaken in almost real-time with probabilistic classifications that
 incorporate our uncertainties about our classification together with
 the ability for algorithms to learn based on a posteriori information
 from earlier classifications. It must be able to predict what
-additional information might be needed to improved (or exclude) the
+additional information might be needed to improve (or exclude) the
 likelihood of a given classification and to specify which parameters
 led to the source being classified as anomalous. Small errors in the
 identification and classification of these anomalous sources will
@@ -1090,8 +1094,13 @@ Fields'' data (i.e.\ data with high temporal sampling).
 \subsection{Group-based Active Feature Acquisition and Active Search
 for Transient Classification}
 
-
- 
+The active learning, active search, and active feature
+acquisition choices for transient classification
+all must be made in an online, streaming fashion.  
+Rather than
+considering an entire pool of test objects, they appear one at a time as
+they are detected and the algorithm must decide whether and how to follow
+up on each immediately as they are detected. 
 The input features for transient object classification will be 
 a variable combination photometric
 and morphologic measures taken at different increments in time. With
@@ -1236,30 +1245,31 @@ standard cloud computing paradigms \cite{gard07} and expect our
 efforts on efficient algorithms and parallelization to yield speedups
 that compound.
 
-
 \section{Timeline and Development Plan}
 
 We will focus on multiple projects in each of the three years of this
 program.  Algorithms will be released as they are developed in a
 twice-yearly release cycle.  Algorithm development will be undertaken
-using data from the DES survey together with a series of detailed
+using data from the SDSS, the DES survey, and  a series of detailed
 simulations developed for the LSST \cite{connolly10}.
 
 \noindent {\bf Year 1:} 
 
 \begin{itemize}
 
-\item Develop search based single-record and group-based anomaly detection
-algorithms and apply them to single epoch SDSS data.  Anomalies identified
-through this process will be released using an interface to Google Sky and
-be based on the VOEvent protocols.
+\item Develop GP algorithms that are robust against sparse training data and
+capable of modeling multi-modal probability
+distributions.  Build a photometric redshift algorithm based on these next generation
+GPs.  Test the algorithm against data from the SDSS, DES, and simulated LSST.
 
-\item Develop sampling strategies for photometric redshift
- methods. Simulate the strategies and test them with different photometric
- redshift estimators.  Perform various cosmological analyses over the
- samples based on different sampling strategies, and estimate the
- sensitivity of the cosmological analyses to the details of the sampling
- strategies.
+\item Develop active learning methods optimized for our next generation GPs.
+We will initially develop myopic criteria, selecting data for follow up whose classification
+considered in a vacuum is the most advantages.  We will then develop methods to implement
+one- and two-step-look-ahead criteria.  We will test these algorithms in the case of
+photometric redshifts.
+
+\item Develop a software package that provides access to our next generation GPs for
+any researcher using any data set.
 
 \end{itemize}
 
@@ -1267,17 +1277,26 @@ be based on the VOEvent protocols.
 
 \begin{itemize}
 
-\item Extend the anomaly detection algorithms to consider repeated
- observations of the same part of the sky.  We will analyze stellar
+\item Develop active feature acquisition algorithms based on the probability distributions
+output by our next generation GPs.  We will use them to determine what additional
+information (e.g., morphological or angular correlation function) provides the most
+helpful supplement information in the case of photometric redshifts.
+
+\item Extend our next generation GPs to the problem of 
+transient-classification.  Analyze stellar
  sources where there are known populations with defined variability
  signatures (e.g.\ Cepheid variables) to provide validation for the
- analysis.  The algorithms will be applied to the larger SDSS data set to
- detect new time varying objects.
+ analysis.
 
-\item Improve classifiers for AGNs, asteroids, variable, and low mass stars
- based on using anomaly detection to identify mistakes and apply them to
- CFHLS and SDSS data.  We will implement an annotation service based on
- Galaxy Zoo to train the classifiers using labeled data.
+\item Extend the active feature acquisition algorithms developed for photometric
+redshifts to the problem of determining the next best measurement for transient
+classification.
+Validate these algorithms on SDSS, DES, and simulated LSST observations, witholding
+data from the algorithm to simulate the case of incomplete, ongoing observations.
+
+\item Generalize our active learning and active feature acquisition algorithms so that
+they can accept output from any model-fitting algorithm, not just our next-generation
+GPs.  Develop a software package providing access to these algorithms.
 
 \end{itemize}
 
@@ -1285,24 +1304,24 @@ be based on the VOEvent protocols.
 
 \begin{itemize}
 
-\item Develop search based systems modeling and apply it to characterizing
-the relationship between measured attributes of stars and galaxies within
-the SDSS data.
+\item Integrate our active learning and active feature acquisition algorithms to
+produce an active search algorithm that can identify interesting objects and optimize
+their follow-up in real time data streams.  Begin running this algorithm on DES data
+as it is made public.
 
-\item Develop and apply a search-based system for identifying differences
-between simulations of galaxy evolution, observational data, and models
-we learned from observations.
-
-\item Based on the simulations for the optimal sampling, and our algorithms
- for machine learning for photometric redshifts, develop the next
- generation photometric redshift technique, apply it to emerging
- photometric peta-catalogs, and make the results publicly available.
+\item Develop a software package that will provide access to all of our
+developed algorithms in a general way so that researchers can provide input and output
+data from any experiment and receive appropriate follow-up recommendations.
 
 \end{itemize}
 
 \newpage
 
 
+
+
+
+>>>>>>> c859578a2569ca496738b65db2e0d98b7066a904
 \begin{thebibliography}{99}
 
 \bibitem[Abazajian {\it et al}. 2009]{Abazajian:2008wr}
@@ -1380,6 +1399,14 @@ Lorenz,~S., Pizagno,~J., Rasmussen,~A., Todd,~N. Tyson,~J.~A., and Young,~M.
 2005, Society of the Photo-Optical Instrumentation Engineers (SPIE) Converence
 Series {\bf 7738}, 53
 
+\bibitem[Connolly {\it et al}. 2010]{connolly10}
+Connolly, A. J., Peterson, J., Jernigan, J. Garrett, Abel, Robert, Bankert, Justin,
+Chang, Chihway, Claver, Charles F., Gibson, Robert, Gilmore, David K., Grace, Emily,
+Johnes, R. Lynne, Ivezic, Zeljko, Jee, James, Juric, Mario, Kahn, Steven M.,
+Krabbendam, Victor L., Krughoff, Simon, Lorenz, Suzanne, Pizagno, Jame,s Rasmussen,
+Andrew, Todd, Nathan, Tyson, J. Anthon, Young, Mallory 2010, Proceedings of the SPIE
+{\bf 7738} 773810
+
 \bibitem[Cunha {\it et al}. 2012]{cunha2012}
 Cunha,~C.~E., Huterer,~D., Lin,~H., Busha,~M.~T., and Wechsler,~R.~H. 2012,
 [arXiv:1207.3347]
@@ -1449,6 +1476,11 @@ Graham,~M.~J., Djorgovski,~S.~G., Mahabal,~A., Donalek,~C., Drake,~A.,
 Longo,~G. 2012 [arXiv:1208.2480] to appear in special issue of Distributed and
 Parallel Databases on Data Intensive eScience
 
+\bibitem[Gray {\it et al}. 2004]{GrayMoore}
+Gray, A. G., Moore, A. W., Nichol, R. C., Connolly, A. J.,
+Genovese, C., and Wasserman, L. 2004, Astronomical Society of the Pacific Conference
+Proceedings {\bf 314} 249
+
 \bibitem[Huijse {\it et al}. 2011]{huijse2011}
 Huijse, Pablo, Est\'evez, Pablo A., Zegers, Pablo, Pr\'incipe, Jose C.,
 and Protopapas, Pavlos 2011, IEEE Signal Processing Letters {\bf 18}, 371
@@ -1472,6 +1504,10 @@ Roni, and Trichas, Markos 2011, arXiv:1101.3316
 \bibitem[Kitching {\it et al}. 2008]{kitching}
 Kitching,~T.~D., Taylor,~A.~N., and Heavens,~A.~F. 2008,
 Monthly Notices of the Royal Astronomical Society {\bf 389} 173
+
+\bibitem[Kubica {\it et al}. 2007]{kubica}
+Kubica, J., Denneau, L., Jr., Moore, A., Jedicke, R., Connolly, A. 2007,
+Astronomical Society of the Pacific Conference Series {\bf 376} 395
 
 \bibitem[Linder 2013]{linder2013}
 Linder, Eric V. 2013, Journal of Cosmology and Astropartical Physics {\bf 1304}
@@ -1642,7 +1678,7 @@ Yanny,~B., York,~D.~G. 2002, The Astrophysical Journal {\bf 579}, 48
 Sesar,~B., Stuart,~J.~S., Ivezi\'c,~\u Z., Morgan,~D.~P., Becker,~A.~C., and
 Wo\'zniak,~P. 2011, The Astronomical Journal {\bf 142}, 190
 
-\bibitem[Settles 2009]{activelearning}
+\bibitem[Settles 2009]{Settles09}
 Settles,~B. 2009, ``Active Learning Literature Survey,'' Computer Sciences Technical
 Report 1648, University of Wisconsin-Madison,
 \verb|http://pages.cs.wisc.edu/~bsettles/active-learning/|
@@ -1755,6 +1791,4 @@ storage.
 
 
 \end{document}
-
-
 
