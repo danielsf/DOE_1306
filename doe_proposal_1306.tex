@@ -43,7 +43,9 @@
 {\bf Principal Investigator: } &Andrew Connolly \\
 {\bf Telephone number: } & (206) 543 9541 \\
 {\bf Email: } & ajc@astro.washington.edu \\
-{\bf Administrative POC name, number, email:} & \\
+{\bf Administrative POC name:} & Lynnette Arias\\
+{\bf Telephone number:} & 206-543-4043\\
+{\bf Administrative POC name:} & osp@uw.edu\\
 {\bf Funding Opportunity FOA Number:} & DE-FOA-0000918 \\
 {\bf DOE/OSP Office: } & Office of Advanced Scientific Computing Research \\
 {\bf DOE/Technical Contact: } & Dr. Alexandra Landsberg \\
@@ -67,8 +69,8 @@
 \newpage
 
 {\bf Collaborating Institutions:} \\
-University of Washington, PI Andrew Connolly \\
-Carnegie Mellon University, PI Jeff Schneider \\
+Lead Institution: University of Washington, PI Andrew Connolly \\
+Collaborating Institution: Carnegie Mellon University, PI Jeff Schneider \\
 
 {\bf Lead PI:} Andrew Connolly \\
 
@@ -86,13 +88,14 @@ Co-PI & Jeff Schneider & Carnegie Mellon U & \$170K & \$170K & \$170K & \$510K \
 % \label{firstpage}
 
 % \maketitle 
-\newpage
+\pagebreak
 
-\begin{center}
-{\bf \Large Learning in an Era of Uncertainty}
-\end{center}
+%\begin{center}
+%{\bf \Large Learning in an Era of Uncertainty}
+%\end{center}
 
 \section{Introduction}
+
 
 A new generation of DOE sponsored data intensive experiments and surveys,
 designed to address fundamental questions in physics, materials, and
@@ -1170,7 +1173,77 @@ object terminates when neither active learning nor active search remains
 interested in it or the object class and light curves are characterized
 well enough that no more observations are required.
 
-\section{Timetable of Activities}
+\section{Timeline and Development Plan}
+
+We will focus on multiple projects in each of the four years of this
+program.  Algorithms will be released as they are developed in a
+twice-yearly release cycle.  Algorithm development will be undertaken using
+data from current astronomical imaging surveys together with a series of
+cosmological N-body simulations.  The time
+dependent imaging data will be taken from the SDSS survey (including a 300
+sq degree region observed 40+ times over the period of 10 years) and the
+deep imaging data (to study the evolution of galaxies) from the Canada
+France Legacy survey (CFHLS; \cite{hoekstra06}).
+
+\noindent {\bf Year 1:} 
+
+\begin{itemize}
+
+\item Develop search based single-record and group-based anomaly detection
+algorithms and apply them to single epoch SDSS data.  Anomalies identified
+through this process will be released using an interface to Google Sky and
+be based on the VOEvent protocols.
+
+\item Develop sampling strategies for photometric redshift
+ methods. Simulate the strategies and test them with different photometric
+ redshift estimators.  Perform various cosmological analyses over the
+ samples based on different sampling strategies, and estimate the
+ sensitivity of the cosmological analyses to the details of the sampling
+ strategies.
+
+\end{itemize}
+
+\noindent {\bf Year 2:} 
+
+\begin{itemize}
+
+\item Extend the anomaly detection algorithms to consider repeated
+ observations of the same part of the sky.  We will analyze stellar
+ sources where there are known populations with defined variability
+ signatures (e.g.\ Cepheid variables) to provide validation for the
+ analysis.  The algorithms will be applied to the larger SDSS data set to
+ detect new time varying objects.
+
+\item Improve classifiers for AGNs, asteroids, variable, and low mass stars
+ based on using anomaly detection to identify mistakes and apply them to
+ CFHLS and SDSS data.  We will implement an annotation service based on
+ Galaxy Zoo to train the classifiers using labeled data.
+
+\end{itemize}
+
+\noindent {\bf Year 3:} 
+
+\begin{itemize}
+
+\item Develop search based systems modeling and apply it to characterizing
+the relationship between measured attributes of stars and galaxies within
+the SDSS data.
+
+\item Develop and apply a search-based system for identifying differences
+between simulations of galaxy evolution, observational data, and models
+we learned from observations.
+
+\item Based on the simulations for the optimal sampling, and our algorithms
+ for machine learning for photometric redshifts, develop the next
+ generation photometric redshift technique, apply it to emerging
+ photometric peta-catalogs, and make the results publicly available.
+
+\end{itemize}
+
+\newpage
+
+
+
 
 
 \begin{thebibliography}{99}
