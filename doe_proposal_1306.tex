@@ -176,7 +176,7 @@ variable or a classification) and some error on that value.  This assumes that
 the true model obeys single-mode Gaussian statistics.  As future experiments
 continue to push the boundaries of our physical understanding, this assumption
 will cease to be valid and we will be forced to build algorithms that can
-accommodate multi-modal models obeying a wide range of probabilistic
+accommodate multi-modal models obeying a wide range of probability
 distributions.  We propose a series of modifications that will allow Gaussian
 Processes to function in this regime.
 {\it Incomplete training data} -- the difficulty of experiments being attempted
@@ -517,7 +517,7 @@ performance of complex robots \cite{Tesch11a,Tesch11b,Tesch13}.
 We now describe how the underlying function is modeled with a GP based on a
 sample of training data.  Assume that each training set datum is of the
 form $\{\vec{\theta},y\}$, where $\vec{\theta}$ is an $N_p$-dimensional
-vector representing the measured data (input) and $y = f(\theta)$ is the
+vector representing the measured data (input) and $y = f(\vec{\theta})$ is the
 latent quantity (output) we are trying to infer.  $f$ is assumed to be a
 probabilistic function on the $N_p$-dimensional space with some covariance
 function relating pairs of points on the function, such as a squared
@@ -579,7 +579,7 @@ filters (i.e., taking their photometry), is several thousand times cheaper.
 For this reason, surveys such as the DES and the LSST are designed to exclusively take
 photometric data and rely on algorithmic researchers to deliver ways
 of inferring a relationship between a galaxy's observed photometry (usually in five or
-six bands) and it's true redshift.
+six bands) and its true redshift.
 
 Photometric redshifts are principally determined using
 forward-fitting models.  Astronomers assume that they can model the rest frame
