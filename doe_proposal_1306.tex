@@ -11,7 +11,6 @@
 \usepackage{squeeze}
 
 
-
 \input epsf
 \usepackage{amsmath,amssymb,subfigure}
 \usepackage{graphicx}
@@ -26,6 +25,7 @@
 %\usepackage{etoolbox}
 
 \pagestyle{empty}
+
 
 \renewcommand{\baselinestretch}{0.99}
 
@@ -189,7 +189,7 @@ propose methods to do so in GPs.
 
 {\bf (2) Active Learning.} Supervised regression and classification
 algorithms require labeled data points for training.  These output labels
-are obtained through labeling by human experts and/or additional data
+are typically assigned by human experts and/or additional data
 collection.  Often, the resources required (both in terms of human-hours
 and experimental apparatus) are considerable.  We propose to develop new
 algorithms to optimize the use of these resources by determining what event
@@ -244,8 +244,7 @@ simulations of the expected data flow from the LSST).  We will, therefore,
 use these data to demonstrate that the algorithms developed above will
 improve the cosmological reach of the DES and LSST in the areas of improved
 determination of photometric redshifts (see Section \ref{sec:photoz}) and
-improved classification and online follow-up of transient astronomical
-objects (see Section \ref{sec:transients}).  We will release our software
+improved classification and online follow-up of transient sources (see Section \ref{sec:transients}).  We will release our software
 publicly and seek collaborations where our algorithms may be spread to
 other sciences -- such as climatology and microbiology -- wherein complex
 systems can be modeled or measured at great expense and algorithms are
@@ -515,10 +514,11 @@ for a more detailed explanation of GPs should consult
 Rasmussen and Williams (2006).
 
 
-The inferences in equations \ref{eq:mean} and \ref{eq:cov} are non-parametric:
+The inferences in Eqns \ref{eq:mean} and \ref{eq:cov} are non-parametric:
 they do not assume a form for the latent model they represent.  This makes GPs
 especially powerful at learning models over data
-with complex degeneracies.  We demonstrate this with the following problem.
+with complex degeneracies.  We demonstrate this with the following 
+case study.
 
 \subsection{Photometric redshifts: a Gaussian Process case study}
 \label{sec:photoz}
@@ -533,8 +533,8 @@ in a handful of broadband filters (i.e., taking their photometry), is
 several thousand times cheaper.  For this reason, surveys such as the DES
 and the LSST are designed to exclusively take photometric data and rely on
 researchers to develop algorithms for estimating a galaxy's true redshift
-from its observed photometry (usually in five or six bands).  Because of
-the cost, only a few spectrographically determined redshifts are available
+from its observed photometry (\citet{connolly95} usually in five or six bands).  Because of
+the observational cost, only a few spectrographically determined redshifts are available
 to help train these algorithms.
 
 In current practice, photometric redshifts are principally determined using
@@ -563,7 +563,7 @@ simulated galaxies through a GP-based algorithm that attempts to learn the full
 probability distribution $P(z_\text{photometric})$.  There is much less scatter
 in this case than in the case of the forward-fitting modeling of EAZY.
 
-\begin{figure}[th]
+\begin{figure}[t]
 \subfigure[]{
 \includegraphics[scale=0.25]{eazy_scatter_plot.png}
 \label{subfig:eazy}
@@ -587,7 +587,7 @@ Other data-driven algorithms for photometric redshift determination do exist.
 An example of these is the publically-available code ANNz \cite{annz},
 which is based on an artificial neural network scheme.
 In this case, the principal
-shortcoming the method is that the artificial neural network
+shortcoming  is that the artificial neural network
 is designed to return only a
 photometric redshift value and an uncertainty.
 This uncertainty is a heuristic combination of the uncertainties in the
@@ -616,7 +616,7 @@ more amenable to model improvement by the introduction of active learning.
 % modeling yields significantly less scatter about the true
 % $z_\text{photometric}=z_\text{spectroscopic}$ relationship.
 
-\begin{figure}[th]
+\begin{figure}[t]
 \centerline{\includegraphics[scale=0.3]{sdss_lnsum.png}}
 \caption{
 The mean value of
@@ -645,33 +645,33 @@ framework will be required.
 
 
 GPs are already designed to handle input data that is sparsely
-sampled.  Equation \ref{eq:cov} gives the GP the freedom to declare a large
+sampled.  Eqn \ref{eq:cov} gives the GP the freedom to declare a large
 uncertainty in regions of data space where there is no training data.  However,
 in order to deliver on the science results required by DES, LSST, and other
 big-data surveys, it is not enough that $\Sigma_q$ be large where the model is
 uncertain.  We require that the inferred 
-value $f_q$ in equation \ref{eq:mean} be an accurate
+value $f_q$ in Eqn \ref{eq:mean} be an accurate
 representation of the true underlying model.  
 We propose to achieve this in several ways.
 
 \vspace{.5\baselineskip}
 \begin{itemize}
 \item New mean function models -- as presented,
-equation \ref{eq:mean} sets the value of $\bar{y}$ to the algebraic mean of the
+Eqn \ref{eq:mean} sets the value of $\bar{y}$ to the algebraic mean of the
 training outputs $\vec{y}$.  This assumes that the GP for all 
 parameters $\vec{\theta}_q$
-starts from the same value and equation \ref{eq:mean} expands the
+starts from the same value and Eqn \ref{eq:mean} expands the
 departures from that value.  
 We will evaluate models more complex than the algebraic
 mean but simpler than the GP, which can be used to give a more informative value
 for $\bar{y}$ such that it interpolates over gaps in the training data.  We propose
-to experiment with such functions including the development of a basis
-function representation of the function models. A preliminary analysis using
+to experiment with functions including those using a basis
+function representation of the function models. For example, a preliminary analysis using
  principal component
 analysis on the input $\{\vec{\theta}\}$ to set $\bar{y}$ according to a linear
-regression on the principal components most correlated with the outputs $\vec{y}$.
-gives an  improvement on the peformance of
-GP as a function regressor.
+regression on the principal component most correlated with the outputs $\vec{y}$.
+shows an  improvement in the peformance of
+the GP as a function regressor.
 
 \item Dynamic hyper parameters -- the value of the characteristic
 length scale $\ell$ in the covariance function $K_{ij}$ is presented
@@ -688,7 +688,7 @@ interpolation across gaps in the training data.
 
 \item Learned $K_{ij}$ -- in the above discussion, the functional form of
 the covariance function
-$K_{ij}$ in equation \ref{eq:covariogram}
+$K_{ij}$ in Eqn \ref{eq:covariogram}
 was assumed.  
 %While this certainly resulted in acceptable behavior in
 %our test cases, 
@@ -703,6 +703,7 @@ using cross-validation and information-theoretical
 approaches that attempt to find a relationship between the form of the covariance
 function and the entropy of the distribution produced by the GP.
 \end{itemize}
+\vspace{.5\baselineskip}
 
 \subsection{Fortifying Gaussian Processes against degenerate training data}
 \label{sec:multimode}
@@ -824,7 +825,7 @@ simulated problem this is possible, but in a real application we do not
 have the labels.  The usual alternative is to consider the uncertainty in
 the predictions on the test points.  In the case of basic GPs, the
 distribution is a multivariate Gaussian with covariance $\Sigma_q$ from
-equation \ref{eq:cov} and the query is the entire test set.
+Eqn \ref{eq:cov} and the query is the entire test set.
 
 A myopic information gain (change in entropy) strategy looks ahead one step
 and chooses the data point that minimizes the expected entropy (monotonic
@@ -938,27 +939,30 @@ leads to a significant improvement in the classifier's performance.
 This study was done in a high signal-to-noise regime.  It takes no account
 of the relative cost of doing one measurement or another.  No gaps exist in
 the available training data.  These are all challenges that real-world
-machine learning algorithms will face (see Section~\ref{sec:sparse}.  We will demonstrate our novel
+machine learning algorithms will face (see Section~\ref{sec:sparse}).
+We will, therefore, develop our novel
 methods on real data sets that contain all these additional challenges.
 
-\begin{figure}[th]
+\begin{figure}[t]
 \centerline{
 \includegraphics[scale=1.0]{rrlyrae.png}
 }
 \caption{
-Taken from \citet{rrlyrae} the left panels shows the expected
+Taken from \cite{rrlyrae} the left panels shows the expected
 sampling of
 a light curve by the LSST at its main survey cadence (top left) and
 for a higher sampling rate that will be employed for 10\% of the LSST
 survey (bottom left). The right panels shows a measure of the  how well
-the light curves can be phased (i.e.\ combining the observations while solving
-for the periodicity of the data). This illustrates the significant effect
-on scientific output of more and more targeted data.}
+the light curves can be characterized after phasing (i.e.\ after combining the observations while solving
+for the periodicity of the data). Poorly sampled data are clearly
+difficult to phase and classify. Active learning techniques can target
+the next ``best'' observation enabling the improvements in
+classification we see for highly sampled data but at the smallest observational cost.}
 
 \label{fig:RRLyrae}
 \end{figure}
 
-\subsection{Active Learning for Transient Classification}
+\subsection{Active Learning for Classification}
 \label{sec:transients}
 
 Real-time automatic recognition and classification of transient objects and
@@ -999,7 +1003,7 @@ model using basis functions derived from a decomposition of light curves
 learned from the ``Deep Drilling Fields'' data (i.e.\ data with high
 temporal sampling).
 
-\subsubsection{Transients: Additional Challenges}
+\subsection{The Challenge of Transients}
 
 Transient objects present many additional challenges not addressed by a
 basic active learning algorithm.  A decision to follow up is not done only
@@ -1018,18 +1022,7 @@ A second challenge is that follow up is not a single binary decision.
 Choices must be made about what color bands to measure and at what timing
 and frequency.  These choices might be revisited continously throughout the
 follow up process.  This is called the {\em active feature selection
-  problem}.
-
-Transient classification and active learning must be done in real
-time.  Where an object's spectrographic redshift could be measured years
-after its photometry was collected, a decision to follow up on a transient
-must be taken in seconds or minutes. Otherwise, valuable transient data
-might pass before it can be captured.  With timescales as short as seconds
-to hours we require the ability to identify, classify and report any
-detection in time to allow for follow-up observations before the initial
-phenomenon fades.
-
-Finally, small errors in the identification and classification of transient
+  problem}. Small errors in the identification and classification of transient
 sources will swamp the system.  The LSST will detect 7.5x10$^8$ sources
 {\bf every night}.  Even for the most numerous transient events (SNe), less
 than 10$^{-5}$ of the total number of sources will belong to this class.
@@ -1040,6 +1033,17 @@ sample the time domain, variations in the quality of the data due to
 atmospheric conditions, changes in the performance of the telescope and
 camera and the possibility that we observe sources at different wavelengths
 at different times.
+
+Finally, transient classification and active learning must be done in real
+time.  Where a non-variable object's spectrographic redshift could be measured years
+after its photometry was collected, a decision to follow up on a transient
+must be taken in seconds or minutes. Otherwise, valuable data
+might fade before it can be captured.  With timescales as short as seconds
+to hours we require the ability to identify, classify and report any
+detection in time to allow for follow-up observations before the initial
+phenomenon fades.
+
+
 
 All of these issues arise in the real-time data collection of any science
 interested in the dynamics of a physical system.  Interestingly, the
@@ -1096,7 +1100,7 @@ selecting known positives versus improving the model in the hopes of
 finding more later is well known as the exploration/exploitation tradeoff.
 
 As with active learning, an optimal algorithm would look like the search
-tree in fig. \ref{fig:searchtree}.  The difference is that the evaluation
+tree in Figure~\ref{fig:searchtree}.  The difference is that the evaluation
 in each leaf is the computation of the number of positives found.  A
 computationally efficient active search method needs to find ways to cut
 the search short and/or replace the computation of expensive expectations
@@ -1108,7 +1112,7 @@ with simple heuristics.  We propose the following new methods:
 
 \item In \cite{Wang13} we showed how to combine an exact one-step myopic
   evaluation with an approximation of the future impact on positives found
-  to achieve results better than expensive look aheads on graph problems.
+  that could achieve results better than expensive look aheads on graph problems.
   We will develop analogous methods for Euclidean spaces and multi-class or
   real-valued outcomes, and will seek a theoretical characterization of the
   performance.
@@ -1180,7 +1184,7 @@ The input features for transient object classification will be
 a variable combination photometric
 and morphologic measures taken at different increments in time. With
 this proposal we will  introduce an information-theoretical approach 
-based on the output covariance matrix of equation \ref{eq:cov} which will allow
+based on the output covariance matrix of Eqn \ref{eq:cov} which will allow
 us to perform a similar determination in real time as observations are made,
 directing experiments as they are performed.
 We will not choose our follow-up observations based on cross-validation testing,
