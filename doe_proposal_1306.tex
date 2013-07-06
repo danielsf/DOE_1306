@@ -97,8 +97,10 @@ Co-PI & Jeff Schneider & Carnegie Mellon U & \$170K & \$170K & \$170K & \$510K \
 %{\bf \Large Learning in an Era of Uncertainty}
 %\end{center}
 
-\section{Introduction}
+\pagestyle{plain}
+\setcounter{page}{1}
 
+\section{Introduction}
 
 A new generation of DOE sponsored data intensive experiments and surveys,
 designed to address fundamental questions in physics, materials, and
@@ -129,9 +131,8 @@ scientific returns from billion dollar investments in observational
 facilities). To achieve these breakthroughs requires that we address
 the challenge of how to scale active learning to the size and
 complexity of the data expected from this next generation of
-experiments.  For example, our inability to undertake a full 
-lookahead, predicting the impact of all future active learning choices
-on our learned model, results in the
+experiments.  For example, our inability to undertake a full look
+ahead to the end of all possible experiments results in the
 development of myopic heuristics that improve the speed of these
 learning techniques but at a substantial cost in how well they perform
 on real data.  See, for example, 
@@ -149,7 +150,7 @@ Synoptic Survey Telescope\footnote{http://www.lsst.org}). These
 surveys are ideal proxies as their bandwidth (terabytes of data per
 night and petabytes of data every couple of months) will enable high
 precision studies of cosmology. The ability to use these data sets to
-achieve an order of magnitude improvement in constraints on our
+achieve an order of magnitude improvement in our constraints on our
 understanding of cosmology and dark energy will, however, depend on
 how well we can analyze, optimize, and calibrate data streams that are
 noisy and incomplete. This will require the development of
@@ -162,108 +163,54 @@ machine learning methods.
 
 On-line, data-driven analysis will require model-fitting and
 classifications that are non-parametric and probabilistic.  Gaussian
-Processes meet these requirements and we will, therefore, build our methods
-around them.  We note, however, objectives 2-4 below will result in 
-active learning algorithms that do
-not depend on this choice, and should be applicable to any
-regression or classification method that yields a probability distribution
-over outcomes.  We divide our
-research program into the following objectives.
+Processes (GPs) meet these requirements and we will, therefore, build our
+methods around them.  We note, however, objectives 2-4 below will result in
+algorithms that do not depend on this choice, and should be applicable to
+any regression or classification method that yields a probability
+distribution over outcomes.  We divide our research program into the
+following objectives.
 
-{\bf (1) Designing Robust Gaussian Processes.}  Figures \ref{fig:scatter}
-and \ref{fig:lnsum} below demonstrate that, ``out of the box,'' Gaussian
-Processes can already perform much better than other algorithms (both
-forward-fitting and data-driven) for model inference. Extending them
-to the future of big-data science will, however, require confronting problems not yet
-faced by automatic data analysis algorithms. {\it Model degeneracy} -- most model-fitting algorithms, including Gaussian
-Processes, are written to return an optimal value (whether a latent physical
-variable or a classification) and some error on that value.  This assumes that
-the true model obeys single-mode Gaussian statistics.  As future experiments
-continue to push the boundaries of our physical understanding, this assumption
-will cease to be valid and we will be forced to build algorithms that can
-accommodate multi-modal models obeying a wide range of probability
-distributions.  We propose a series of modifications that will allow Gaussian
-Processes to function in this regime.
-{\it Incomplete training data} -- the difficulty of experiments being attempted
-in high energy physics, astrophysics, and biology often means that, not only is
-the gathering of data expensive, it may not be possible in some regimes.  Future
-algorithms will need to be able to make inferences about models in regimes where
-training data is either very sparse or not available at all.  Because of their
-non-parametric design, Gaussian Processes are amenable to this kind of
-modeling and we propose additional modifications that will enhance their
-robustness against such incomplete training data.
+{\bf (1) Designing Robust Gaussian Processes.}  Applying GPs to the future
+of big data science will require confronting problems not yet addressed by
+automatic data analysis algorithms. Most model-fitting algorithms,
+including GPs, return a prediction and an error on that value that is
+unimodal and usually Guassian.  As future experiments push the boundaries
+of our physical understanding, this assumption will cease to be valid.  A
+particularly difficult case is where the data allows multiple
+interpretations and thus the real posterior belief about a variable should
+be multi-modal.  We propose new methods that allow GPs to provide these
+predictive distributions.  Experiments in high energy physics,
+astrophysics, and biology are not only expensive, but are also sometimes
+impossible in some regimes.  We need to make inferences across regimes
+where training data is either very sparse or not available at all and
+propose methods to do so in GPs.
 
-{\bf (2) Active Learning.} Supervised regression and classification algorithms
-require labeled data points for training.  These output labels are obtained
-through labeling by human experts and/or additional data collection.
-Often, the resources required (both in terms of human-hours and
-experimental apparatus) are considerable.  We propose to develop new
+{\bf (2) Active Learning.} Supervised regression and classification
+algorithms require labeled data points for training.  These output labels
+are obtained through labeling by human experts and/or additional data
+collection.  Often, the resources required (both in terms of human-hours
+and experimental apparatus) are considerable.  We propose to develop new
 algorithms to optimize the use of these resources by determining what event
 or object labels will maximize the improvement to models from supervised
-learning algorithms.  Our prototype implementation (see Figure \ref{fig:learning}) 
-using a classical
-heuristic on the problem of determing astronomical Doppler shifts (or
-redshifts) from broad-band photometric data already shows the promise of
-active learning in cosmology.  We propose novel algorithms based on new
-myopic criteria and increasing the computational scalability of lookahead
-methods that will greatly improve the accuracy and coverage of learned
-models.
+learning algorithms.
 
-{\bf (3) Active Feature Acquisition.}  Active Learning selects specific
-unknown events or objects for follow-up observation and classification
-by human experts.  Active Feature Acquisition further refines our
-inquiry by asking what kinds of follow-up observations will yield the
-most information about the unknown object.  We propose to extend our
-recent work on using Gaussian Processes (GPs) to detect damped
-lyman-alpha (DLA) systems \cite{Garnett12a}.  In that work GP
-regression was used on each observed, noisy spectrum to infer the
-latent spectrum.  The single independent (input) variable was
-wavelength.  In other problems (such as the identification of
-astronomical transients) there will be several input variables which
-we can choose to observe or ignore.  
-We will build an information-theoretical framework to make this choice.
-In the DLA work, a binary choice was made between models with and
-without a DLA.  DLAs were
-classified by recognizing which model fit best.  In the proposed work,
-we will learn a different model for each class of object and will
-estimate class probabilities using Bayes rule for combining the prior
-probability for each class and how well the respective models fit the
-observations.  We will apply these techniques to the challenge of
-characterizing and classifying the light curves of supernovae (used in measuring the
-cosmic acceleration) from data with poor temporal sampling,
-%increasing the number of supernovae that can be used for cosmological
-%experiments by an order of magnitude.  
-The key advantage of this
-approach is that the GPs naturally provide a mean and covariance for
-future unobserved observations (see Section \ref{sec:gp} for a more detailed
-discussion).  This uncertainty propagates through
-to class labels and we can use it to estimate the reduction in class
-uncertainty that will be gained by making a given observation at a
-specific time.  The observation yielding the greatest reduction in
-entropy for the class and the light curves for this object will be
-taken.
+{\bf (3) Active Feature Acquisition.}  Active learning selects specific
+unknown events or objects for follow-up observation and classification by
+human experts.  Active feature acquisition further refines the inquiry by
+asking what kinds of follow-up observations will yield the most information
+about the unknown object.  We will develop algorithms for this using
+Gaussian processes.
 
-{\bf (4) Active Search.} Often it is the anomalous events within large
-streams of data that lead to fundamental breakthroughs. We, therefore, require
-methods for
-rapidly identifying and classifying potentially novel events and objects
-while staying within the limited budget of additional experiments that
-might be undertaken to confirm these discoveries.
-This is an active search problem. The
-problem and the Bayesian optimal algorithm for it are described in our
-recent work \cite{Garnett11,Garnett12}.  As in active learning, the
-acquisition of class labels is expensive and we need to learn a model to
-predict these labels from limited input data. The final
-performance objective is, however, not the accuracy of the classifier, but rather the
-number of positives (i.e. objects from interesting classes)
-identified. Our previous work considered a binary classification problem: ``is
-the object `interesting' or not?''  We will extend this work to allow for
-classification according to a continuous scalar function or multiple discrete
-classes.  We will design algorithms that consider probability distributions
-across all possible classes and
-quantify how new observations will affect these
-distributions with an eye towards reducing the entropy, or some other
-information-theoretical measure of uncertainty.
+{\bf (4) Active Search.} Often it is the anomalous events or objects from
+rare classes within large streams of data that lead to fundamental
+scientific breakthroughs. We, therefore, require methods that allocate most
+observational resources to those objects.  This is an active search
+problem. As in active learning, the acquisition of class labels is
+expensive and we need to learn a model to predict these labels from limited
+input data. The final performance objective is, however, not the accuracy
+of the classifier, but rather the number of positives (i.e. objects from
+interesting classes) observed.  We will develop algorithms that do active
+search in combination with achieving the other objectives.
 
 % We
 %propose to use the simple myopic algorithm described in that work.  It
@@ -290,25 +237,24 @@ information-theoretical measure of uncertainty.
 %changed).
 
 {\bf (5) Science Outcomes.}  Data from the Dark Energy Survey will become
-publicly available over the term of this project (together with
-detailed simulations of the expected data flow from the LSST).  We
-will, therefore, use these data to demonstrate
-that the algorithms developed above will improve the cosmological
-reach of the DES and LSST in the areas of  
-improved determination of photometric
-redshifts (see Section \ref{sec:photoz}) and improved classification and online
-follow-up of transient astronomical objects (see Section \ref{sec:anoms}).  We will release our software
+publicly available over the term of this project (together with detailed
+simulations of the expected data flow from the LSST).  We will, therefore,
+use these data to demonstrate that the algorithms developed above will
+improve the cosmological reach of the DES and LSST in the areas of improved
+determination of photometric redshifts (see Section \ref{sec:photoz}) and
+improved classification and online follow-up of transient astronomical
+objects (see Section \ref{sec:transients}).  We will release our software
 publicly and seek collaborations where our algorithms may be spread to
 other sciences -- such as climatology and microbiology -- wherein complex
 systems can be modeled or measured at great expense and algorithms are
 required to determine which models and experiments are actually worth
 performing.
 
-Each of these goals will require us to develop algorithms to simultaneously
-learn the latent physical model underlying a given data set, the
-uncertainties around that model, and the potential information to be gained
-by futher studying a specific instance of the model (``event'' or
-``object'').
+% Each of these goals will require us to develop algorithms to simultaneously
+% learn the latent physical model underlying a given data set, the
+% uncertainties around that model, and the potential information to be gained
+% by futher studying a specific instance of the model (``event'' or
+% ``object'').
 
 \subsection{The Collaboration}
 
@@ -323,30 +269,31 @@ cosmology and statistics for over a decade (noted by the President
 of the American Statistical Association (ASA) as an exemplary
 interdisciplinary research team \cite{straf03}).
 
-Highlights from this collaboration include n-tree searching algorithms
-that make the calculation of n-point correlation functions scale to
-the size of current surveys \cite{GrayMoore} and that enable rapid
-characterization of orbital tracks in sparsely sampled temporal data
-\cite{kubica}. The software associated with these algorithms was made
-publicly available and has been used to compute the 2--point function
-on over 10$^6$ galaxies and the 3--point correlation function of
-400,000 galaxies from the SDSS survey
-\cite{Scranton2002,Szapudi2002,Nichol2006,mcbride2011a,mcbride2011b}
-as well as in measures of the marked correlation functions
-\cite{Skibba2006}.  As part of this collaboration \cite{yip2004a,
-  vdp2009, daniel2011} introduced to astrophysics signal compression
-and analysis techniques that are now regularly applied to the analysis
-of spectroscopic surveys. More recently this collaboration has
-developed algorithms for automatically classifying astronomical objects
-\cite{vdp2009,daniel2011} as well as an initial set of papers that use
-a simplified active learning method to accelerate the exploration of
-complex parameter spaces \cite{daniel2012}.  Schneider's group has led
-the development of several new methods of regularization to learn
-complex models with only a small amount of training data
+Highlights from this collaboration include n-tree searching algorithms that
+make the calculation of n-point correlation functions scale to the size of
+current surveys \cite{GrayMoore} and that enable rapid characterization of
+orbital tracks in sparsely sampled temporal data \cite{kubica}. The
+software associated with these algorithms was made publicly available and
+has been used to compute the 2--point function on over 10$^6$ galaxies and
+the 3--point correlation function of 400,000 galaxies from the SDSS survey
+\cite{Scranton2002,Szapudi2002,Nichol2006,mcbride2011a,mcbride2011b} as
+well as in measures of the marked correlation functions \cite{Skibba2006}.
+As part of this collaboration \cite{yip2004a, vdp2009, daniel2011}
+introduced to astrophysics signal compression and analysis techniques that
+are now regularly applied to the analysis of spectroscopic surveys. More
+recently this collaboration has developed algorithms for automatically
+classifying astronomical objects \cite{vdp2009,daniel2011} as well as an
+initial set of papers that use a simplified active learning method to
+accelerate the exploration of complex parameter spaces \cite{daniel2012}.
+Schneider's group has led the development of new methods of regularization
+to learn complex models with only a small amount of training data
 \cite{YiZhangICML2010,YiZhangSDM2010,YiZhangMultitask2010,YiZhang2011multiECOC,YiZhang2012},
-for non-parametric estimators for divergences and dependencies
-\cite{poczos11alphadiv,Poczos2011UAI,poczos12CVPR}, and for graphical
-models for finding groups of collectively anomalous records \cite{Xiong2011gad,xiong2011fgm}.
+new non-parametric estimators for divergences and dependencies
+\cite{poczos11alphadiv,Poczos2011UAI,poczos12CVPR}, and new graphical
+models for finding groups of collectively anomalous records
+\cite{Xiong2011gad,xiong2011fgm}.  Most recently, his group's work on
+active search and active learning provides some starting points for the
+proposed effort \cite{Tesch13,Wang13,Sutherland13,Garnett12}.
  
 Connolly leads the University of Washington data management group that
 develops the algorithms and techniques for the real-time analysis of
@@ -479,7 +426,7 @@ the probability distributions underlying the data.
 We believe that this framework
 is the most robust and informative available.  It will allow us
 to learn, not only
-the models underlying the data, but the uncertainties surrounding those models,
+the models underlying the data, but the uncertainties surrounding these models,
 and the potential information to be gained from different follow-up
 observations.  These three inferences will be critical in an age of
 research with low tolerance for uncertainty and limited budgets for
@@ -492,10 +439,10 @@ We will build this new framework on the foundation of Gaussian Processes.
 
 
 Gaussian processes (GPs) model the output of an unknown, noisy function
-in multi-dimensional input space
+in multi-dimensional data space
 such that any set of samples from it has a joint multivariate Gaussian
 distribution \cite{gp}.  Given a set of observed samples from the function's
-input space, a GP
+data space, a GP
 can make predictions about a set of other locations and assign these
 predictions a multivariate Gaussian distribution.  An important
 feature of GPs is that they do not make parametric assumptions about the
@@ -509,7 +456,7 @@ expansion history of the universe \cite{ericgp} and interpolating point
 spread functions across large images \cite{psf}.  Mahabal {\it et al}. (2008b) 
 and Wang {\it et al}. (2011,
 2012) use a mixture of Gaussian Processes to model light curves and
-identify periodically varying sources.  Huijse {\it et al}. (2011, 2012)
+identify periodically varying sources.  Huisje {\it et al}. (2011, 2012)
 improve upon their methods, using information-theoretical quantities to
 separate the true period of these variations from systematics introduced by
 observational apparatus.  The PIs have used GPs to accelerate the search of
@@ -524,7 +471,7 @@ form $\{\vec{\theta},y\}$, where $\vec{\theta}$ is an $N_p$-dimensional
 vector representing the measured data (input) and $y = f(\vec{\theta})$ is the
 latent quantity (output) we are trying to infer.  $f$ is assumed to be a
 probabilistic function on the $N_p$-dimensional space with some covariance
-function relating pairs of points on the input space, such as a squared
+function relating pairs of points on the function, such as a squared
 exponential covariance,
 \begin{equation}
 \label{eq:covariogram}
@@ -574,18 +521,21 @@ with complex degeneracies.  We demonstrate this with the following problem.
 \subsection{Photometric redshifts: a Gaussian Process case study}
 \label{sec:photoz}
 
-One science use case for the algorithms proposed here is the problem of learning
-photometric redshifts.  Any attempt to solve the astrophysical problem of dark
-energy requires measuring the cosmological Doppler shift of light from hundreds of
-millions of galaxies.  Directly measuring the spectra of these galaxies is
-prohibitively expensive.  Measuring their brightness in a handful of broadband
-filters (i.e., taking their photometry), is several thousand times cheaper. 
-For this reason, surveys such as the DES and the LSST are designed to exclusively take
-photometric data and rely on algorithmic researchers to deliver ways
-of inferring a relationship between a galaxy's observed photometry (usually in five or
-six bands) and its true redshift.
+One science use case for the algorithms proposed here is the problem of
+learning photometric redshifts.  Any attempt to solve the astrophysical
+problem of dark energy requires measuring the cosmological Doppler shift of
+light from hundreds of millions of galaxies.  These redshifts can be
+determined very accurately from spectra, but directly measuring the spectra
+of these galaxies is prohibitively expensive.  Measuring their brightness
+in a handful of broadband filters (i.e., taking their photometry), is
+several thousand times cheaper.  For this reason, surveys such as the DES
+and the LSST are designed to exclusively take photometric data and rely on
+researchers to develop algorithms for estimating a galaxy's true redshift
+from its observed photometry (usually in five or six bands).  Because of
+the cost, only a few spectrographically determined redshifts are available
+to help train these algorithms.
 
-Photometric redshifts are principally determined using
+In current practice, Photometric redshifts are principally determined using
 forward-fitting models.  Cosmologists assume that they can model the rest frame
 spectra of any galaxy.  These spectral models are
 redshifted and integrated over the profile of an experiment's
@@ -607,9 +557,8 @@ While many of the galaxies fall near the
 $z_\text{photometric}=z_\text{spectroscopic}$ line, there is significant scatter
 in the results due to degeneracies between the color and redshift of a
 galaxy.  Figure \ref{subfig:gp} plots the results from running the same
-simulated galaxies through GP-based algorithm that attempts to learn the full
-probability distribution $P(z_\text{photometric})$ over the output.  
-There is much less scatter
+simulated galaxies through a GP-based algorithm that attempts to learn the full
+probability distribution $P(z_\text{photometric})$.  There is much less scatter
 in this case than in the case of the forward-fitting modeling of EAZY.
 
 \begin{figure}[th]
@@ -626,14 +575,14 @@ Photometric redshift plotted
 against true spectroscopic redshift for 48,000 simulated LSST galaxy
 observations.  Photometric redshifts are derived using the
 EAZY template-fitting
-algorithm (a forward-fitting model) in Figure \ref{subfig:eazy} and
+algorithm (a forward model) in Figure \ref{subfig:eazy} and
 our GP based algorithm in Figure \ref{subfig:gp}.
 }
 \label{fig:scatter}
 \end{figure}
 
 Other data-driven algorithms for photometric redshift determination do exist. 
-An example of these is the publicly-available code ANNz \cite{annz},
+An example of these is the publically-available code ANNz \cite{annz},
 which is based on an artificial neural network scheme.
 In this case, the principal
 shortcoming the method is that the artificial neural network
@@ -695,11 +644,11 @@ framework will be required.
 
 GPs are already designed to handle input data that is sparsely
 sampled.  Equation \ref{eq:cov} gives the GP the freedom to declare a large
-uncertainty in regions of input space where there is no training data.  However,
+uncertainty in regions of data space where there is no training data.  However,
 in order to deliver on the science results required by DES, LSST, and other
 big-data surveys, it is not enough that $\Sigma_q$ be large where the model is
 uncertain.  We require that the inferred 
-value $f(\vec{\theta}_q)$ in equation \ref{eq:mean} be an accurate
+value $f_q$ in equation \ref{eq:mean} be an accurate
 representation of the true underlying model.  
 We propose to achieve this in several ways.
 
@@ -707,17 +656,17 @@ We propose to achieve this in several ways.
 \item New mean function models -- as presented,
 equation \ref{eq:mean} sets the value of $\bar{y}$ to the algebraic mean of the
 training outputs $\vec{y}$.  This assumes that the GP for all 
-query inputs $\vec{\theta}_q$
+parameters $\vec{\theta}_q$
 starts from the same value and equation \ref{eq:mean} expands the
-departures about that value.  
+departures from that value.  
 We will evaluate models more complex than the algebraic
 mean but simpler than the GP, which can be used to give a more informative value
 for $\bar{y}$ such that it interpolates over gaps in the training data.  We propose
 to experiment with such functions including the development of a basis
-function representation of the $\bar{y}$ models. A preliminary analysis using
+function representation of the function models. A preliminary analysis using
  principal component
 analysis on the input $\{\vec{\theta}\}$ to set $\bar{y}$ according to a linear
-regression on the principal components most correlated with the outputs $\vec{y}$
+regression on the principal components most correlated with the outputs $\vec{y}$.
 gives an slight improvement on the peformance of
 GP as a function regressor.
 
@@ -725,9 +674,9 @@ GP as a function regressor.
 length scale $\ell$ in the covariance function $K_{ij}$ is presented
 as a parameter to be optimized by cross-validation.  This, again, selects a
 single value for $\ell$ for all possible $\vec{\theta}_q$, regardless of
-$\vec{\theta}_q$'s position in the input space.  We will develop 
+$\vec{\theta}_q$'s position in the data space.  We will develop 
 dynamic algorithms based on the covariance
-structure present within the input $\{\vec{\theta},y\}$  
+structure present within the input $\{\vec{\theta}\,y\}$  
 for setting $\ell$ so that highly-sampled 
 training data will
 return small $\ell$ (tightly coupling the GP to the training data) and
@@ -741,10 +690,10 @@ was assumed.
 %While this certainly resulted in acceptable behavior in
 %our test cases, 
 It is, however, by no means guaranteed that the choice we made (a Gaussian
-function in input space) will always be the best.  
+function in data space) will always be the best.  
 We will explore ways
 to enable the GP to learn the most appropriate form of 
-the covariance function
+the covariogram
 based on the training data at hand. Examples of this include setting the
 form of the covariance function
 using cross-validation and information-theoretical
@@ -780,17 +729,16 @@ model likelihood of the single-mode model.
 \item Repeat steps 3-5 for three-mode, four-mode, etc. models until
   the system converges to the best fit to the training data.
 \end{enumerate}
-Through this iterative approach, we expect to build  GPs such that, even when they
-succumb to the degeneracies seen in Figure \ref{subfig:gp}, they will still place
+Through this iterative approach, we expect to build  GPs such that, even when it
+succumbs to the degeneracies seen in Figure \ref{subfig:gp}, it will still place
 significant probability density at the true
 $z_\text{photometric}=z_\text{spectroscopic}$ value.  This will represent a
-signtificant improvement over current model-learning algorithms (i.e. neural networks), 
-which are
-principally concerned with returning a learned value $f(\vec{\theta}_q)$ 
-for the model function and
-some heuristic estimate for the uncertainty $\Sigma_q$.
+signtificant improvement over current model-learning algorithms, which are
+principally concerned with returning a learned value for the model function and
+some heuristic estimate for the uncertainty (i.e. neural networks).
 
 \section{Active Learning}
+\label{sec:active_learning}
 
 A generic active learning algorithm takes the following form:
 
@@ -853,12 +801,7 @@ and weight them by the estimated probability of each outcome.  For each
 outcome, it would then consider what next point it would choose if it
 received that outcome.  The tree expands down to a depth equal to the
 number of data points that will be chosen and at the leaf every possible
-model would be learned and evaluated.  
-The algorithm does not actually choose a new point to label (i.e., make the
-decision signified by the root of the tree) until
-it has extrapolated all possible choices out to every possible leaf 
-and determined which of the original choices is optimal.
-Since the number of leaves is
+model would be learned and evaluated.  Since the number of leaves is
 exponential in the depth of the tree, this quickly become intractable.  A
 typical solution (referred to as myopic) is to truncate the tree to zero or
 one level.  A second speedup is often obtained by replacing a full model
@@ -878,8 +821,8 @@ A myopic information gain (change in entropy) strategy looks ahead one step
 and chooses the data point that minimizes the expected entropy (monotonic
 in $\det(\Sigma_q)$).  Even this can be expensive since it requires the
 computation of the determinant.  An alternative is minimizing the average
-variance $\text{tr}(\Sigma_q)$ (also known as V-optimality).  A further
-approximation is to do no lookahead and simply choose the data point
+variance $\text{tr}(\Sigma_q)$, also known as V-optimality).  A further
+approximation is to do no look ahead and simply choose the data point
 corresponding to the largest diagonal element in $\text{tr}(\Sigma_q)$.  This is
 known as uncertainty sampling.
 
@@ -903,13 +846,17 @@ We propose the following new methods:
   literature and we will also analyze theoretically when and why it
   outperforms the alternatives.
 
-\item It is clear that we can improve performance by looking ahead further
-  (e.g. see Garnett {\it et al}. (2012a)).  We propose to develop pruning rules that
-  will allow us to lookahead further using our improved models.  The rules
-  will have the ability to trade off the aggressiveness of pruning, and
-  thus the amount of look ahead allowed, against the approximation
-  accuracy.  We will investigate when the additional lookahead allowed
-  more than compensates for the errors induced by pruning.
+\item We can improve performance if we find the computational tricks needed
+  to look ahead further.  Previously, we published a method for increasing
+  look ahead in an active search problem by pruning the search tree
+  \citet{Garnett12}.  It drastically reduces computation while provably
+  returning the correct answer (i.e. not an approximation).  We propose to
+  develop analogous pruning rules for the active learning problem.  We will
+  further extend both methods by developing approximate pruning rules that
+  trade off the aggressiveness of pruning, and thus the amount of look
+  ahead allowed, against approximation accuracy.  We will investigate when
+  the additional look ahead allowed more than compensates for the errors
+  induced by aggressive pruning.
 
 \end{itemize}
 
@@ -940,14 +887,13 @@ We propose the following new methods:
 
 \begin{figure}[t]
 \centerline{
-\includegraphics[scale=0.3]{learning_curve.png}
+\includegraphics[scale=0.4]{learning_curve.png}
 }
 \caption{
-Active learning applied to classification according to photometric redshifts, 
-i.e. a scalar function on a
-6-dimensional input space.  The horizontal axis is the size of the training data
+Active learning applied to classification according to a scalar function on a
+6-dimensional data space.  The horizontal axis is the size of the training data
 set.  The vertical axis is the mean value of the output probability distribution
-at the true value of the redshift.  The black curve assembles the
+at the true value of the scalar function.  The black curve assembles the
 training set randomly.  The red curve selects new training points that maximize
 the figure of merit $\left(-\ln[P(\text{mode})]\right)$.
 }
@@ -955,7 +901,7 @@ the figure of merit $\left(-\ln[P(\text{mode})]\right)$.
 \end{figure}
 
 In both empirical and forward-fitting photometric redshift codes, biases
-arise from the fact that the distribution of training samples (or templates)
+arise from the fact that the distribution of training samples (templates)
 is not the same in color and redshift space as the data the model will be
 applied to.  Additional issues include the fact that some regions of color
 space and some redshifts are more difficult to learn (require more training
@@ -981,48 +927,117 @@ leads to a significant improvement in the classifier's performance.
 This study was done in a high signal-to-noise regime.  It takes no account
 of the relative cost of doing one measurement or another.  No gaps exist in
 the available training data.  These are all challenges that real-world
-machine learning algorithms will face (see Section~\ref{sec:sparse}). 
-We will demonstrate our novel
+machine learning algorithms will face (see Section~\ref{sec:sparse}.  We will demonstrate our novel
 methods on real data sets that contain all these additional challenges.
 
+\begin{figure}[th]
+\centerline{
+\includegraphics[scale=1.0]{rrlyrae.png}
+}
+\caption{
+Taken from \citet{rrlyrae} the left panels shows the expected
+sampling of
+a light curve by the LSST at its main survey cadence (top left) and
+for a higher sampling rate that will be employed for 10\% of the LSST
+survey (bottom left). The right panels shows a measure of the  how well
+the light curves can be phased (i.e.\ combining the observations while solving
+for the periodicity of the data). This illustrates the significant effect
+on scientific output of more and more targeted data.}
 
-\section{Active Feature Acquisition:
-Anomaly Detection and Classification in Massive Data
- Streams}
-\label{sec:anoms}
+\label{fig:RRLyrae}
+\end{figure}
 
+\subsection{Active Learning for Transient Classification}
+\label{sec:transients}
 
-While the problem of photometric redshift determination is fertile ground for
-the development of active learning algorithms, it poses little challenge for
-active feature acquisition: for a given experiment, the photometric filters are
-often immutable. Survey cosmology, however, presents us with another 
-problem, the identification and classification of transient sources,
-which raises both the questions ``which objects should we
-follow-up?'' and ``what observations should we make of them?''
-With timescales as short as seconds to hours we require the ability to
-identify, classify and report any detection in time to allow for
-follow-up observations before the initial outburst
-fades. Identification and classification must, therefore, be
-undertaken in almost real-time with probabilistic classifications that
-incorporate our uncertainties about our classification together with
-the ability for algorithms to learn based on a posteriori information
-from earlier classifications.  Algorithms must be able to predict what
-additional information might be needed to improve (or exclude) the
-likelihood of a given classification and to specify which parameters
-led to the source being classified as anomalous. Small errors in the
-identification and classification of these anomalous sources will
-swamp any underlying signal. The LSST will detect 7.5x10$^8$ sources
-{\bf every night}. Even for the most numerous transient events (SNe)
-this corresponds to less than 10$^{-5}$ of the total number of sources
-identified being transient. For the most energetic bursters the
-magnitude of the challenge is 500-fold larger.  Algorithms for
-identifying anomalies and variability must, therefore, be robust to
-false positives and missing data and must account for the cadence in
-how we sample the time domain, variations in the quality of the data
-due to atmospheric conditions, changes in the performance of the
-telescope and camera and the possibility that we observe sources at
-different wavelengths at different times.
+Real-time automatic recognition and classification of transient objects and
+events is already widely acknowledged as a necessary support technology for
+the forthcoming age of survey cosmology
+\cite{djorgovski2011,richards2011,richards2012,graham2012,mahabal2008a,mahabal2011a}.
+The transient classification problem mirrors the photometric redshift
+problem.  It is cheap and easy to get the initial observations of many
+transients.  LSST will find thousands of them every night.  However,
+obtaining an accurate ground-truth label of the object's type requires the
+detection to be followed-up with other telescopes to measure the light
+curves over time in multiple bands.  Getting a final label may also require
+a human expert to analyze the light curves.  All of this is expensive.  As
+with photometric redshifts, we propose to use our active learning
+algorithms to choose which transients should be followed up.  
 
+A great deal of work has already been accomplished developing algorithms
+that can learn the classification of a transient object given data that are
+well sampled and that are analysed in a batch mode. Even with these
+idealized data sets misclassification rates are typically 30\% or greater.
+For the DES and the LSST data streams these challenges are exacerbated as
+the data are poorly sampled in the temporal domain and the classifications
+must be undertaken in almost real-time (within 60s of an observation for
+the case of the LSST).  For the case of the LSST 90\% of the data will be
+sampled at a rate 20-times less than the highest cadence (with the highest
+sampling rates undertaken in the ``Deep Drilling Fields'').
+Figure~\ref{fig:RRLyrae} shows how this reduction in sampling degrades our
+ability to constrain a light curve (and thereby classify a source).
+
+We propose to break down the observations of a given object into $\{\Delta
+m,\Delta t\}$ pairs (where $m$ is brightness and $t$ is time) as an input
+to a GP regression and then classify the object based on that
+reconstruction. Extension of the GP to return a probabilistic
+reconstruction will enable active learning as well as the active feature
+acquisition and active search algorithms described in the next section. For
+lower signal-to-noise observations we propose to build the classification
+model using basis functions derived from a decomposition of light curves
+learned from the ``Deep Drilling Fields'' data (i.e.\ data with high
+temporal sampling).
+
+\subsubsection{Transients: Additional Challenges}
+
+Transient objects present many additional challenges not addressed by a
+basic active learning algorithm.  A decision to follow up is not done only
+with the goal of improving the learned model.  The overarching science
+dictates that some transients are of a more valuable type than others and
+thus we want to maximize the number and quality of the light curves we
+collect from them independently of any model learning considerations.  For
+example, an object that doesn't fall into any existing class is especially
+interesting while an object that turns out not to be a transient at all
+(i.e. detected only because of noise) is scientifically worthless.  While
+the latter might be valuable for improving our classifier, we ultimately
+want to maximize the follow-ups done on the former.  This is called the
+{\em active search problem}.
+
+A second challenge is that follow up is not a single binary decision.
+Choices must be made about what color bands to measure and at what timing
+and frequency.  These choices might be revisited continously throughout the
+follow up process.  This is called the {\em active feature selection
+  problem}.
+
+Transient classification and active learning must be done in real
+time.  Where an object's spectrographic redshift could be measured years
+after its photometry was collected, a decision to follow up on a transient
+must be taken in seconds or minutes. Otherwise, valuable transient data
+might pass before it can be captured.  With timescales as short as seconds
+to hours we require the ability to identify, classify and report any
+detection in time to allow for follow-up observations before the initial
+phenomenon fades.
+
+Finally, small errors in the identification and classification of transient
+sources will swamp the system.  The LSST will detect 7.5x10$^8$ sources
+{\bf every night}.  Even for the most numerous transient events (SNe), less
+than 10$^{-5}$ of the total number of sources will belong to this class.
+The most energetic bursters are 500 times rarer.  Algorithms for
+identifying anomalies and variability must, therefore, be robust to false
+positives and missing data and must account for the cadence in how we
+sample the time domain, variations in the quality of the data due to
+atmospheric conditions, changes in the performance of the telescope and
+camera and the possibility that we observe sources at different wavelengths
+at different times.
+
+All of these issues arise in the real-time data collection of any science
+interested in the dynamics of a physical system.  Interestingly, the
+problem is increasingly present in simulation efforts.  As simulations get
+larger, it is impossible to store all the data and online decisions must be
+made about what simulated variables and events merit the limited disk space
+available.  While we focus our demonstration and testing on astronomical
+transients, our core algorithms will be generic enough to apply across
+other scientific applications.
 
 %The next generation of astrophysical surveys will visit the same
 %region of sky many thousands of times. This opening of the temporal
@@ -1052,57 +1067,93 @@ different wavelengths at different times.
 %universe by an order of magnitude.
 %
 
+\section{Active Search}
+\label{sec:active_search}
 
+The active search problem and the Bayesian optimal algorithm for it are
+described in our recent work \cite{Garnett11,Garnett12}.  An active search
+algorithm proceeds exactly as the generic active learning algorithm give in
+section \ref{sec:active_learning}.  Data is collected and the model is
+improved.  The difference is the ultimate objective function.  Rather than
+being evaluated on model quality with accuracy or log-likelihood, the goal
+is to maximize the sum of the value of the objects selected for labeling.
+For this discussion we simplify to a problem with only two classes: a
+positive class worth one point and a negative class worth nothing.  A good
+algorithm will still choose points that improve its model because the model
+will help it find more positives in the future.  The tradeoff between
+selecting known positives versus improving the model in the hopes of
+finding more later is well known as the exploration/exploitation tradeoff.
 
+As with active learning, an optimal algorithm would look like the search
+tree in fig. \ref{fig:searchtree}.  The difference is that the evaluation
+in each leaf is the computation of the number of positives found.  A
+computationally efficient active search method needs to find ways to cut
+the search short and/or replace the computation of expensive expectations
+with simple heuristics.  We propose the following new methods:
 
-\begin{figure}[th]
-\centerline{
-\includegraphics[scale=1.0]{rrlyrae.png}
-}
-\caption{
-Taken from \citet{rrlyrae} the left panels shows the expected
-sampling of
-a light curve by the LSST at its main survey cadence (top left) and
-for a higher sampling rate that will be employed for 10\% of the LSST
-survey (bottom left). The right panels shows a measure of the  how well
-the light curves can be phased (i.e.\ combining the observations while solving
-for the periodicity of the data). This illustrates the significant effect
-on scientific output of more and more targeted data.}
+\begin{itemize}
 
-\label{fig:RRLyrae}
-\end{figure}
+\item Approximate pruning rules in the spirit of the exact rules in
+  \cite{Garnett12} that can trade off accuracy for search speed.
 
+\item In \cite{Wang13} we showed how to combine an exact one-step myopic
+  evaluation with an approximation of the future impact on positives found
+  to achieve results better than expensive look aheads on graph problems.
+  We will develop analogous methods for Euclidean spaces and multi-class or
+  real-valued outcomes, and will seek a theoretical characterization of the
+  performance.
 
-\subsection{Active Learning for Transient Classification}
+\item There is a large literature on bandit problems including the optimal
+  algorithms derived from allocation indices when the alternatives are
+  independent (see \cite{Gittin89}) and the more recent approaches based on
+  obtaining provable regret bounds (see \cite{Auer02} and the extensive
+  work after it).  Bandit problems are about finding good choices and
+  exploiting them repeatedly.  Active search is different because each
+  selection pays off at most once and the key is using that information to
+  quickly find other valuable selections.  Nonetheless, there are
+  similarities and we will investigate when and how bandit algorithms can
+  be adapted to do active search.
 
-Real-time automatic classification of objects is already widely
-acknowledged as a necessary support technology for the forthcoming age
-of survey cosmology
-\cite{djorgovski2011,richards2011,richards2012,graham2012,mahabal2008a,mahabal2011a}.
-A great deal of work has already been accomplished developing
-algorithms that can learn the classification of an object given data
-that are well sampled and that are analysed in a batch mode. Even with these
-idealized data sets misclassification rates are typically 30\% or
-greater.  For the DES and the LSST data streams these challenges
-are exacerbated as the data are poorly sampled in the temporal domain
-and the classifications must be undertaken in almost real-time (within
-60s of an observation for the case of the LSST).  For the case of the
-LSST 90\% of the data will be sampled at a rate 20-times less than the
-highest cadence (with the highest sampling rates undertaken in the
-``Deep Drilling Fields'').  Figure~\ref{fig:RRLyrae} shows how this
-reduction in sampling degrades our ability to constrain a light curve
-(and thereby classify a source).
+\end{itemize}
 
-We propose to break down the observations of a given object into
-$\{\Delta m,\Delta t\}$ pairs (where $m$ is brightness and $t$ is
-time) as an input to a GP regression and then classify the object
-based on that reconstruction. Extension of the GP to return a
-probabilistic reconstruction will enable {\bf XXX something}. For
-lower signal-to-noise observations we propose to build the
-classification model using basis functions derived from a
-decomposition of light curves learned from the ``Deep Drilling
-Fields'' data (i.e.\ data with high temporal sampling).
+\section{Active Feature Acquisition}
 
+We propose to extend our
+recent work on using Gaussian Processes (GPs) to detect damped
+lyman-alpha (DLA) systems \cite{Garnett12a}.  In that work GP
+regression was used on each observed, noisy spectrum to infer the
+latent spectrum.  The single independent (input) variable was
+wavelength.  In other problems (such as the identification of
+astronomical transients) there will be several input variables which
+we can choose to observe or ignore.  
+We will build an information-theoretical framework to make this choice.
+In the DLA work, a binary choice was made between models with and
+without a DLA.  DLAs were
+classified by recognizing which model fit best.  In the proposed work,
+we will learn a different model for each class of object and will
+estimate class probabilities using Bayes rule for combining the prior
+probability for each class and how well the respective models fit the
+observations.  
+%increasing the number of supernovae that can be used for cosmological
+%experiments by an order of magnitude.  
+The key advantage of this
+approach is that the GPs naturally provide a mean and covariance for
+future unobserved observations (see Section \ref{sec:gp} for a more detailed
+discussion).  This uncertainty propagates through
+to class labels and we can use it to estimate the reduction in class
+uncertainty that will be gained by making a given observation at a
+specific time.  The observation yielding the greatest reduction in
+entropy for the class and the light curves for this object will be
+taken.
+
+ Our previous work considered a binary classification problem: ``is
+the object `interesting' or not?''  We will extend this work to allow for
+classification according to a continuous scalar function or multiple discrete
+classes.  We will design algorithms that consider probability distributions
+across all possible classes and
+quantify how new observations will affect these
+distributions with an eye towards reducing the entropy, or some other
+information-theoretical measure of uncertainty.
 
 \subsection{Group-based Active Feature Acquisition and Active Search
 for Transient Classification}
@@ -1118,12 +1169,10 @@ The input features for transient object classification will be
 a variable combination photometric
 and morphologic measures taken at different increments in time. With
 this proposal we will  introduce an information-theoretical approach 
-based on the output probability distributions generated by our next generation GPs 
-which will allow
-us determine the utility of different types of follow-up observation
-in real time as observations are made,
+based on the output covariance matrix of equation \ref{eq:cov} which will allow
+us to perform a similar determination in real time as observations are made,
 directing experiments as they are performed.
-These determinations will not be based on cross-validation testing,
+We will not choose our follow-up observations based on cross-validation testing,
 but rather based on which observations we expect to yield the most significant
 decreases in the entropy of our probabilistic model.
 Huijse {\it et al}. (2011,2012) use a similar scheme to find the correlation
@@ -1183,7 +1232,7 @@ full range of classifications.
 %interested in it or the object class and light curves are characterized
 %well enough that no more observations are required.
 
-\subsection{Caching structures for computational efficiency for
+\section{Caching structures for computational efficiency for
   real-time classification}
 \label{sec:computationalefficiency}
 
@@ -1252,6 +1301,12 @@ standard cloud computing paradigms \cite{gard07} and expect our
 efforts on efficient algorithms and parallelization to yield speedups
 that compound.
 
+\section{Combination}
+
+The final task is to combine the best methods for active learning, search,
+and feature acquisition into a single algorithm that performs all of them
+simultaneously.
+
 \section{Timeline, Development Plan, and Responsibilities}
 
 We will focus on multiple projects in each of the three years of this
@@ -1274,9 +1329,9 @@ distributions.
 GPs.  Test the algorithm against data from the SDSS, DES, and simulated LSST.
 
 \item (Schneider) Develop active learning methods optimized for our next generation GPs.
-Initially focus on myopic criteria, selecting data for follow up whose classification
-considered in a vacuum is the most advantageous.  Subsequently develop methods to implement
-one- and two-step-lookahead criteria.
+We will initially develop myopic criteria, selecting data for follow up whose classification
+considered in a vacuum is the most advantages.  We will then develop methods to implement
+one- and two-step-look-ahead criteria.
 
 \item (Connolly) Test the developed active learning methods on photometric redshift data.
 
@@ -1292,9 +1347,9 @@ any researcher using any data set.
 
 \item (Schneider)
 Develop active feature acquisition algorithms based on the probability distributions
-output by our next generation GPs.  Use them to determine what additional
+output by our next generation GPs.  We will use them to determine what additional
 information (e.g., morphological or angular correlation function) provides the most
-helpful supplemental information in the case of photometric redshifts.
+helpful supplement information in the case of photometric redshifts.
 
 \item (Connolly) Extend our next generation GPs to the problem of 
 transient-classification.  Analyze stellar
@@ -1334,7 +1389,6 @@ data from any experiment and receive appropriate follow-up recommendations.
 \newpage
 
 
-
 \begin{thebibliography}{99}
 
 \bibitem[Abazajian {\it et al}. 2009]{Abazajian:2008wr}
@@ -1344,35 +1398,35 @@ data from any experiment and receive appropriate follow-up recommendations.
   [arXiv:0812.0649 [astro-ph]].
   %%CITATION = APJSA,182,543;%%
 
-%\bibitem[Abdalla {\it et al}. 2011]{abdalla}
-%Abdalla,~F.~B., Banerji,~M., Lahav,~O., and Rashkov,~V. 2011,
-%Monthly Notices of the Royal Astronomical Society {\bf 417}, 1891
+\bibitem[Abdalla {\it et al}. 2011]{abdalla}
+Abdalla,~F.~B., Banerji,~M., Lahav,~O., and Rashkov,~V. 2011,
+Monthly Notices of the Royal Astronomical Society {\bf 417}, 1891
 
-%\bibitem[Abramo {\it et al}. 2012]{narrow}
-%Abramo,~L.~R., Strauss,~M.~A., Lima,~M., Hern\'andez-Monteagudo,~C., Lazkoz,~R.,
-%Moles,~M., de Oliveira,~C.~M., Sendra,~I., Sodr\'e Jr.,~L., and
-%Storchi-Bergmann,~T. 2012, Monthly Notices of the Royal Astronomical Society
-%{\bf 423}, 3251
+\bibitem[Abramo {\it et al}. 2012]{narrow}
+Abramo,~L.~R., Strauss,~M.~A., Lima,~M., Hern\'andez-Monteagudo,~C., Lazkoz,~R.,
+Moles,~M., de Oliveira,~C.~M., Sendra,~I., Sodr\'e Jr.,~L., and
+Storchi-Bergmann,~T. 2012, Monthly Notices of the Royal Astronomical Society
+{\bf 423}, 3251
 
-%\bibitem[Albrecht {\it et al}. 2006]{detf}
-%Albrecht,~A., Bernstein,~B., Cahn,~R., Freedman,~W.~L., Hewitt,~J.,
-%Hu,~W., Huth,~J., Kamionkowski,~M., Kolb,~E., Knox,~L., Mather,~J.~C.,
-%Staggs,~S., Suntzeff,~N.~B. (Dark Energy Task Force) 2006,
-%``Report of the Dark Energy Task Force,''
-%\verb|http://jdem.gsfc.nasa.gov/science/DETF_Report.pdf|
+\bibitem[Albrecht {\it et al}. 2006]{detf}
+Albrecht,~A., Bernstein,~B., Cahn,~R., Freedman,~W.~L., Hewitt,~J.,
+Hu,~W., Huth,~J., Kamionkowski,~M., Kolb,~E., Knox,~L., Mather,~J.~C.,
+Staggs,~S., Suntzeff,~N.~B. (Dark Energy Task Force) 2006,
+``Report of the Dark Energy Task Force,''
+\verb|http://jdem.gsfc.nasa.gov/science/DETF_Report.pdf|
 
 
 \bibitem[Berg\'e {\it et al}. 2012]{psf}
 Berg\'e,~J., Price,~S., Amara,~A., and Rhodes,~J. 2012,
 Monthly Notices of the Royal Astronomical Society {\bf 419}, 2356
 
-%\bibitem[Blocker and Protopapas 2013]{blocker2013}
-%Blocker, Alexander W. and Protopapas, Pavlos 2013, arXiv:1301.3027
+\bibitem[Blocker and Protopapas 2013]{blocker2013}
+Blocker, Alexander W. and Protopapas, Pavlos 2013, arXiv:1301.3027
 
-%\bibitem[Bloom {\it et al}. 2011]{bloom2011}
-%Bloom,~J.~S., Richards,~J.~W., Nugent,~P.~E., Quimby,~R.~M., Kasliwal,~M.~M.,
-%Starr,~D.~L., Posnanski,~D., Ofek,~E.~O., Cenko,~S.~B., Butler,~N.~R.,
-%Kulkarni,~S.~R., Gal-Yam,~A., and Law,~N. 2011 [arXiv:1106.5491]
+\bibitem[Bloom {\it et al}. 2011]{bloom2011}
+Bloom,~J.~S., Richards,~J.~W., Nugent,~P.~E., Quimby,~R.~M., Kasliwal,~M.~M.,
+Starr,~D.~L., Posnanski,~D., Ofek,~E.~O., Cenko,~S.~B., Butler,~N.~R.,
+Kulkarni,~S.~R., Gal-Yam,~A., and Law,~N. 2011 [arXiv:1106.5491]
 
 \bibitem[Bonfield {\it et al}. 2010]{bonfield}
 Bonfield,~D.~G., Sun,~Y., Davey,~N., Jarvis,~M.~J., Abdalla,~F.~B.,
@@ -1387,10 +1441,10 @@ The Astrophysical Journal {\bf 686}, 1503
 Brink, Henrik, Richards, Joseph W., Poznanski, Dovi, Bloom, Joshua S., Rice,
 John, Negahban, Sahand, and Wainwright, Martin 2012, arXiv:1209.3775
 
-%\bibitem[Bryan 2007]{brentsthesis}
-%Bryan, B., 2007, Ph.D. thesis
-%\verb|http://reports-archive.adm.cs.cmu.edu/anon/|
-%\verb|ml2007/abstracts/07-122.html|
+\bibitem[Bryan 2007]{brentsthesis}
+Bryan, B., 2007, Ph.D. thesis
+\verb|http://reports-archive.adm.cs.cmu.edu/anon/|
+\verb|ml2007/abstracts/07-122.html|
 
 \bibitem[Bryan {\it et al}. 2007]{bryan}
 Bryan, B., Schneider, J., Miller, C.~J., Nichol, R.~C., Genovese, C., and
@@ -1404,13 +1458,13 @@ Budav\'ari,~T. 2008 The Astrophysical Journal {\bf 695}, 747
 Collister,~A.~A. and Lahav,~O. 2004,
 Publications of the Astronomical Society of the Pacific {\bf 116}, 345
 
-%\bibitem[Connolly {\it et al}. 2005]{imsim}
-%Connolly,~A.~J., Peterson,~J., Jernigan,~J.~G., Abel,~R., Bankert,~J.,
-%Chang,~C., Claver,~C.~F., Gibson,~R., Gilmore,~D.~K., Grace,~E., Jones,~R.~L.,
-%Ivezic,~Z., Jee,~J., Juric,~M., Kahn,~S.~M., Krabbendam,~V.~L., Krughoff,~S.,
-%Lorenz,~S., Pizagno,~J., Rasmussen,~A., Todd,~N. Tyson,~J.~A., and Young,~M.
-%2005, Society of the Photo-Optical Instrumentation Engineers (SPIE) Converence
-%Series {\bf 7738}, 53
+\bibitem[Connolly {\it et al}. 2005]{imsim}
+Connolly,~A.~J., Peterson,~J., Jernigan,~J.~G., Abel,~R., Bankert,~J.,
+Chang,~C., Claver,~C.~F., Gibson,~R., Gilmore,~D.~K., Grace,~E., Jones,~R.~L.,
+Ivezic,~Z., Jee,~J., Juric,~M., Kahn,~S.~M., Krabbendam,~V.~L., Krughoff,~S.,
+Lorenz,~S., Pizagno,~J., Rasmussen,~A., Todd,~N. Tyson,~J.~A., and Young,~M.
+2005, Society of the Photo-Optical Instrumentation Engineers (SPIE) Converence
+Series {\bf 7738}, 53
 
 \bibitem[Connolly {\it et al}. 2010]{connolly10}
 Connolly, A. J., Peterson, J., Jernigan, J. Garrett, Abel, Robert, Bankert, Justin,
@@ -1420,12 +1474,12 @@ Krabbendam, Victor L., Krughoff, Simon, Lorenz, Suzanne, Pizagno, Jame,s Rasmuss
 Andrew, Todd, Nathan, Tyson, J. Anthon, Young, Mallory 2010, Proceedings of the SPIE
 {\bf 7738} 773810
 
-%\bibitem[Cunha {\it et al}. 2012]{cunha2012}
-%Cunha,~C.~E., Huterer,~D., Lin,~H., Busha,~M.~T., and Wechsler,~R.~H. 2012,
-%[arXiv:1207.3347]
+\bibitem[Cunha {\it et al}. 2012]{cunha2012}
+Cunha,~C.~E., Huterer,~D., Lin,~H., Busha,~M.~T., and Wechsler,~R.~H. 2012,
+[arXiv:1207.3347]
 
-%\bibitem[Daniel and Linder 2010]{muvarpi2}
-%Daniel,~S.~F. and Linder,~E.~V. 2010, Physical Review D {\bf 82}, 103523
+\bibitem[Daniel and Linder 2010]{muvarpi2}
+Daniel,~S.~F. and Linder,~E.~V. 2010, Physical Review D {\bf 82}, 103523
 
 %\cite{Daniel:2011rr}
 \bibitem[Daniel {\it et al}. 2011]{daniel2011} 
@@ -1439,22 +1493,22 @@ Andrew, Todd, Nathan, Tyson, J. Anthon, Young, Mallory 2010, Proceedings of the 
 Daniel,~S.~F., Connolly,~A.~J., and Schneider,~J. 2012
 [arXiv:1205.2708]
 
-%\bibitem[Das {\it et al}. 2011]{sudeep}
-%Das,~S., de Putter,~R., Linder,~E.~V., and Nakajima,~R. 2011,
-%[arXiv:1102.5090]
+\bibitem[Das {\it et al}. 2011]{sudeep}
+Das,~S., de Putter,~R., Linder,~E.~V., and Nakajima,~R. 2011,
+[arXiv:1102.5090]
 
-%\bibitem[Davis {\it et al}. 2007]{essence}
-%Davis,~T.~M., M\"ortsell,~E., Sollerman,~J., Becker,~A.~C., Blondin,~S.,
-%Challis,~P., Clocchiatti,~A., Filippenko,~A.~V., Foley,~R.~J., Garnavich,~P.~M.,
-%Jha,~S., Krisciunas,~K., Kirshner,~R.~P., Leibundgut,~B., Li,~W., Matheson,~T.,
-%Miknaitis,~G., Pignata,~G., Rest,~A., Riess,~A.~G., Schmidt,~B.~P.,
-%Smith,~R.~C., Spyromilio,~J., Stubbs,~C.~W., Suntzeff,~N.~B., Tonry,~J.~L.,
-%Wood-Vasey,~W.~M., and Zenteno,~A. 2007, The Astrophysical Journal, {\bf 666},
-%716
+\bibitem[Davis {\it et al}. 2007]{essence}
+Davis,~T.~M., M\"ortsell,~E., Sollerman,~J., Becker,~A.~C., Blondin,~S.,
+Challis,~P., Clocchiatti,~A., Filippenko,~A.~V., Foley,~R.~J., Garnavich,~P.~M.,
+Jha,~S., Krisciunas,~K., Kirshner,~R.~P., Leibundgut,~B., Li,~W., Matheson,~T.,
+Miknaitis,~G., Pignata,~G., Rest,~A., Riess,~A.~G., Schmidt,~B.~P.,
+Smith,~R.~C., Spyromilio,~J., Stubbs,~C.~W., Suntzeff,~N.~B., Tonry,~J.~L.,
+Wood-Vasey,~W.~M., and Zenteno,~A. 2007, The Astrophysical Journal, {\bf 666},
+716
 
-%\bibitem[de Putter {\it et al}. 2010]{roland}
-%de Putter,~R., Huterer,~D. and Linder,~E.~V. 2010, Physical Review D {\bf 81},
-%103513
+\bibitem[de Putter {\it et al}. 2010]{roland}
+de Putter,~R., Huterer,~D. and Linder,~E.~V. 2010, Physical Review D {\bf 81},
+103513
 
 
 \bibitem[Djorgovski {\it et al}. 2011]{djorgovski2011}
@@ -1463,16 +1517,10 @@ Graham,~M.~J., Drake,~A.~J., Sharma,~N. and Chen,~Y. 2011
 [arXiv:1110.4655] to appear in Statistical Analysis and Data Mining, ref. proc.
 CIDU 2011 conf., eds. A. Srivastava and N. Chawla
 
-%\bibitem[Foster \it{et al}. 2009]{foster}
-%Foster, Leslie, Waagen, Alex, Aijaz, Nabeela, Hurley, Michael, Luis, Apolonio,
-%Rinsky, Joel, Satyavolu, Chandrika, Way, Michael J., Gazis, Paul, Srivastava,
-%Ashok 2009, Journal of Machine Learning Research {\bf 10} 857
-
-\bibitem[Gardner {\it et al}. 2007]{gard07}
-Gardner, J. P., Connolly, A. J., and McBride, C. 2007,
-``Enabling rapid development of parallel tree search applications,''
-in ``Proceedings of the 2007 Workshop on Challenges of Large Applications in Distributed
-Environments (CLADE)''
+\bibitem[Foster \it{et al}. 2009]{foster}
+Foster, Leslie, Waagen, Alex, Aijaz, Nabeela, Hurley, Michael, Luis, Apolonio,
+Rinsky, Joel, Satyavolu, Chandrika, Way, Michael J., Gazis, Paul, Srivastava,
+Ashok 2009, Journal of Machine Learning Research {\bf 10} 857
 
 \bibitem[Garnett {\it et al}. 2011]{Garnett11}
 Garnett,~R., Krishnamurhty,~Y., Wang,~D., Schneider,~J., and Mann,~R. 2011,
@@ -1528,31 +1576,27 @@ Monthly Notices of the Royal Astronomical Society {\bf 389} 173
 Kubica, J., Denneau, L., Jr., Moore, A., Jedicke, R., Connolly, A. 2007,
 Astronomical Society of the Pacific Conference Series {\bf 376} 395
 
-\bibitem[Kulldorff 1997]{Kulldorf97}
-Kulldorrff, M. 1997,
-Communications in Statistics -- Theory and Methods {\bf 26} 1481
+\bibitem[Linder 2013]{linder2013}
+Linder, Eric V. 2013, Journal of Cosmology and Astropartical Physics {\bf 1304}
+031
 
-%\bibitem[Linder 2013]{linder2013}
-%Linder, Eric V. 2013, Journal of Cosmology and Astropartical Physics {\bf 1304}
-%031
+\bibitem[Long {\it et al}. 2012]{long2012}
+Long,~J.~P., El Karoui,~N., Rice,~J.~A., Richards,~J.~W., and Bloom,~J.~S. 2012,
+Publications of the Astronomical Society of the Pacific {\bf 124} 280
 
-%\bibitem[Long {\it et al}. 2012]{long2012}
-%Long,~J.~P., El Karoui,~N., Rice,~J.~A., Richards,~J.~W., and Bloom,~J.~S. 2012,
-%Publications of the Astronomical Society of the Pacific {\bf 124} 280
+\bibitem[LSST Collaboration 2011]{lsstoverview}
+LSST Collaboration 2011, [arXiv:0805.2366]
+\verb|http://www.lsst.org/lsst/overview/|
 
-%\bibitem[LSST Collaboration 2011]{lsstoverview}
-%LSST Collaboration 2011, [arXiv:0805.2366]
-%\verb|http://www.lsst.org/lsst/overview/|
+\bibitem[LSST Dark Energy Science Collaboration 2012]{desc}
+LSST Dark Energy Science Collaboration 2012, [arXiv:1211.0310]
 
-%\bibitem[LSST Dark Energy Science Collaboration 2012]{desc}
-%LSST Dark Energy Science Collaboration 2012, [arXiv:1211.0310]
+\bibitem[LSST Science Collaborations 2009]{sciencebook}
+LSST Science Collaborations 2009, ``LSST Science Book'',
+\verb|http://www.lsst.org/lsst/science/scibook|
 
-%\bibitem[LSST Science Collaborations 2009]{sciencebook}
-%LSST Science Collaborations 2009, ``LSST Science Book'',
-%\verb|http://www.lsst.org/lsst/science/scibook|
-
-%\bibitem[Ma {\it et al}. 2006]{Ma2006}
-%Ma,~Z., Hu,~H., and Huterer,~D. 2006, The Astrophysical Journal {\bf 636}, 21
+\bibitem[Ma {\it et al}. 2006]{Ma2006}
+Ma,~Z., Hu,~H., and Huterer,~D. 2006, The Astrophysical Journal {\bf 636}, 21
 
 \bibitem[Ma {\it et al}. 2012]{YifeiMa12}
 Ma,~Y., Garnett,~R., and Schneider,~J. 2012,
@@ -1582,19 +1626,19 @@ Graham,~M.~J., Williams,~R., Chen,~Y., Moghaddam,~B., and Turmon,~M.
 2011a, [arxiv:1111.3699] to appear in Proc. IAU 285, ``New Horizons in Transient
 Astronomy,'' Oxford, September 2011
 
-%\bibitem[Mahabal {\it et al}. 2011b]{mahabal2011b}
-%Mahabal,~A.~A., Djorgovski,~S.~G., Drake,~A.~J., Donalek~C., Graham,~M~J.,
-%Williams,~R.~D., Chen,~Y., Moghaddam,~B., Turmon,~M., Beshore,~E., and Larson,~S.
-%2011b, Bulletin of the Astronomical Society of India {\bf 39}, 387
+\bibitem[Mahabal {\it et al}. 2011b]{mahabal2011b}
+Mahabal,~A.~A., Djorgovski,~S.~G., Drake,~A.~J., Donalek~C., Graham,~M~J.,
+Williams,~R.~D., Chen,~Y., Moghaddam,~B., Turmon,~M., Beshore,~E., and Larson,~S.
+2011b, Bulletin of the Astronomical Society of India {\bf 39}, 387
 
-%\bibitem[Mandelbaum {\it et al}. 2008]{mandelbaum2008}
-%Mandelbaum,~R., Seljak,~U., Hirata,~C.~M., Bardelli,~S., Bolzonella,!M.,
-%Bongiorno,~A., Carollo,~M., Contini,~T., Cunha,~C.~E., Garilli,~B.,
-%Iovino,~A., Kambczyk,~P, Kneib,~J.-P., Knobel,~C., Koo,~D.~C., Lamareille,~F.,
-%Le F\`evre,~O., Leborgne,~J.-F., Lilly,~S.~J., Maier,~C., Mainieri,~V.,
-%Mignoli,~M., Newman,~J.~A., Oesch,~P.~A., Perez-Montero,~E., Ricciardelli,~E.,
-%Scodeggio,~M., Silverman,~J., and Tasca,~L. 2008, Monthly Notices of the Royal
-%Astronomical Society {\bf 386}, 781
+\bibitem[Mandelbaum {\it et al}. 2008]{mandelbaum2008}
+Mandelbaum,~R., Seljak,~U., Hirata,~C.~M., Bardelli,~S., Bolzonella,!M.,
+Bongiorno,~A., Carollo,~M., Contini,~T., Cunha,~C.~E., Garilli,~B.,
+Iovino,~A., Kambczyk,~P, Kneib,~J.-P., Knobel,~C., Koo,~D.~C., Lamareille,~F.,
+Le F\`evre,~O., Leborgne,~J.-F., Lilly,~S.~J., Maier,~C., Mainieri,~V.,
+Mignoli,~M., Newman,~J.~A., Oesch,~P.~A., Perez-Montero,~E., Ricciardelli,~E.,
+Scodeggio,~M., Silverman,~J., and Tasca,~L. 2008, Monthly Notices of the Royal
+Astronomical Society {\bf 386}, 781
 
 \bibitem[McBride {\it et al}. 2011a]{mcbride2011a}
 McBride,~C.~K., Connolly,~A.~J., Gardner,~J.~P., Scranton,~R., Newman,~J.~A.,
@@ -1606,28 +1650,11 @@ McBride,~C.~K., Connolly,~A.~J., Gardner,~J.~P., Scranton,~R., Scoccimarro,~R.,
 Berlind,~A.~A., Mar\'in,~F., and Schneider,~D.~P. 2011b, The Astrophysical
 Journal {\bf 739}, 85
 
-\bibitem[Moore {\it et al}. 1997]{Moore97}
-Moore, A., Schneider, J., and Deng, K. 1997,
-``Efficient Locally Weighted Polynomial Regression Predictions,'' in
-``International Conference on Machine Learning''
-
-\bibitem[Moore and Lee 1998]{Moore97a}
-Moore, A., and Lee, M. 1998, Journal of Artificial Intelligence Research {\bf 8} 67
-
-\bibitem[Moore 1999]{Moore99}
-Moore, A. 1999, ``Very Fast EM-based Mixture Model Clustering using Multiresolution
-Kd-trees,'' in ``Neural Information Processing Systems 11''  pp. 543-549
-
 \bibitem[Moore {\it et al}. 2000]{Moore00}
 Moore,~A., Connolly,~A., Genovese,~C., Grone,~L., Kanidoris,~N., Nichol,~R.,
 Schneider,~J., Szalay,~A., Szapudi,~I., and Wasserman,~L. 2000,
 ``Fast Algorithms and Efficient Statistics: N-point Correlation Functions,'' in
 MPA/MPE/ESO Conference on Mining the Sky [arXiv:astro-ph/0012333]
-
-\bibitem[Moore and Schneider 2002]{Moore02}
-Moore, A. W., and Schneider, J. G. 2002, 
-``RADSEARCH: A new approach for finding optimal rules
-efficiently from dense datasets,'' in ``AAAI-2002''
 
 \bibitem[Morgan {\it et al}. 2011]{morgan2011}
 Morgan, A.N., Long, James, Richards, Joseph W., Broderick, Tamara, Butler,
@@ -1637,11 +1664,6 @@ Nathaniel R., and Bloom, Joshua S. 2011, arXiv:1112.3654
 Nakajima,~R., Mandelbaum,~R., Seljak,~U., Cohn,~J.~D., Reyes,~R., and
 Cool,~R. 2012, Monthly Notices of the Royal Astronomical Society {\bf 420}, 3240
 [arXiv:1107.1395]
-
-\bibitem[Neill and Moore 2003]{Neill03}
-Neill, D. and Moore, A. 2003,
-``A fast multi-resolution method for detection of significant spatial overdensities,''
-Carnegie Mellon University Computer Science Department paper 2175
 
 \bibitem[Nichol {\it et al}. 2006]{Nichol2006}
 Nichol,~R.~C., Sheth,~R.~K., Suto,~Y., Gray,~A.~J., Kayo,~I., Wechsler,~R.~H.,
@@ -1674,20 +1696,20 @@ Poczos,~B., Xiong,~L., Sutherland,~D., and Schneider,~J. 2012,
 ``Nonparametric Kernel Estimators for Image Classification,''
 IEEE Conference on Computer Vision and Pattern Recognition
 
-%\bibitem[Preston {\it et al}. 2009]{preston2009}
-%Preston, Dan, Protopapas, Pavlos, and Brodely, Carla 2009, arXiv:0901.3329
+\bibitem[Preston {\it et al}. 2009]{preston2009}
+Preston, Dan, Protopapas, Pavlos, and Brodely, Carla 2009, arXiv:0901.3329
 
 \bibitem[Rasmussen and Williams 2006]{gp}
 Rasmussen, C.~E. and Williams, C.~K.~I., 2006, ``Gaussian
 Processes for Machine Learning''
 \verb|http://www.GaussianProcess.org/gpml/|
 
-%\bibitem[Richards {\it et al}. 2004]{qso}
-%Richards,~G.~T., Nichols,~R.~C., Gray,~A.~G., Brunner,~R.~J., Lupton,~R.~H.,
-%Vanden Berk,~D.~E., Chong,~S.~S., Weinstein,~M.~A., Schneider,~D.~P.,
-%Anderson,~S.~F., Munn,~J.~A., Harris,~H.~C., Strauss,~M.~A., Fan,~X.,
-%Gunn,~J.~E., Ivezi\'c,~Z., York,~D.~G., Brinkmann,~J., and Moore,~A.~W. 2004,
-%The Astrophysical Journal Supplement Series, {\bf 155}, 257
+\bibitem[Richards {\it et al}. 2004]{qso}
+Richards,~G.~T., Nichols,~R.~C., Gray,~A.~G., Brunner,~R.~J., Lupton,~R.~H.,
+Vanden Berk,~D.~E., Chong,~S.~S., Weinstein,~M.~A., Schneider,~D.~P.,
+Anderson,~S.~F., Munn,~J.~A., Harris,~H.~C., Strauss,~M.~A., Fan,~X.,
+Gunn,~J.~E., Ivezi\'c,~Z., York,~D.~G., Brinkmann,~J., and Moore,~A.~W. 2004,
+The Astrophysical Journal Supplement Series, {\bf 155}, 257
 
 \bibitem[Richards {\it et al}. 2011]{richards2011}
 Richards,~J.~W., Starr,~D.~L., Butler,~N.~R., Bloom,~J.~S., Brewer,~J.~M.,
@@ -1699,19 +1721,14 @@ Richards,~J.~W., Starr,~D.~L., Brink,~H., Miller,~A.~A., Bloom,~J.~S.,
 Butler,~N.~R., James,~J.~B., Long,~J.~P., and Rice,~J. 2012a
 The Astrophysical Journal {\bf 744}, 192
 
-%\bibitem[Richards {\it et al}. 2012b]{richards2012b}
-%Richards, Joseph W., Starr, Dan L., Miller, Adam A., Bloom, Joshua S.,
-%Butler, Nathaniel R., Brink, Henrik, and Crellin-Quick, Arien 2012b,
-%The Astrophysical Journal Supplement Series {\bf 203} 32
+\bibitem[Richards {\it et al}. 2012b]{richards2012b}
+Richards, Joseph W., Starr, Dan L., Miller, Adam A., Bloom, Joshua S.,
+Butler, Nathaniel R., Brink, Henrik, and Crellin-Quick, Arien 2012b,
+The Astrophysical Journal Supplement Series {\bf 203} 32
 
-%\bibitem[Rosenfield {\it et al}. 2011]{rosenfield2011}
-%Rosenfield,~P., Connolly,~A., Fay,~J., Sayres,~C., and Tofflemire,~B. 2011,
-%Astronomical Society of the Pacific Conference Series {\bf 443}, 109
-
-\bibitem[Sabhnani {\it et al}. 2006]{Sabhnani06}
-Sabhnani, M., Moore, A., and Dubrawski, A. 2006,
-``T-Cube: A Data Structure for Fast Extraction of Time Series from Large Datasets,''
-technical report number CMU-ML-06-104
+\bibitem[Rosenfield {\it et al}. 2011]{rosenfield2011}
+Rosenfield,~P., Connolly,~A., Fay,~J., Sayres,~C., and Tofflemire,~B. 2011,
+Astronomical Society of the Pacific Conference Series {\bf 443}, 109
 
 \bibitem[Scranton {\it et al}. 2002]{Scranton2002}
 Scranton,~R., Johnston,~D., Dodelson,~S., Frieman,~J.~A., Connolly,~A.,
@@ -1724,9 +1741,9 @@ Lupton,~R.~H., McKay,~T., Munn,~J., Peoples,~J., Pier,~J., Richards,~G.~T.,
 Rockosi,~C., Schlegel,~D., Schneider,~D.~P., Stoughton,~C., Tucker,~D.~L.,
 Yanny,~B., York,~D.~G. 2002, The Astrophysical Journal {\bf 579}, 48
 
-%\bibitem[Sesar {\it et al}. 2011]{linear}
-%Sesar,~B., Stuart,~J.~S., Ivezi\'c,~\u Z., Morgan,~D.~P., Becker,~A.~C., and
-%Wo\'zniak,~P. 2011, The Astronomical Journal {\bf 142}, 190
+\bibitem[Sesar {\it et al}. 2011]{linear}
+Sesar,~B., Stuart,~J.~S., Ivezi\'c,~\u Z., Morgan,~D.~P., Becker,~A.~C., and
+Wo\'zniak,~P. 2011, The Astronomical Journal {\bf 142}, 190
 
 \bibitem[Settles 2009]{Settles09}
 Settles,~B. 2009, ``Active Learning Literature Survey,'' Computer Sciences Technical
@@ -1756,23 +1773,6 @@ Lee,~B.~C., Lupton,~R.~H., McKay,~T.~A., Munn,~J., Peoples,~J., Pier,~J.,
 Rockosi,~C., Schlegel,~D., Stoughtfon,~C., Tucker,~D.~L., Yanny,~B., York,~D.~G.
 2002, The Astrophysical Journal {\bf 570}, 75
 
-\bibitem[Tesch {\it et al}. 2011a]{Tesch11a}
-Tesch, M., Schneider, J., and Choset, H. 2011a,
-``Adapting Control Policies for Expensive Systems to Changing Environments,'' in
-``IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)''
-
-\bibitem[Tesch {\it et al}. 2011b]{Tesch11b}
-Tesch, M., Schneider, J., and Choset, H. 2011b,
-``Using Response Surfaces and Expected Improvements to Optimize 
-Snake Robot Gait Parameters,''
-in
-``IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)''
-
-\bibitem[Tesch {\it et al}. 2013]{Tesch13}
-Tesch, M., Schneider, J., and Choset, H. 2013,
-``Expensive Funciton Optimization with Stochastic Binary Outcomes,''
-in ``International Conference on Machine Learning (ICML)''
-
 \bibitem[Vanderplas and Connolly 2009]{vdp2009}
 Vanderplas,~J. and Connolly,~A.~J. 2009,
 Astronomical Journal {\bf 138}, 1365
@@ -1785,10 +1785,10 @@ arXiv:1111.1315
 Wang, Yuyang, Khardon, Roni, and Protopapas, Pavlos 2012
 arXiv:1203.0970
 
-%\bibitem[Wiley {\it et al}. 2011]{wiley2011}
-%Wiley,~K, Connolly,~A.~J., Gardner,~J., Krughoff,~S., Balazinska,~M., Howe,~B.,
-%Kwon,~Y., and Bu, ~Y. 2011, Publication of the Astronomical Society of the
-%Pacific {\bf 123}, 366
+\bibitem[Wiley {\it et al}. 2011]{wiley2011}
+Wiley,~K, Connolly,~A.~J., Gardner,~J., Krughoff,~S., Balazinska,~M., Howe,~B.,
+Kwon,~Y., and Bu, ~Y. 2011, Publication of the Astronomical Society of the
+Pacific {\bf 123}, 366
 
 \bibitem[Xiong {\it et al}. 2011a]{Xiong2011gad}
 Xiong,~L., Poczos,~B., Schneider,~J., Connolly,~A., Vanderplas,~J. 2011a,
