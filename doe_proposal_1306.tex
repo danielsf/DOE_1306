@@ -8,6 +8,8 @@
 
 \usepackage{amsmath}
 \usepackage{amsbsy}
+\usepackage{squeeze}
+
 
 
 \input epsf
@@ -652,6 +654,7 @@ value $f_q$ in equation \ref{eq:mean} be an accurate
 representation of the true underlying model.  
 We propose to achieve this in several ways.
 
+\vspace{.5\baselineskip}
 \begin{itemize}
 \item New mean function models -- as presented,
 equation \ref{eq:mean} sets the value of $\bar{y}$ to the algebraic mean of the
@@ -711,7 +714,9 @@ plotted in Figure \ref{subfig:gp}.  Note the high
 $z_\text{spectroscopic}$ galaxies that appear at low $z_\text{photometric}$ and
 vice-versa.  To correct for this error, we will harness the full probabilistic
 nature of GPs, building a system which tests the simplest, single-mode Gaussian
-model against multi-modal models.  The proposed algorithm will work as follows:
+model against multi-modal models.  The proposed algorithm will work as
+follows:
+\vspace{.5\baselineskip}
 \begin{enumerate}
 \item Fit the training data to a single-mode GP.
 
@@ -729,6 +734,8 @@ model likelihood of the single-mode model.
 \item Repeat steps 3-5 for three-mode, four-mode, etc. models until
   the system converges to the best fit to the training data.
 \end{enumerate}
+
+\vspace{.5\baselineskip}
 Through this iterative approach, we expect to build  GPs such that, even when it
 succumbs to the degeneracies seen in Figure \ref{subfig:gp}, it will still place
 significant probability density at the true
@@ -742,6 +749,7 @@ some heuristic estimate for the uncertainty (i.e. neural networks).
 
 A generic active learning algorithm takes the following form:
 
+\vspace{.5\baselineskip}
 \begin{enumerate}
 
 \item Learn a model (e.g. a Gaussian process) using the current set of
@@ -758,6 +766,7 @@ A generic active learning algorithm takes the following form:
 \item Add the resulting data to the training data and repeat.
 
 \end{enumerate}
+\vspace{.5\baselineskip}
 
 The performance of an active learning algorithm is evaluated by some
 measure of the model's quality (e.g. accuracy or log-likelihood on a test
@@ -828,6 +837,7 @@ known as uncertainty sampling.
 
 We propose the following new methods:
 
+\vspace{.5\baselineskip}
 \begin{itemize}
 
 \item The usual implementations of the criteria listed above are based on
@@ -859,6 +869,7 @@ We propose the following new methods:
   induced by aggressive pruning.
 
 \end{itemize}
+\vspace{.5\baselineskip}
 
 % We will expand upon
 % our recent work on the problem of optimal surveying or polling
@@ -1090,9 +1101,8 @@ in each leaf is the computation of the number of positives found.  A
 computationally efficient active search method needs to find ways to cut
 the search short and/or replace the computation of expensive expectations
 with simple heuristics.  We propose the following new methods:
-
+\vspace{.5\baselineskip}
 \begin{itemize}
-
 \item Approximate pruning rules in the spirit of the exact rules in
   \cite{Garnett12} that can trade off accuracy for search speed.
 
@@ -1115,6 +1125,7 @@ with simple heuristics.  We propose the following new methods:
   be adapted to do active search.
 
 \end{itemize}
+\vspace{.5\baselineskip}
 
 \section{Active Feature Acquisition}
 
@@ -1317,8 +1328,8 @@ simulations developed for the LSST \cite{connolly10}.  Each
 item below will indicate which of the PIs will take the lead in that stage
 of the program.
 
-\noindent {\bf Year 1:} 
-
+\noindent {\bf Year 1:}
+\vspace{.5\baselineskip}
 \begin{itemize}
 
 \item (Schneider) Develop GP algorithms that are robust against sparse training data and
@@ -1340,9 +1351,10 @@ Develop a software package that provides access to our next generation GPs for
 any researcher using any data set.
 
 \end{itemize}
+\vspace{.5\baselineskip}
 
 \noindent {\bf Year 2:} 
-
+\vspace{.5\baselineskip}
 \begin{itemize}
 
 \item (Schneider)
@@ -1369,8 +1381,9 @@ they can accept output from any model-fitting algorithm, not just our next-gener
 GPs.  Develop a software package providing access to these algorithms.
 
 \end{itemize}
+\vspace{.5\baselineskip}
 
-\noindent {\bf Year 3:} 
+\noindent {\bf Year 3:} \vspace{.5\baselineskip}
 
 \begin{itemize}
 
