@@ -27,7 +27,7 @@
 \pagestyle{empty}
 
 
-%\renewcommand{\baselinestretch}{0.95}
+\renewcommand{\baselinestretch}{0.99}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -166,8 +166,8 @@ machine learning methods.
 On-line, data-driven analysis will require model-fitting and
 classifications that are non-parametric and probabilistic.  Gaussian
 Processes (GPs) meet these requirements and we will, therefore, build our
-methods around them.  We note, however, that objectives 2-4 below will result in
-algorithms that do not depend on this choice, and will be applicable to
+methods around them.  We note, however, objectives 2-4 below will result in
+algorithms that do not depend on this choice, and should be applicable to
 any regression or classification method that yields a probability
 distribution over outcomes.  We divide our research program into the
 following objectives.
@@ -465,7 +465,7 @@ observational apparatus.  The PIs have used GPs to accelerate the search of
 high-dimensional likelihood functions on the cosmological parameters by
 efficiently selecting sample points \cite{daniel2012}, to detect damped Lyman
 alpha systems in the spectra of quasars \cite{Garnett12a}, and to optimize the
-performance of complex robots \cite{Tesch13,Tesch11a,Tesch11b}.
+performance of complex robots \cite{Tesch11a,Tesch11b,Tesch13}.
 
 We now describe how the underlying function is modeled with a GP based on a
 sample of training data.  Assume that each training set datum is of the
@@ -801,8 +801,8 @@ criteria.
 
 \begin{figure}[t]
 \centerline{\includegraphics[scale=0.4]{searchtree.png}}
-\caption{The search tree for an optimal active learning algorithm that will
-  be allowed to choose two more data points.}
+\caption{Search tree for an optimal active learning algorithm that will
+  choose two more data points.}
 \label{fig:searchtree}
 \end{figure}
 
@@ -810,24 +810,23 @@ It is useful to see the challenges involved in developing good active
 learning criteria by considering what an optimal algorithm might need to
 do.  Figure \ref{fig:searchtree} shows the computation it would require.
 The root of the tree contains the current decision on which point to choose
-and an optimal algorithm would consider them all.  For each 
-potential choice, it
-would then consider every possible outcome (label) that might be obtained
-and weight them by the estimated probability of each outcome.  For each
-outcome, it would then consider what next point it would choose if it
+and an optimal algorithm would consider them all.  For each potential
+choice, it would then consider every possible outcome (label) that might be
+obtained and weight them by the estimated probability of each outcome.  For
+each outcome, it would then consider what next point it would choose if it
 received that outcome.  The tree expands down to a depth equal to the
 number of data points that will be chosen and at the leaf every possible
-model would be learned and evaluated.  
-The algorithm only chooses a new point to label (the decision signified by the
-root of the tree) after it has evaluated all possible choices out to their
-ultimate consequence.
-Since the number of leaves is
-exponential in the depth of the tree, this quickly become intractable.  A
-typical solution (referred to as myopic) is to truncate the tree to zero or
-one level.  A second speedup is often obtained by replacing a full model
-evaluation with a fast heuristic (see reference
-\cite{Settles09} for a summary of
-common heuristics).
+model would be learned and evaluated.  The algorithm only chooses a new
+point to label (the decision signified by the root of the tree) after it
+has evaluated all possible choices out to their ultimate consequence.
+Since the number of leaves is exponential in the depth of the tree, this
+quickly become intractable.  A typical solution (referred to as myopic) is
+to truncate the tree to zero or one level.  A second speedup is often
+obtained by replacing a full model evaluation with a fast heuristic (see
+reference \cite{Settles09} for a summary of common heuristics).  In our
+work \cite{YifeiMa12} and others (e.g. \cite{Krause08}), myopic algorithms
+can often be justified theoretically by using submodularity to show that
+they obtain a performance within at least $1 - 1/e$ of optimal.
 
 The evaluation of the model, whether in a full or truncated tree, is also a
 challenge.  If we knew the true labels in our test set, we could use them
@@ -1032,7 +1031,7 @@ want to maximize the follow-ups done on the former.  This is called the
 A second challenge is that follow up is not a single binary decision.
 Choices must be made about what color bands to measure and at what timing
 and frequency.  These choices might be revisited continously throughout the
-follow up process.  This is called the {\em active feature selection
+follow up process.  This is called the {\em active feature acquisition
   problem}. Small errors in the identification and classification of transient
 sources will swamp the system.  The LSST will detect 7.5x10$^8$ sources
 {\bf every night}.  Even for the most numerous transient events (SNe), less
@@ -1053,8 +1052,6 @@ might fade before it can be captured.  With timescales as short as seconds
 to hours we require the ability to identify, classify and report any
 detection in time to allow for follow-up observations before the initial
 phenomenon fades.
-
-
 
 All of these issues arise in the real-time data collection of any science
 interested in the dynamics of a physical system.  Interestingly, the
@@ -1144,131 +1141,116 @@ with simple heuristics.  We propose the following new methods:
 
 \section{Active Feature Acquisition}
 
-We propose to extend our
-recent work on using Gaussian Processes (GPs) to detect damped
-lyman-alpha (DLA) systems \cite{Garnett12a}.  In that work GP
-regression was used on each observed, noisy spectrum to infer the
-latent spectrum.  The single independent (input) variable was
-wavelength.  In other problems (such as the identification of
-astrophysical transients) there will be several input variables which
-we can choose to observe or ignore.  
-We will build an information-theoretical framework to make this choice.
-In the DLA work, a binary choice was made between models with and
-without a DLA.  DLAs were
-classified by recognizing which model fit best.  In the proposed work,
-we will learn a different model for each class of object and will
-estimate class probabilities using Bayes rule for combining the prior
-probability for each class and how well the respective models fit the
-observations.  
-%increasing the number of supernovae that can be used for cosmological
-%experiments by an order of magnitude.  
-The key advantage of this
-approach is that the GPs naturally provide a mean and covariance for
-future unobserved observations (see Section \ref{sec:gp} for a more detailed
-discussion).  This uncertainty propagates through
-to class labels and we can use it to estimate the reduction in class
-uncertainty that will be gained by making a given observation at a
-specific time.  The observation yielding the greatest reduction in
-entropy for the class and the light curves for this object will be
-taken.
+In the work discussed so far, we have considered the process of acquiring a
+label to be a single decision to do so.  The active learning or search
+algorithm looks at the feature data, and then decides whether to request
+the label.  If it does, the label is obtained through a single expensive
+experiment.  Here we consider the case where many possible features can be
+measured and each increases the accuracy of the label prediction.
 
- Our previous work considered a binary classification problem: ``is
-the object `interesting' or not?''  We will extend this work to allow for
-classification according to a continuous scalar function or multiple discrete
-classes.  We will design algorithms that consider probability distributions
-across all possible classes and
-quantify how new observations will affect these
-distributions with an eye towards reducing the entropy, or some other
-information-theoretical measure of uncertainty.
+We propose to build active feature acquisition methods on a Gaussian
+process based classifier where a GP is created for each class with
+different priors according to the class.  When data from a new object
+arrives, it is applied to the GP for each class and the posterior class
+probability is computed by applying Bayes rule to the likelihood of each
+model.  This GP model follows the approach we used recently to detect
+damped lyman alpha (DLA) systems in the spectra of quasars
+\cite{Garnett12a}.
 
-\subsection{Group-based Active Feature Acquisition and Active Search
-for Transient Classification}
+Using the GP equations from section \ref{sec:gp} on the model for each
+class, we can get a mean and covariance for any set of unobserved features
+under the assumption that class is the correct one.  We then use the
+posterior class probabilities to get a combined distribution over what we
+expect to see if we choose to observe some currently unobserved feature.
+The result is a set of joint prediction distributions over all class labels
+and unobserved features.  These distributions are what we need to
+instantiate an information theoretic version of figure \ref{fig:searchtree}
+for the active feature acquisition problem.  The nodes that consider all
+possible outcomes become integrals over the combined distribution of
+expected observations.  The evaluation function in the leaves is the
+entropy of posterior class probabilities: $H(X) = -\Sigma_k p_k \log(p_k)$
+where $p_k$ is the posterior probability that discrete random variable $X$
+has value $k$.  As with active learning and active search, we will use a
+truncated search tree in order to obtain a tractable myopic algorithm.
 
-The active learning, active search, and active feature
-acquisition choices for transient classification
-all must be made in an online, streaming fashion.  
-Rather than
-considering an entire pool of test objects, they appear one at a time as
-they are detected and the algorithm must decide whether and how to follow
-up on each immediately as they are detected. 
-The input features for transient object classification will be 
-a variable combination photometric
-and morphologic measures taken at different increments in time. With
-this proposal we will  introduce an information-theoretical approach 
-based on the output covariance matrix of Eqn \ref{eq:cov} which will allow
-us to perform a similar determination in real time as observations are made,
-directing experiments as they are performed.
-We will not choose our follow-up observations based on cross-validation testing,
-but rather based on which observations we expect to yield the most significant
-decreases in the entropy of our probabilistic model.
-References \cite{huijse2011,huijse2012} use a similar scheme to find the correlation
-between observations within a single light curve.  We will attempt to find
-the type of observation with the greatest information content. 
+\subsection{Application to transients}
 
-In {\it active search} the ultimate objective in following up detected
-anomalies is to maximize the number of interesting anomalies
-classified and characterized while staying within a budget of
-follow-up observations or experiments. The problem and the Bayesian
-optimal algorithm for it are described in references
-\cite{Garnett11,Garnett12}. We propose to expand on these approaches using scan
-statistics to consider not just individual anomalies but also group
-anomaly detection algorithms that consider arbitrary groupings of
-self-similar anomalous records \cite{Neill05}.
+A GP for the transient classification problem will have two dimensions, one
+for time and the other for color band or wavelength.  The active feature
+acquisition problem will have additional constraints because the
+opportunity to observe features will proceed along the time dimension and
+an instantaneous decision to observe that time-color combination or pass it
+up forever will have to be made.  The search tree can be modified
+accordingly by restricting the observations available at each ``choose
+node''.
 
+The good performance of myopic algorithms, both practically and
+theoretically, depends on a diminishing returns property that assumes an
+observation you skipped at one time point can always be made at a later
+time.  This obviously is not possible with transients.  When deciding on an
+observation, not only its current information content is important.  You
+must also consider whether observations you might take in the future might
+be a good proxy for the one currently under consideration.  To overcome
+this issue, we propose a calibration scheme that reviews previously
+observed objects and learns an adaptive threshold on the myopic information
+gain that can be applied to new objects.
 
-Techniques such as GPs offer
-two distinct advantages which render them particularly amenable to
-integration into active learning frameworks.  Variance can be used
-to assign an uncertainty to the predicted value and the covariance
-provides the structure between all pairs of predicted and observed
-outputs.  References \cite{daniel2012,bryan} use these
-aspects to great affect, treating the determined variances as a
-measure of the information that can be learned by promoting a query
-point to a new training point and thus learning the likelihood surface
-of a theory space with greater efficiency than traditional MCMC
-methods.
+% \subsection{Group-based Active Feature Acquisition and Active Search
+% for Transient Classification}
+% 
+% The active learning, active search, and active feature
+% acquisition choices for transient classification
+% all must be made in an online, streaming fashion.  
+% Rather than
+% considering an entire pool of test objects, they appear one at a time as
+% they are detected and the algorithm must decide whether and how to follow
+% up on each immediately as they are detected. 
+% The input features for transient object classification will be 
+% a variable combination photometric
+% and morphologic measures taken at different increments in time. With
+% this proposal we will  introduce an information-theoretical approach 
+% based on the output covariance matrix of Eqn \ref{eq:cov} which will allow
+% us to perform a similar determination in real time as observations are made,
+% directing experiments as they are performed.
+% We will not choose our follow-up observations based on cross-validation testing,
+% but rather based on which observations we expect to yield the most significant
+% decreases in the entropy of our probabilistic model.
+% References \cite{huijse2011,huijse2012} use a similar scheme to find the correlation
+% between observations within a single light curve.  We will attempt to find
+% the type of observation with the greatest information content. 
 
+\section{Integration and Computation}
 
-A limitation of current classification approaches is that they are 
-optimized for the case of binary classifications: ``Is something a 
-quasar, or is it not?''  \cite{kim2011,pichara2012}, ``Is an 
-object a real astrophysical transient, or is it an instrumental 
-artifact?''  \cite{brink2012} rather than learning a model over the 
-full range of classifications. 
+The culmination of our proposed program of research will be to integrate
+the methods devised above into a single, combined, computationally
+efficient streaming algorithm.  The three goals of active learning, active
+search, and active feature acquisition will be combined in a staged set of
+decisions.  When a new event or object is detected, the data will be used
+to provide an estimated physical model for the object.  These models are
+the input variables for this object in the active learning and active
+search algorithms.  In parallel, the active learning and active search
+methods will decide whether to follow-up on this object.  If either of them
+selects the object, it is advanced to active feature acquisition.  There
+additional observations on the object are selected and the process for this
+object repeats.  An object that initially seemed interesting to one
+algorithm may cease to be so after additional observations or may be
+adopted by the other one.  The process for one object terminates when
+neither active learning nor active search remains interested in it or the
+object class and light curves are characterized well enough that no more
+observations are required.
 
+% Finally, we propose to expand on these approaches to operate on groups of
+% objects
+% statistics to consider not just individual anomalies but also group
+% anomaly detection algorithms that consider arbitrary groupings of
+% self-similar anomalous records \cite{Neill05}.
 
-
-%The culmination of our proposed
-%program of research will be to combine the methods devised above into a single
-%combined streaming algorithm as described below.
-%
-%The three goals of active learning, active search, and active feature
-%acquisition will be combined
-%in a staged set of decisions.  When a new event or object is detected, the data
-%will be used to provide and estimated physical model for the object.
-%These models are the input variables for this object in the active
-%learning and active search algorithms.  In parallel, the active learning
-%and active search methods will decide whether to follow-up on this object.
-%If either of them selects the object, it is advanced to active feature
-%acquisition.  There additional observations on the object are selected and
-%the process for this object repeats.  An object that initially seemed
-%interesting to one algorithm may cease to be so after additional
-%observations or may be adopted by the other one.  The process for one
-%object terminates when neither active learning nor active search remains
-%interested in it or the object class and light curves are characterized
-%well enough that no more observations are required.
-
-\section{Caching structures for computational efficiency for
-  real-time classification}
+\subsection{Caching structures for computational efficiency}
 \label{sec:computationalefficiency}
 
-Given the size and dimensionality of data from the next generation of
-surveys efficient caching and search techniques are required for both
-anomaly detection and classification and to optimize sampling
-strategies whose cost function is, effectively, our ability to
-constrain the underlying cosmology. We will address these
-computational issues with a set of caching, sampling, and search
-techniques.
+Scaling our algorithms up to the size of future scientific data sets will
+require a number of algorithmic, caching, statistical, and parallel
+computation tricks.  We will draw from the following methods and ideas:
 
 %\vspace{-4mm}
 \paragraph{AD-Trees.}
@@ -1278,37 +1260,34 @@ independent of the number of records.  It is similar to an OLAP datacube,
 except that it caches the answer to all possible queries in a single
 structure rather than requiring the building of many cubes.  Specialized
 pruning tricks keep its memory footprint modest.  Our algorithms will rely
-heavily on this structure. An extension called TCube stores time series in the AD-Tree
-\cite{Sabhnani06}.  This allows queries of the form: {\it return the
- aggregated time series of counts for all records matching query X}.
-Additional pruning tricks based on sparse vector representations allow this
-to be memory efficient.  The TCube structure will be used primarily for
-identifying time-varying anomalies, and will be extended to images.
+heavily on this structure. A structure called a TCube extends AD-Trees to
+time series \cite{Sabhnani06}.  This allows queries of the form: {\it
+  return the aggregated time series of counts for all records matching
+  query X}.  Additional pruning tricks based on sparse vector
+representations allow this to be memory efficient.
 
-We propose additional modifications that will cache sufficient
-statistics.  In addition to the counts of records matching a query, it will
-store means and covariances of continuous-valued attributes of those
-records.  This is especially useful for search-based comparison techniques
-because those sufficient statistics can be used to build classifiers
-such as LDA or QDA, which can quickly assess whether there is a difference
-between two populations of objects.  This allows an efficient rule-based
-search for sub-populations with differences between them in the same way it
-was done in the Radsearch algorithm \cite{Moore02}.
+We propose additional modifications that will cache sufficient statistics.
+In addition to counts, it will store means and covariances of
+continuous-valued attributes.  This is especially useful for search-based
+comparison techniques because those sufficient statistics can be used to
+build classifiers such as LDA or QDA, which can quickly assess whether
+there is a difference between two populations of objects.
+%  This allows an efficient rule-based
+%search for sub-populations with differences between them in the same way it
+% was done in the Radsearch algorithm \cite{Moore02}.
 
 %\vspace{-4mm}
 \paragraph{KD-Trees.}
-KD-Trees are classic data structures used extensively in
-machine learning and N-body simulations.  A traditional use is to retrieve
-nearest neighbors in {\it log N} time.  By storing sufficient statistics at
-the internal nodes of the trees, one can retrieve the
-statistics needed for operations such as kernel regression very efficiently
-\cite{Moore97}.  
+KD-Trees are classic data structures used extensively in machine learning
+and N-body simulations.  A traditional use is to retrieve nearest neighbors
+in {\it log N} time.  By storing sufficient statistics at the internal
+nodes of the trees, one can retrieve the statistics needed for operations
+such as kernel regression very efficiently \cite{Moore97}.  KD-Trees are
+especially valuable with GPs because a full GP requires a matrix inversion
+of the size of the number of data points in the data set, which may be
+intractable.  The typical GP kernel, however, has a locality property that
+means the number of points contributing to any particular query is modest.  We will use KD-Trees to find these points efficiently.
 % These also take {\it log N} time in all but pathological cases.  
-A more interesting extension for this work is the use of KD-Trees
-to speed up the EM-based mixture model algorithm, which achieved as much as
-three orders of magnitude speedup over previous methods \cite{Moore99}.  We
-will modify this approach to speed up the EM algorithm proposed for
-learning dynamical models.
 
 %\vspace{-4mm}
 \paragraph{Hierarchical search structures.}  
@@ -1321,49 +1300,41 @@ scoring metric makes it possible to significantly prune the search space
 (i.e. based on the sufficient statistics for this region, I can determine
 that no sub-region will fit my criteria).
 
-The algorithms we propose may be further sped up by parallelizing
-across CPUs on a grid.  We will use this technique when possible using
-standard cloud computing paradigms \cite{gard07} and expect our
-efforts on efficient algorithms and parallelization to yield speedups
-that compound.
-
-\section{Combination}
-
-The final task is to combine the best methods for active learning, search,
-and feature acquisition into a single algorithm that performs all of them
-simultaneously.
+\paragraph{Distributed computation.}
+The algorithms we propose may be further sped up by parallelizing across
+CPUs on a grid.  We will use this technique when possible using standard
+cloud computing paradigms \cite{gard07} and expect our efforts on efficient
+algorithms, caching, and parallelization to yield speedups that compound on
+each other.
 
 \section{Timeline, Development Plan, and Responsibilities}
 
 We will focus on multiple projects in each of the three years of this
 program.  Algorithms will be released as they are developed in a
-twice-yearly release cycle.  Algorithm development will be undertaken
-using data from the DES survey, and  a series of detailed
-simulations developed for the LSST \cite{connolly10}.  Each
-item below will indicate which of the PIs will take the lead in that stage
-of the program.
+twice-yearly release cycle.  Algorithm development will be undertaken using
+data from the DES survey, and a series of detailed simulations developed
+for the LSST \cite{connolly10}.  Each item below will indicate which of the
+PIs will take the lead in that stage of the program.
 
 \noindent {\bf Year 1:}
 \vspace{.5\baselineskip}
 \begin{itemize}
 
-\item (Schneider) Develop GP algorithms that are robust against sparse training data and
-capable of modeling multi-modal probability
-distributions.  
+\item (Schneider) Develop GP algorithms that are robust against sparse
+  training data and capable of modeling multi-modal probability
+  distributions.
 
-\item (Connolly) Build a photometric redshift algorithm based on these next generation
-GPs.  Test the algorithm against data from the DES, and simulated LSST.
+\item (Connolly) Build a photometric redshift algorithm based on these new
+  GPs.  Test the algorithm against data from the DES, and simulated LSST.
 
-\item (Schneider) Develop active learning methods optimized for our next generation GPs.
-Initially develop myopic criteria, selecting data for follow up whose classification
-considered in a vacuum is the most advantages.  Later, develop methods to implement
-one- and two-step-look-ahead criteria.
+\item (Schneider) Develop active learning methods optimized for our new
+  GPs.  Initially develop myopic criteria and later develop methods to
+  increase look ahead.
 
-\item (Connolly) Test the developed active learning methods on photometric redshift data.
+\item (Connolly) Test the developed active learning methods on photometric
+  redshift data.
 
-\item (Schneider) 
-Develop a software package that provides access to our next generation GPs for
-any researcher using any data set.
+\item (Schneider) Develop a software package for release to other scientists.
 
 \end{itemize}
 \vspace{.5\baselineskip}
@@ -1372,28 +1343,25 @@ any researcher using any data set.
 \vspace{.5\baselineskip}
 \begin{itemize}
 
-\item (Schneider)
-Develop active feature acquisition algorithms based on the probability distributions
-output by our next generation GPs.  Use them to determine what additional
-information (e.g., morphological or angular correlation function) provides the most
-helpful supplement information in the case of photometric redshifts.
+\item (Schneider) Develop active feature acquisition algorithms.  Use them
+  to determine what additional information (e.g., morphological or angular
+  correlation function) provides the most helpful supplement information in
+  the case of photometric redshifts.
 
-\item (Connolly) Extend our next generation GPs to the problem of 
-transient-classification.  Analyze stellar
- sources where there are known populations with defined variability
- signatures (e.g.\ Cepheid variables) to provide validation for the
- analysis.
+\item (Connolly) Extend our GPs to the problem of transient-classification.
+  Analyze stellar sources where there are known populations with defined
+  variability signatures (e.g.\ Cepheid variables) to provide validation
+  for the analysis.
 
-\item (Connolly) Extend the active feature acquisition algorithms developed for photometric
-redshifts to the problem of determining the next best measurement for transient
-classification.
-Validate these algorithms on DES, and simulated LSST observations, witholding
-data from the algorithm to simulate the case of incomplete, ongoing observations.
+\item (Connolly) Extend the active feature acquisition algorithms developed
+  for photometric redshifts to the problem of determining the next best
+  measurement for transient classification.  Validate these algorithms on
+  DES, and simulated LSST observations.
 
-\item (Schneider) 
-Generalize our active learning and active feature acquisition algorithms so that
-they can accept output from any model-fitting algorithm, not just our next-generation
-GPs.  Develop a software package providing access to these algorithms.
+\item (Schneider) Generalize our active learning and active feature
+  acquisition algorithms beyond GPs to work with any probabilistic
+  model-fitting algorithm.  Develop a software package providing access to
+  these algorithms.
 
 \end{itemize}
 \vspace{.5\baselineskip}
@@ -1402,15 +1370,19 @@ GPs.  Develop a software package providing access to these algorithms.
 
 \begin{itemize}
 
-\item (Connolly)
-Integrate our active learning and active feature acquisition algorithms to
-produce an active search algorithm that can identify interesting objects and optimize
-their follow-up in real time data streams.  Begin running this algorithm on DES data
-as it is made public.
+\item (Schneider) Develop active search algorithms based on GPs and
+  extended to other probabilistic models.
 
-\item (Schneider) Develop a software package that will provide access to all of our
-developed algorithms in a general way so that researchers can provide input and output
-data from any experiment and receive appropriate follow-up recommendations.
+\item (Connolly) Integrate our active learning and active feature
+  acquisition algorithms to produce an active search algorithm that can
+  identify interesting objects and optimize their follow-up in real time
+  data streams.  Begin running this algorithm on DES data as it is made
+  public.
+
+\item (Connolly,Schneider) Develop an integrated software package that will
+  provide access to all of our algorithms for use by scientists across all
+  fields.
+
 
 \end{itemize}
 
@@ -1419,247 +1391,529 @@ data from any experiment and receive appropriate follow-up recommendations.
 
 \section*{References}
 \begin{thebibliography}{99}
-
-\bibitem{Garnett11}
-Garnett,~R., Krishnamurhty,~Y., Wang,~D., Schneider,~J., and Mann,~R. 2011,
-``Bayesian Optimal Active Search on Graphs,'' KDD Workshop on Mining and
-Learning with Graphs
-
-\bibitem{Garnett12}
-Garnett,~R., Krishnamurthy,~Y., Xiong,~X., Schneider,~J., and Mann,~R. 2012,
-``Bayesian Optimal Active Search and Surveying,'' International Conference on
-Machine Learning
-
-\bibitem{straf03}
-Straf,~M.~L. 2003, Journal of the American Statistical Association {\bf 98}, 1
-
-\bibitem{GrayMoore}
-Gray, A. G., Moore, A. W., Nichol, R. C., Connolly, A. J.,
-Genovese, C., and Wasserman, L. 2004, Astronomical Society of the Pacific Conference
-Proceedings {\bf 314} 249
-
-\bibitem{kubica}
-Kubica, J., Denneau, L., Jr., Moore, A., Jedicke, R., Connolly, A. 2007,
-Astronomical Society of the Pacific Conference Series {\bf 376} 395
-
-\bibitem{Scranton2002}
-Scranton,~R., Johnston,~D., Dodelson,~S., Frieman,~J.~A., Connolly,~A.,
-Eisenstein,~D.~J., Gunn,~J.~E., Hui,~L., Jain,~B., Kent,~S., Loveday,~J.,
-Narayanan,~V., Nichol,~R.~C., O'Connell,~L., Soccimarro,~R., Sheth,~R.~K.,
-Stebbins,~A., Strauss,~M.~A., Szalay,~A.~S., Sapudi,~I., Tegmark,~M.,
-Vogeley,~M., Zehavi,~I., Annis,~J., Bahcall,~N.~A., Brinkman,~J., Csabai,~I.,
-Hindsley,~R., Ivezic,~Z., Kim,~R.~S.~J., Knapp,~G.~R., Lamb,~D.~Q., Lee,~B.~C.,
-Lupton,~R.~H., McKay,~T., Munn,~J., Peoples,~J., Pier,~J., Richards,~G.~T.,
-Rockosi,~C., Schlegel,~D., Schneider,~D.~P., Stoughton,~C., Tucker,~D.~L.,
-Yanny,~B., York,~D.~G. 2002, The Astrophysical Journal {\bf 579}, 48
-
-\bibitem{Szapudi2002}
-Szapud,~I., Frieman,~J.~A., Scoccimarro,~R., Szalay,~A.~S., Connolly,~A.~J.,
-Dodelson,~S., Eisenstein,~D.~J., Gunn,~J.~E., Johnston,~D., Kent,~S.,
-Loveday,~J., Meiksin,~A., Nichol,~R.~C., Scranton,~R., Stebbins,~A.,
-Vogeley,~M.~S., Annis,~J., Bahcall,~N.~A., Brinkman,~J., Csabai,~I., Doi,~M.,
-Fukigita,~M., Ivezi\'c,~\u Z., Kim,~R.~S.~J., Knapp,~G.~R., Lamb,~D.~Q.,
-Lee,~B.~C., Lupton,~R.~H., McKay,~T.~A., Munn,~J., Peoples,~J., Pier,~J.,
-Rockosi,~C., Schlegel,~D., Stoughtfon,~C., Tucker,~D.~L., Yanny,~B., York,~D.~G.
-2002, The Astrophysical Journal {\bf 570}, 75
-
-\bibitem{Nichol2006}
-Nichol,~R.~C., Sheth,~R.~K., Suto,~Y., Gray,~A.~J., Kayo,~I., Wechsler,~R.~H.,
-Marin,~F., Kulkarni,~G., Blanton,~M., Connolly,~A.~J., Gardner,~J.~P., Jain,~B.,
-Miller,~C.~J., Moore,~A.~W., Pope,~A., Pun,~J., Schneider,~D., Schneider,~J.,
-Szalay,~A., Szapudi,~I., Zehavi,~I., Bahcall,~N.~A., Csabai,~I., Brinkmann,~J.
-2006, Monthly Notices of the Royal Astronomical Society {\bf 368}, 1507
-
-\bibitem{mcbride2011a}
-McBride,~C.~K., Connolly,~A.~J., Gardner,~J.~P., Scranton,~R., Newman,~J.~A.,
-Scoccimarro,~R., Zehavi,~I., and Schneider,~D.~P. 2011, The Astrophysical
-Journal, {\bf 726}, 13
-
-\bibitem{mcbride2011b}
-McBride,~C.~K., Connolly,~A.~J., Gardner,~J.~P., Scranton,~R., Scoccimarro,~R.,
-Berlind,~A.~A., Mar\'in,~F., and Schneider,~D.~P. 2011, The Astrophysical
-Journal {\bf 739}, 85
-
-\bibitem{Skibba2006}
-Skibba,~R., Sheth,~R.~K., Connolly,~A.~J., and Scranton,~R. 2006,
-Monthly Notices of the Royal Astronomical Society, {\bf 369}, 68
-
-\bibitem{yip2004a}
-Yip,~C.~W., Connolly,~A.~J., Szalay,~A.~S., Budav\'ari,~T., SubbaRao,~M.,
-Frieman,~J.~A., Nichol,~R.~C., Hopkins,~A.~M., York,~D.~G., Okamura,~S.,
-Brinkmann,~J., Csabai,~I., Thakar,~A.~R., Fukugita,~M., 
-and Ivezi\'c,~\u Z. 2004, The Astronomical Journal {\bf 128}, 585
-
-\bibitem{vdp2009}
-Vanderplas,~J. and Connolly,~A.~J. 2009,
-Astronomical Journal {\bf 138}, 1365
-
-%\cite{Daniel:2011rr}
-\bibitem{daniel2011} 
-  Daniel,~S.~F., Connolly,~A.~J., Schneider,~J., Vanderplas,~J. and Xiong,~L.
-  2011, 
-  %``Classification of Stellar Spectra with LLE,''
-  The Astronomical Journal  {\bf 142}, 203
-  [arXiv:1110.4646 [astro-ph.SR]].
-  %%CITATION = ARXIV:1110.4646;%%
-
-\bibitem{daniel2012}
-Daniel,~S.~F., Connolly,~A.~J., and Schneider,~J. 2012
-[arXiv:1205.2708]
-
-\bibitem{YiZhangICML2010}
-Zhang,~Y. and Schneider,~J. 2010, ``Projection Penalties: Dimension Reduction without
-Loss,'' International Conference on Machine Learning
-
-\bibitem{YiZhangSDM2010}
-Zhang,~Y., Schneider,~J., and Dubrawski,~A. 2010,
-``Learning Compressible Models,'' Proceedings of SIAM Data Mining Conference
-
-
-\bibitem{YiZhangMultitask2010}
-Zhang,~Y. and Schneider,~J. 2010,
-``Learning Multiple Tasks with a Sparse Matrix-Normal Penalty,''
-Neural Information Processing Systems
-
-
-\bibitem{YiZhang2011multiECOC}
-Zhang,~Y. and Schneider,~J 2011, ``Multi-label Output Codes using Canonical Correlation
-Analysis,'' Artificial Intelligence and Statistics
-
-\bibitem{YiZhang2012}
-Zhang,~Y. and Schneider,~J. 2012, ``Maximum Margin Output Coding,''
-International Conference on Machine Learning
-
-\bibitem{poczos11alphadiv}
-Poczos,~B. and Schneider,~J. 2011, ``On the Estimation of alpha-Divergences,''
-Artificial Intelligence and Statistics (AISTATS)
-
-\bibitem{Poczos2011UAI}
-Poczos,~B., Xiong,~L., and Schneider,~J. 2011, ``Nonparametric Divergence Estimation with
-Applications to Machine Learning on Distributions,''  Uncertainty in Artificial
-Intelligence
-
-\bibitem{poczos12CVPR}
-Poczos,~B., Xiong,~L., Sutherland,~D., and Schneider,~J. 2012,
-``Nonparametric Kernel Estimators for Image Classification,''
-IEEE Conference on Computer Vision and Pattern Recognition
-
-\bibitem{Xiong2011gad}
-Xiong,~L., Poczos,~B., Schneider,~J., Connolly,~A., Vanderplas,~J. 2011,
-``Hierarchical Probabilistic Models for Group Anomaly Detection,''
-Artificial Intelligence and Statistics (AISTATS)
-
-\bibitem{xiong2011fgm}
-Xiong,~L., Poczos,~B., and Schneider,~J. 2011, ``Group Anomaly Detection using Flexible
-Genre Models,'' Neural Information Processing Systems
-
-\bibitem{Tesch13}
-Tesch, M., Schneider, J., and Choset, H. 2013,
-``Expensive Funciton Optimization with Stochastic Binary Outcomes,''
-in ``International Conference on Machine Learning (ICML)''
-
-\bibitem{Wang13}
-Wang, X., Garnett, R., and Schneider, J. 2013,
-``Active Search on Graphs,'' in ``ACM SIGKDD Conference on Knowledge Discovery
-and Data Mining''
-
-\bibitem{Sutherland13}
-Sutherland, D., Poczos, B. and Schneider, J. 2013,
-``Active Learning and Search on Low-Rank Matrices,'' in
-``ACM SIGKDD Conference on Knowledge Discovery and Data Mining''
-
-\bibitem{kitching}
-Kitching,~T.~D., Taylor,~A.~N., and Heavens,~A.~F. 2008,
-Monthly Notices of the Royal Astronomical Society {\bf 389} 173
-
-\bibitem{huterer2006}
-Huterer,~D., Takada,~M., Bernstein,~G., and Jain,~B. 2006,
-Monthly Notices of the Royal Astronomical Society {\bf 366}, 101
-
-\bibitem{nakajima2011}
-Nakajima,~R., Mandelbaum,~R., Seljak,~U., Cohn,~J.~D., Reyes,~R., and
-Cool,~R. 2012, Monthly Notices of the Royal Astronomical Society {\bf 420}, 3240
-[arXiv:1107.1395]
-
-\bibitem{annz}
-Collister,~A.~A. and Lahav,~O. 2004,
-Publications of the Astronomical Society of the Pacific {\bf 116}, 345
-
-\bibitem{gp}
-Rasmussen, C.~E. and Williams, C.~K.~I., 2006, ``Gaussian
-Processes for Machine Learning''
-\verb|http://www.GaussianProcess.org/gpml/|
-
-\bibitem{ericgp}
-Shafieloo,~A., Kim,~A.~G., and Linder,~E.~V. 2012,
-Physical Review D {\bf 85}, 123530 [arXiv:1204.2272]
-
-\bibitem{psf}
-Berg\'e,~J., Price,~S., Amara,~A., and Rhodes,~J. 2012,
-Monthly Notices of the Royal Astronomical Society {\bf 419}, 2356
-
-\bibitem{mahabal2008b}
-Mahabal,~A., Djorgovski,~S.~G., Williams,~R., Drake,~A., Donalek,~C.,
-Graham,~M., Moghaddam,~B., Turmon,~M., Jewell,~J., Khosla,~A., and
-Hensley,~B. 2008 [arXiv:0810.4527] to appear in proceedings of the Class 2008
-conference (Classification and Discovery in Large Astronomical Surveys, Ringberg
-Castle, 14-17 October 2008)
-
-\bibitem{wang2011}
-Wang, Yuyang, Khardon, Roni, and Protopapas, Pavlos 2011
-arXiv:1111.1315
-
-\bibitem{wang2012}
-Wang, Yuyang, Khardon, Roni, and Protopapas, Pavlos 2012
-arXiv:1203.0970
-
-\bibitem{huijse2011}
-Huijse, Pablo, Est\'evez, Pablo A., Zegers, Pablo, Pr\'incipe, Jose C.,
-and Protopapas, Pavlos 2011, IEEE Signal Processing Letters {\bf 18}, 371
-
-\bibitem{huijse2012}
-Huijse, Pablo, Est\'evez, Pablo A., Protopapas, Pavlos, Zebers, Pablo,
-and Pr\'incipe, Jos\'e C. 2012, arXiv:1212.2398
-
-\bibitem{Garnett12a}
-Garnett,~R., Ho,~S., and Schneider,~J. 2012,
-``Gaussian Processes for Identifying Damped Lyman-alpha Systems in Spectroscopic
-Surveys,'' Neural Information Processing Systems 
-workshop on Modern Nonparametric Methods in Machine Learning
-
-\bibitem{Tesch11a}
-Tesch, M., Schneider, J., and Choset, H. 2011,
-``Adapting Control Policies for Expensive Systems to Changing Environments,'' in
-``IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)''
-
-\bibitem{Tesch11b}
-Tesch, M., Schneider, J., and Choset, H. 2011,
-``Using Response Surfaces and Expected Improvements to Optimize 
-Snake Robot Gait Parameters,''
-in
-``IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)''
-
-
-\bibitem{connolly95}
-Connolly, A. J., Csabai, I., Szalay, A. S., Koo, D. C., Kron, R. G.,
-and Munn, J. A. 1995, Astronomical Journal {\bf 110} 2655
-
-\bibitem{eazy}
-Brammer,~G.~B., van Dokkum,~P.~G., and Coppi,~P. 2008,
-The Astrophysical Journal {\bf 686}, 1503
-
-
-\bibitem{budavari2008}
-Budav\'ari,~T. 2008 The Astrophysical Journal {\bf 695}, 747
-
-\bibitem{kaufman}
-Kaufman, Cari G., Bingham, Derek, Habib, Salman, Heitmann, Katrin, and Frieman,
-Joshua A. 2011, The Annals of Applied Statistitcs {\bf 5} 2470
-
-\bibitem{bonfield}
-Bonfield,~D.~G., Sun,~Y., Davey,~N., Jarvis,~M.~J., Abdalla,~F.~B.,
-Banerji,~M., Adams,~R.~G. 2010, Monthly Notices of the Royal Astronomical Society 
-{\bf 405} 987
+\bibitem{Garnett11}
+Garnett,~R., Krishnamurhty,~Y., Wang,~D., Schneider,~J., and Mann,~R. 2011,
+``Bayesian Optimal Active Search on Graphs,'' KDD Workshop on Mining and
+Learning with Graphs
+
+\bibitem{Garnett12}
+Garnett,~R., Krishnamurthy,~Y., Xiong,~X., Schneider,~J., and Mann,~R. 2012,
+``Bayesian Optimal Active Search and Surveying,'' International Conference on
+Machine Learning
+
+\bibitem{straf03}
+Straf,~M.~L. 2003, Journal of the American Statistical Association {\bf 98}, 1
+
+\bibitem{GrayMoore}
+Gray, A. G., Moore, A. W., Nichol, R. C., Connolly, A. J.,
+Genovese, C., and Wasserman, L. 2004, Astronomical Society of the Pacific Conference
+Proceedings {\bf 314} 249
+
+\bibitem{kubica}
+Kubica, J., Denneau, L., Jr., Moore, A., Jedicke, R., Connolly, A. 2007,
+Astronomical Society of the Pacific Conference Series {\bf 376} 395
+
+\bibitem{Scranton2002}
+Scranton,~R., Johnston,~D., Dodelson,~S., Frieman,~J.~A., Connolly,~A.,
+Eisenstein,~D.~J., Gunn,~J.~E., Hui,~L., Jain,~B., Kent,~S., Loveday,~J.,
+Narayanan,~V., Nichol,~R.~C., O'Connell,~L., Soccimarro,~R., Sheth,~R.~K.,
+Stebbins,~A., Strauss,~M.~A., Szalay,~A.~S., Sapudi,~I., Tegmark,~M.,
+Vogeley,~M., Zehavi,~I., Annis,~J., Bahcall,~N.~A., Brinkman,~J., Csabai,~I.,
+Hindsley,~R., Ivezic,~Z., Kim,~R.~S.~J., Knapp,~G.~R., Lamb,~D.~Q., Lee,~B.~C.,
+Lupton,~R.~H., McKay,~T., Munn,~J., Peoples,~J., Pier,~J., Richards,~G.~T.,
+Rockosi,~C., Schlegel,~D., Schneider,~D.~P., Stoughton,~C., Tucker,~D.~L.,
+Yanny,~B., York,~D.~G. 2002, The Astrophysical Journal {\bf 579}, 48
+
+\bibitem{Szapudi2002}
+Szapud,~I., Frieman,~J.~A., Scoccimarro,~R., Szalay,~A.~S., Connolly,~A.~J.,
+Dodelson,~S., Eisenstein,~D.~J., Gunn,~J.~E., Johnston,~D., Kent,~S.,
+Loveday,~J., Meiksin,~A., Nichol,~R.~C., Scranton,~R., Stebbins,~A.,
+Vogeley,~M.~S., Annis,~J., Bahcall,~N.~A., Brinkman,~J., Csabai,~I., Doi,~M.,
+Fukigita,~M., Ivezi\'c,~\u Z., Kim,~R.~S.~J., Knapp,~G.~R., Lamb,~D.~Q.,
+Lee,~B.~C., Lupton,~R.~H., McKay,~T.~A., Munn,~J., Peoples,~J., Pier,~J.,
+Rockosi,~C., Schlegel,~D., Stoughtfon,~C., Tucker,~D.~L., Yanny,~B., York,~D.~G.
+2002, The Astrophysical Journal {\bf 570}, 75
+
+\bibitem{Nichol2006}
+Nichol,~R.~C., Sheth,~R.~K., Suto,~Y., Gray,~A.~J., Kayo,~I., Wechsler,~R.~H.,
+Marin,~F., Kulkarni,~G., Blanton,~M., Connolly,~A.~J., Gardner,~J.~P., Jain,~B.,
+Miller,~C.~J., Moore,~A.~W., Pope,~A., Pun,~J., Schneider,~D., Schneider,~J.,
+Szalay,~A., Szapudi,~I., Zehavi,~I., Bahcall,~N.~A., Csabai,~I., Brinkmann,~J.
+2006, Monthly Notices of the Royal Astronomical Society {\bf 368}, 1507
+
+\bibitem{mcbride2011a}
+McBride,~C.~K., Connolly,~A.~J., Gardner,~J.~P., Scranton,~R., Newman,~J.~A.,
+Scoccimarro,~R., Zehavi,~I., and Schneider,~D.~P. 2011, The Astrophysical
+Journal, {\bf 726}, 13
+
+\bibitem{mcbride2011b}
+McBride,~C.~K., Connolly,~A.~J., Gardner,~J.~P., Scranton,~R., Scoccimarro,~R.,
+Berlind,~A.~A., Mar\'in,~F., and Schneider,~D.~P. 2011, The Astrophysical
+Journal {\bf 739}, 85
+
+\bibitem{Skibba2006}
+Skibba,~R., Sheth,~R.~K., Connolly,~A.~J., and Scranton,~R. 2006,
+Monthly Notices of the Royal Astronomical Society, {\bf 369}, 68
+
+\bibitem{yip2004a}
+Yip,~C.~W., Connolly,~A.~J., Szalay,~A.~S., Budav\'ari,~T., SubbaRao,~M.,
+Frieman,~J.~A., Nichol,~R.~C., Hopkins,~A.~M., York,~D.~G., Okamura,~S.,
+Brinkmann,~J., Csabai,~I., Thakar,~A.~R., Fukugita,~M., 
+and Ivezi\'c,~\u Z. 2004, The Astronomical Journal {\bf 128}, 585
+
+\bibitem{vdp2009}
+Vanderplas,~J. and Connolly,~A.~J. 2009,
+Astronomical Journal {\bf 138}, 1365
+
+%\cite{Daniel:2011rr}
+\bibitem{daniel2011} 
+  Daniel,~S.~F., Connolly,~A.~J., Schneider,~J., Vanderplas,~J. and Xiong,~L.
+  2011, 
+  %``Classification of Stellar Spectra with LLE,''
+  The Astronomical Journal  {\bf 142}, 203
+  [arXiv:1110.4646 [astro-ph.SR]].
+  %%CITATION = ARXIV:1110.4646;%%
+
+\bibitem{daniel2012}
+Daniel,~S.~F., Connolly,~A.~J., and Schneider,~J. 2012
+[arXiv:1205.2708]
+
+\bibitem{YiZhangICML2010}
+Zhang,~Y. and Schneider,~J. 2010, ``Projection Penalties: Dimension Reduction without
+Loss,'' International Conference on Machine Learning
+
+\bibitem{YiZhangSDM2010}
+Zhang,~Y., Schneider,~J., and Dubrawski,~A. 2010,
+``Learning Compressible Models,'' Proceedings of SIAM Data Mining Conference
+
+
+\bibitem{YiZhangMultitask2010}
+Zhang,~Y. and Schneider,~J. 2010,
+``Learning Multiple Tasks with a Sparse Matrix-Normal Penalty,''
+Neural Information Processing Systems
+
+
+\bibitem{YiZhang2011multiECOC}
+Zhang,~Y. and Schneider,~J 2011, ``Multi-label Output Codes using Canonical Correlation
+Analysis,'' Artificial Intelligence and Statistics
+
+\bibitem{YiZhang2012}
+Zhang,~Y. and Schneider,~J. 2012, ``Maximum Margin Output Coding,''
+International Conference on Machine Learning
+
+\bibitem{poczos11alphadiv}
+Poczos,~B. and Schneider,~J. 2011, ``On the Estimation of alpha-Divergences,''
+Artificial Intelligence and Statistics (AISTATS)
+
+\bibitem{Poczos2011UAI}
+Poczos,~B., Xiong,~L., and Schneider,~J. 2011, ``Nonparametric Divergence Estimation with
+Applications to Machine Learning on Distributions,''  Uncertainty in Artificial
+Intelligence
+
+\bibitem{poczos12CVPR}
+Poczos,~B., Xiong,~L., Sutherland,~D., and Schneider,~J. 2012,
+``Nonparametric Kernel Estimators for Image Classification,''
+IEEE Conference on Computer Vision and Pattern Recognition
+
+\bibitem{Xiong2011gad}
+Xiong,~L., Poczos,~B., Schneider,~J., Connolly,~A., Vanderplas,~J. 2011,
+``Hierarchical Probabilistic Models for Group Anomaly Detection,''
+Artificial Intelligence and Statistics (AISTATS)
+
+\bibitem{xiong2011fgm}
+Xiong,~L., Poczos,~B., and Schneider,~J. 2011, ``Group Anomaly Detection using Flexible
+Genre Models,'' Neural Information Processing Systems
+
+\bibitem{Tesch13}
+Tesch, M., Schneider, J., and Choset, H. 2013,
+``Expensive Funciton Optimization with Stochastic Binary Outcomes,''
+in ``International Conference on Machine Learning (ICML)''
+
+\bibitem{Wang13}
+Wang, X., Garnett, R., and Schneider, J. 2013,
+``Active Search on Graphs,'' in ``ACM SIGKDD Conference on Knowledge Discovery
+and Data Mining''
+
+\bibitem{Sutherland13}
+Sutherland, D., Poczos, B. and Schneider, J. 2013,
+``Active Learning and Search on Low-Rank Matrices,'' in
+``ACM SIGKDD Conference on Knowledge Discovery and Data Mining''
+
+\bibitem{kitching}
+Kitching,~T.~D., Taylor,~A.~N., and Heavens,~A.~F. 2008,
+Monthly Notices of the Royal Astronomical Society {\bf 389} 173
+
+\bibitem{huterer2006}
+Huterer,~D., Takada,~M., Bernstein,~G., and Jain,~B. 2006,
+Monthly Notices of the Royal Astronomical Society {\bf 366}, 101
+
+\bibitem{nakajima2011}
+Nakajima,~R., Mandelbaum,~R., Seljak,~U., Cohn,~J.~D., Reyes,~R., and
+Cool,~R. 2012, Monthly Notices of the Royal Astronomical Society {\bf 420}, 3240
+[arXiv:1107.1395]
+
+\bibitem{annz}
+Collister,~A.~A. and Lahav,~O. 2004,
+Publications of the Astronomical Society of the Pacific {\bf 116}, 345
+
+\bibitem{gp}
+Rasmussen, C.~E. and Williams, C.~K.~I., 2006, ``Gaussian
+Processes for Machine Learning''
+\verb|http://www.GaussianProcess.org/gpml/|
+
+\bibitem{ericgp}
+Shafieloo,~A., Kim,~A.~G., and Linder,~E.~V. 2012,
+Physical Review D {\bf 85}, 123530 [arXiv:1204.2272]
+
+\bibitem{psf}
+Berg\'e,~J., Price,~S., Amara,~A., and Rhodes,~J. 2012,
+Monthly Notices of the Royal Astronomical Society {\bf 419}, 2356
+
+\bibitem{mahabal2008b}
+Mahabal,~A., Djorgovski,~S.~G., Williams,~R., Drake,~A., Donalek,~C.,
+Graham,~M., Moghaddam,~B., Turmon,~M., Jewell,~J., Khosla,~A., and
+Hensley,~B. 2008 [arXiv:0810.4527] to appear in proceedings of the Class 2008
+conference (Classification and Discovery in Large Astronomical Surveys, Ringberg
+Castle, 14-17 October 2008)
+
+\bibitem{wang2011}
+Wang, Yuyang, Khardon, Roni, and Protopapas, Pavlos 2011
+arXiv:1111.1315
+
+\bibitem{wang2012}
+Wang, Yuyang, Khardon, Roni, and Protopapas, Pavlos 2012
+arXiv:1203.0970
+
+\bibitem{huijse2011}
+Huijse, Pablo, Est\'evez, Pablo A., Zegers, Pablo, Pr\'incipe, Jose C.,
+and Protopapas, Pavlos 2011, IEEE Signal Processing Letters {\bf 18}, 371
+
+\bibitem{huijse2012}
+Huijse, Pablo, Est\'evez, Pablo A., Protopapas, Pavlos, Zebers, Pablo,
+and Pr\'incipe, Jos\'e C. 2012, arXiv:1212.2398
+
+\bibitem{Garnett12a}
+Garnett,~R., Ho,~S., and Schneider,~J. 2012,
+``Gaussian Processes for Identifying Damped Lyman-alpha Systems in Spectroscopic
+Surveys,'' Neural Information Processing Systems 
+workshop on Modern Nonparametric Methods in Machine Learning
+
+\bibitem{Tesch11a}
+Tesch, M., Schneider, J., and Choset, H. 2011,
+``Adapting Control Policies for Expensive Systems to Changing Environments,'' in
+``IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)''
+
+\bibitem{Tesch11b}
+Tesch, M., Schneider, J., and Choset, H. 2011,
+``Using Response Surfaces and Expected Improvements to Optimize 
+Snake Robot Gait Parameters,''
+in
+``IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)''
+
+
+\bibitem{connolly95}
+Connolly, A. J., Csabai, I., Szalay, A. S., Koo, D. C., Kron, R. G.,
+and Munn, J. A. 1995, Astronomical Journal {\bf 110} 2655
+
+\bibitem{eazy}
+Brammer,~G.~B., van Dokkum,~P.~G., and Coppi,~P. 2008,
+The Astrophysical Journal {\bf 686}, 1503
+
+
+\bibitem{budavari2008}
+Budav\'ari,~T. 2008 The Astrophysical Journal {\bf 695}, 747
+
+\bibitem{kaufman}
+Kaufman, Cari G., Bingham, Derek, Habib, Salman, Heitmann, Katrin, and Frieman,
+Joshua A. 2011, The Annals of Applied Statistitcs {\bf 5} 2470
+
+\bibitem{bonfield}
+Bonfield,~D.~G., Sun,~Y., Davey,~N., Jarvis,~M.~J., Abdalla,~F.~B.,
+Banerji,~M., Adams,~R.~G. 2010, Monthly Notices of the Royal Astronomical Society 
+{\bf 405} 987
+
+\bibitem{Abazajian:2008wr}
+  Abazajian, K.~N.{\it et al.}  [SDSS Collaboration]~2009,
+  %``The Seventh Data Release of the Sloan Digital Sky Survey,''
+  The Astrophysical Journal Supplement Series  {\bf 182}, 543
+  [arXiv:0812.0649 [astro-ph]].
+  %%CITATION = APJSA,182,543;%%
+
+\bibitem{mackay}
+MacKay, David 1992, Neural Computation {\bf 4} 415
+
+\bibitem{Settles09}
+Settles,~B. 2009, ``Active Learning Literature Survey,'' Computer Sciences Technical
+Report 1648, University of Wisconsin-Madison,
+\verb|http://pages.cs.wisc.edu/~bsettles/active-learning/|
+
+\bibitem{YifeiMa12}
+Ma,~Y., Garnett,~R., and Schneider,~J. 2012,
+``Submodularity in Batch Active Learning and Survey Problems
+on Gaussian Random Fields,''
+Neural Information Processing Systems 
+workshop on Discrete Optimization in Machine Learning
+
+\bibitem{rrlyrae}
+Oluseyi, Hakeem M., Becker, Andrew C., Culliton, Christopher, Furqan, Muhammad,
+Hoadley, Keri L., Regencia, Paul, Wells, Akeem J., Ivez\`ic, Zeljko, Jones, R.
+Lynne, Krughoff, K. Simon, and Sesar, Branimir (2012), The Astronomical Joural
+{\bf 144} 9
+
+
+\bibitem{djorgovski2011}
+Djorgovski,~S.~J., Donalek,~C., Mahabal,~A.~A., Moghaddam,~B., Turmon,~M.,
+Graham,~M.~J., Drake,~A.~J., Sharma,~N. and Chen,~Y. 2011
+[arXiv:1110.4655] to appear in Statistical Analysis and Data Mining, ref. proc.
+CIDU 2011 conf., eds. A. Srivastava and N. Chawla
+
+\bibitem{richards2011}
+Richards,~J.~W., Starr,~D.~L., Butler,~N.~R., Bloom,~J.~S., Brewer,~J.~M.,
+Crellin-Quick,~A., Higgins,~J., Kennedy,~R., and Rischard,~M. 2011,
+The Astrophysical Journal {\bf 733}, 10
+
+\bibitem{richards2012}
+Richards,~J.~W., Starr,~D.~L., Brink,~H., Miller,~A.~A., Bloom,~J.~S.,
+Butler,~N.~R., James,~J.~B., Long,~J.~P., and Rice,~J. 2012
+The Astrophysical Journal {\bf 744}, 192
+
+\bibitem{graham2012}
+Graham,~M.~J., Djorgovski,~S.~G., Mahabal,~A., Donalek,~C., Drake,~A.,
+Longo,~G. 2012 [arXiv:1208.2480] to appear in special issue of Distributed and
+Parallel Databases on Data Intensive eScience
+
+\bibitem{mahabal2008a}
+Mahabal,~A., Djorgovski,~S.~G., Turmon,~M., Jewell,~J., Williams,~R.~R.,
+Drake,~A.~J., Graham,~M.~G., Donalek,~C., Glikman,~E., and the Palomar-QUEST Team
+2008, Astronomische Nachrichten {\bf 329}, 288
+
+
+\bibitem{mahabal2011a}
+Mahabal,~A.~A., Donalek,~C., Djorgovski,~S.~J., Drake,~A.~J.,
+Graham,~M.~J., Williams,~R., Chen,~Y., Moghaddam,~B., and Turmon,~M.
+2011, [arxiv:1111.3699] to appear in Proc. IAU 285, ``New Horizons in Transient
+Astronomy,'' Oxford, September 2011
+
+\bibitem{Gittin89}
+Gittins, J. 1989, ``Multi-Armed Bandit Allocation Indices,'' published by Wiley
+
+\bibitem{Auer02}
+Auer, P., Cesa-Bianchi, N., and Fischer, P. 2002,
+``Finite-time Analysis of the Multiarmed Bandit Probem,''
+Machine Learning {\bf 47} 235
+
+\bibitem{Neill05}
+Neill, D. and Moore, A. 2005,
+``Detecting Significant Multidimensional Spatial Clusters,''
+Advances in Neural Information Processing Systems {\bf 17} 969
+
+\bibitem{bryan}
+Bryan, B., Schneider, J., Miller, C.~J., Nichol, R.~C., Genovese, C., and
+Wasserman, L., 2007,
+The Astrophysical Journal {\bf 665}, 25
+
+\bibitem{kim2011}
+Kim, Dae-Won, Protopapas, Pavlos, Byun, Young-Ik, Alcock, Charles, Khardon,
+Roni, and Trichas, Markos 2011, arXiv:1101.3316
+
+\bibitem{pichara2012}
+Pichara, K., Protopapas, P., Kim, D.-W., Marquette, J.-B., and Tisserand, P.
+2012, Monthly Notices of the Royal Astronomical Society, {\bf 427} 1284
+
+\bibitem{brink2012}
+Brink, Henrik, Richards, Joseph W., Poznanski, Dovi, Bloom, Joshua S., Rice,
+John, Negahban, Sahand, and Wainwright, Martin 2012, arXiv:1209.3775
+
+\bibitem{Moore97a}
+Moore, A., and Lee, M. 1998, Journal of Artificial Intelligence Research {\bf 8} 67
+
+\bibitem{Sabhnani06}
+Sabhnani, M., Moore, A., and Dubrawski, A. 2006,
+``T-Cube: A Data Structure for Fast Extraction of Time Series from Large Datasets,''
+technical report number CMU-ML-06-104
+
+\bibitem{Moore02}
+Moore, A. W., and Schneider, J. G. 2002, 
+``RADSEARCH: A new approach for finding optimal rules
+efficiently from dense datasets,'' in ``AAAI-2002''
+
+\bibitem{Moore97}
+Moore, A., Schneider, J., and Deng, K. 1997,
+``Efficient Locally Weighted Polynomial Regression Predictions,'' in
+``International Conference on Machine Learning''
+
+\bibitem{Moore99}
+Moore, A. 1999, ``Very Fast EM-based Mixture Model Clustering using Multiresolution
+Kd-trees,'' in ``Neural Information Processing Systems 11''  pp. 543-549
+
+\bibitem{Kulldorf97}
+Kulldorrff, M. 1997,
+Communications in Statistics -- Theory and Methods {\bf 26} 1481
+
+
+\bibitem{Neill03}
+Neill, D. and Moore, A. 2003,
+``A fast multi-resolution method for detection of significant spatial overdensities,''
+Carnegie Mellon University Computer Science Department paper 2175
+
+
+\bibitem{gard07}
+Gardner, J. P., Connolly, A. J., and McBride, C. 2007,
+``Enabling rapid development of parallel tree search applications,''
+in ``Proceedings of the 2007 Workshop on Challenges of Large Applications in Distributed
+Environments (CLADE)''
+
+\bibitem{connolly10}
+Connolly, A. J., Peterson, J., Jernigan, J. Garrett, Abel, Robert, Bankert, Justin,
+Chang, Chihway, Claver, Charles F., Gibson, Robert, Gilmore, David K., Grace, Emily,
+Johnes, R. Lynne, Ivezic, Zeljko, Jee, James, Juric, Mario, Kahn, Steven M.,
+Krabbendam, Victor L., Krughoff, Simon, Lorenz, Suzanne, Pizagno, Jame,s Rasmussen,
+Andrew, Todd, Nathan, Tyson, J. Anthon, Young, Mallory 2010, Proceedings of the SPIE
+{\bf 7738} 773810
+
+%%%%%%%%%%%%%%%%%in order above this line
+
+%\bibitem[Abdalla {\it et al}. 2011]{abdalla}
+%Abdalla,~F.~B., Banerji,~M., Lahav,~O., and Rashkov,~V. 2011,
+%Monthly Notices of the Royal Astronomical Society {\bf 417}, 1891
+
+%\bibitem[Abramo {\it et al}. 2012]{narrow}
+%Abramo,~L.~R., Strauss,~M.~A., Lima,~M., Hern\'andez-Monteagudo,~C., Lazkoz,~R.,
+%Moles,~M., de Oliveira,~C.~M., Sendra,~I., Sodr\'e Jr.,~L., and
+%Storchi-Bergmann,~T. 2012, Monthly Notices of the Royal Astronomical Society
+%{\bf 423}, 3251
+
+%\bibitem[Albrecht {\it et al}. 2006]{detf}
+%Albrecht,~A., Bernstein,~B., Cahn,~R., Freedman,~W.~L., Hewitt,~J.,
+%Hu,~W., Huth,~J., Kamionkowski,~M., Kolb,~E., Knox,~L., Mather,~J.~C.,
+%Staggs,~S., Suntzeff,~N.~B. (Dark Energy Task Force) 2006,
+%``Report of the Dark Energy Task Force,''
+%\verb|http://jdem.gsfc.nasa.gov/science/DETF_Report.pdf|
+
+%\bibitem[Blocker and Protopapas 2013]{blocker2013}
+%Blocker, Alexander W. and Protopapas, Pavlos 2013, arXiv:1301.3027
+
+%\bibitem[Bloom {\it et al}. 2011]{bloom2011}
+%Bloom,~J.~S., Richards,~J.~W., Nugent,~P.~E., Quimby,~R.~M., Kasliwal,~M.~M.,
+%Starr,~D.~L., Posnanski,~D., Ofek,~E.~O., Cenko,~S.~B., Butler,~N.~R.,
+%Kulkarni,~S.~R., Gal-Yam,~A., and Law,~N. 2011 [arXiv:1106.5491]
+
+%\bibitem[Bryan 2007]{brentsthesis}
+%Bryan, B., 2007, Ph.D. thesis
+%\verb|http://reports-archive.adm.cs.cmu.edu/anon/|
+%\verb|ml2007/abstracts/07-122.html|
+
+%\bibitem[Connolly {\it et al}. 2005]{imsim}
+%Connolly,~A.~J., Peterson,~J., Jernigan,~J.~G., Abel,~R., Bankert,~J.,
+%Chang,~C., Claver,~C.~F., Gibson,~R., Gilmore,~D.~K., Grace,~E., Jones,~R.~L.,
+%Ivezic,~Z., Jee,~J., Juric,~M., Kahn,~S.~M., Krabbendam,~V.~L., Krughoff,~S.,
+%Lorenz,~S., Pizagno,~J., Rasmussen,~A., Todd,~N. Tyson,~J.~A., and Young,~M.
+%2005, Society of the Photo-Optical Instrumentation Engineers (SPIE) Converence
+%Series {\bf 7738}, 53
+
+%\bibitem[Cunha {\it et al}. 2012]{cunha2012}
+%Cunha,~C.~E., Huterer,~D., Lin,~H., Busha,~M.~T., and Wechsler,~R.~H. 2012,
+%[arXiv:1207.3347]
+
+%\bibitem[Daniel and Linder 2010]{muvarpi2}
+%Daniel,~S.~F. and Linder,~E.~V. 2010, Physical Review D {\bf 82}, 103523
+
+%\bibitem[Das {\it et al}. 2011]{sudeep}
+%Das,~S., de Putter,~R., Linder,~E.~V., and Nakajima,~R. 2011,
+%[arXiv:1102.5090]
+
+%\bibitem[Davis {\it et al}. 2007]{essence}
+%Davis,~T.~M., M\"ortsell,~E., Sollerman,~J., Becker,~A.~C., Blondin,~S.,
+%Challis,~P., Clocchiatti,~A., Filippenko,~A.~V., Foley,~R.~J., Garnavich,~P.~M.,
+%Jha,~S., Krisciunas,~K., Kirshner,~R.~P., Leibundgut,~B., Li,~W., Matheson,~T.,
+%Miknaitis,~G., Pignata,~G., Rest,~A., Riess,~A.~G., Schmidt,~B.~P.,
+%Smith,~R.~C., Spyromilio,~J., Stubbs,~C.~W., Suntzeff,~N.~B., Tonry,~J.~L.,
+%Wood-Vasey,~W.~M., and Zenteno,~A. 2007, The Astrophysical Journal, {\bf 666},
+%716
+
+%\bibitem[de Putter {\it et al}. 2010]{roland}
+%de Putter,~R., Huterer,~D. and Linder,~E.~V. 2010, Physical Review D {\bf 81},
+%103513
+
+%\bibitem[Foster \it{et al}. 2009]{foster}
+%Foster, Leslie, Waagen, Alex, Aijaz, Nabeela, Hurley, Michael, Luis, Apolonio,
+%Rinsky, Joel, Satyavolu, Chandrika, Way, Michael J., Gazis, Paul, Srivastava,
+%Ashok 2009, Journal of Machine Learning Research {\bf 10} 857
+
+%\bibitem[Linder 2013]{linder2013}
+%Linder, Eric V. 2013, Journal of Cosmology and Astropartical Physics {\bf 1304}
+%031
+
+%\bibitem[Long {\it et al}. 2012]{long2012}
+%Long,~J.~P., El Karoui,~N., Rice,~J.~A., Richards,~J.~W., and Bloom,~J.~S. 2012,
+%Publications of the Astronomical Society of the Pacific {\bf 124} 280
+
+%\bibitem[LSST Collaboration 2011]{lsstoverview}
+%LSST Collaboration 2011, [arXiv:0805.2366]
+%\verb|http://www.lsst.org/lsst/overview/|
+
+%\bibitem[LSST Dark Energy Science Collaboration 2012]{desc}
+%LSST Dark Energy Science Collaboration 2012, [arXiv:1211.0310]
+
+%\bibitem[LSST Science Collaborations 2009]{sciencebook}
+%LSST Science Collaborations 2009, ``LSST Science Book'',
+%\verb|http://www.lsst.org/lsst/science/scibook|
+
+%\bibitem[Ma {\it et al}. 2006]{Ma2006}
+%Ma,~Z., Hu,~H., and Huterer,~D. 2006, The Astrophysical Journal {\bf 636}, 21
+
+%\bibitem[Mahabal {\it et al}. 2011b]{mahabal2011b}
+%Mahabal,~A.~A., Djorgovski,~S.~G., Drake,~A.~J., Donalek~C., Graham,~M~J.,
+%Williams,~R.~D., Chen,~Y., Moghaddam,~B., Turmon,~M., Beshore,~E., and Larson,~S.
+%2011b, Bulletin of the Astronomical Society of India {\bf 39}, 387
+
+%\bibitem[Mandelbaum {\it et al}. 2008]{mandelbaum2008}
+%Mandelbaum,~R., Seljak,~U., Hirata,~C.~M., Bardelli,~S., Bolzonella,!M.,
+%Bongiorno,~A., Carollo,~M., Contini,~T., Cunha,~C.~E., Garilli,~B.,
+%Iovino,~A., Kambczyk,~P, Kneib,~J.-P., Knobel,~C., Koo,~D.~C., Lamareille,~F.,
+%Le F\`evre,~O., Leborgne,~J.-F., Lilly,~S.~J., Maier,~C., Mainieri,~V.,
+%Mignoli,~M., Newman,~J.~A., Oesch,~P.~A., Perez-Montero,~E., Ricciardelli,~E.,
+%Scodeggio,~M., Silverman,~J., and Tasca,~L. 2008, Monthly Notices of the Royal
+%Astronomical Society {\bf 386}, 781
+
+%\bibitem{Moore00}
+%Moore,~A., Connolly,~A., Genovese,~C., Grone,~L., Kanidoris,~N., Nichol,~R.,
+%Schneider,~J., Szalay,~A., Szapudi,~I., and Wasserman,~L. 2000,
+%``Fast Algorithms and Efficient Statistics: N-point Correlation Functions,'' in
+%MPA/MPE/ESO Conference on Mining the Sky [arXiv:astro-ph/0012333]
+
+%\bibitem{morgan2011}
+%Morgan, A.N., Long, James, Richards, Joseph W., Broderick, Tamara, Butler,
+%Nathaniel R., and Bloom, Joshua S. 2011, arXiv:1112.3654
+
+%\bibitem[Preston {\it et al}. 2009]{preston2009}
+%Preston, Dan, Protopapas, Pavlos, and Brodely, Carla 2009, arXiv:0901.3329
+
+%\bibitem[Richards {\it et al}. 2004]{qso}
+%Richards,~G.~T., Nichols,~R.~C., Gray,~A.~G., Brunner,~R.~J., Lupton,~R.~H.,
+%Vanden Berk,~D.~E., Chong,~S.~S., Weinstein,~M.~A., Schneider,~D.~P.,
+%Anderson,~S.~F., Munn,~J.~A., Harris,~H.~C., Strauss,~M.~A., Fan,~X.,
+%Gunn,~J.~E., Ivezi\'c,~Z., York,~D.~G., Brinkmann,~J., and Moore,~A.~W. 2004,
+%The Astrophysical Journal Supplement Series, {\bf 155}, 257
+
+%\bibitem[Richards {\it et al}. 2012b]{richards2012b}
+%Richards, Joseph W., Starr, Dan L., Miller, Adam A., Bloom, Joshua S.,
+%Butler, Nathaniel R., Brink, Henrik, and Crellin-Quick, Arien 2012b,
+%The Astrophysical Journal Supplement Series {\bf 203} 32
+
+%\bibitem[Rosenfield {\it et al}. 2011]{rosenfield2011}
+%Rosenfield,~P., Connolly,~A., Fay,~J., Sayres,~C., and Tofflemire,~B. 2011,
+%Astronomical Society of the Pacific Conference Series {\bf 443}, 109
+
+%\bibitem[Sesar {\it et al}. 2011]{linear}
+%Sesar,~B., Stuart,~J.~S., Ivezi\'c,~\u Z., Morgan,~D.~P., Becker,~A.~C., and
+%Wo\'zniak,~P. 2011, The Astronomical Journal {\bf 142}, 190
+
+
+%\bibitem[Wiley {\it et al}. 2011]{wiley2011}
+%Wiley,~K, Connolly,~A.~J., Gardner,~J., Krughoff,~S., Balazinska,~M., Howe,~B.,
+%Kwon,~Y., and Bu, ~Y. 2011, Publication of the Astronomical Society of the
+%Pacific {\bf 123}, 366
 
 \bibitem{Abazajian:2008wr}
   Abazajian, K.~N.{\it et al.}  [SDSS Collaboration]~2009,
@@ -1667,140 +1921,6 @@ Banerji,~M., Adams,~R.~G. 2010, Monthly Notices of the Royal Astronomical Societ
   The Astrophysical Journal Supplement Series  {\bf 182}, 543
   [arXiv:0812.0649 [astro-ph]].
   %%CITATION = APJSA,182,543;%%
-
-\bibitem{mackay}
-MacKay, David 1992, Neural Computation {\bf 4} 415
-
-\bibitem{Settles09}
-Settles,~B. 2009, ``Active Learning Literature Survey,'' Computer Sciences Technical
-Report 1648, University of Wisconsin-Madison,
-\verb|http://pages.cs.wisc.edu/~bsettles/active-learning/|
-
-\bibitem{YifeiMa12}
-Ma,~Y., Garnett,~R., and Schneider,~J. 2012,
-``Submodularity in Batch Active Learning and Survey Problems
-on Gaussian Random Fields,''
-Neural Information Processing Systems 
-workshop on Discrete Optimization in Machine Learning
-
-\bibitem{rrlyrae}
-Oluseyi, Hakeem M., Becker, Andrew C., Culliton, Christopher, Furqan, Muhammad,
-Hoadley, Keri L., Regencia, Paul, Wells, Akeem J., Ivez\`ic, Zeljko, Jones, R.
-Lynne, Krughoff, K. Simon, and Sesar, Branimir (2012), The Astronomical Joural
-{\bf 144} 9
-
-
-\bibitem{djorgovski2011}
-Djorgovski,~S.~J., Donalek,~C., Mahabal,~A.~A., Moghaddam,~B., Turmon,~M.,
-Graham,~M.~J., Drake,~A.~J., Sharma,~N. and Chen,~Y. 2011
-[arXiv:1110.4655] to appear in Statistical Analysis and Data Mining, ref. proc.
-CIDU 2011 conf., eds. A. Srivastava and N. Chawla
-
-\bibitem{richards2011}
-Richards,~J.~W., Starr,~D.~L., Butler,~N.~R., Bloom,~J.~S., Brewer,~J.~M.,
-Crellin-Quick,~A., Higgins,~J., Kennedy,~R., and Rischard,~M. 2011,
-The Astrophysical Journal {\bf 733}, 10
-
-\bibitem{richards2012}
-Richards,~J.~W., Starr,~D.~L., Brink,~H., Miller,~A.~A., Bloom,~J.~S.,
-Butler,~N.~R., James,~J.~B., Long,~J.~P., and Rice,~J. 2012
-The Astrophysical Journal {\bf 744}, 192
-
-\bibitem{graham2012}
-Graham,~M.~J., Djorgovski,~S.~G., Mahabal,~A., Donalek,~C., Drake,~A.,
-Longo,~G. 2012 [arXiv:1208.2480] to appear in special issue of Distributed and
-Parallel Databases on Data Intensive eScience
-
-\bibitem{mahabal2008a}
-Mahabal,~A., Djorgovski,~S.~G., Turmon,~M., Jewell,~J., Williams,~R.~R.,
-Drake,~A.~J., Graham,~M.~G., Donalek,~C., Glikman,~E., and the Palomar-QUEST Team
-2008, Astronomische Nachrichten {\bf 329}, 288
-
-
-\bibitem{mahabal2011a}
-Mahabal,~A.~A., Donalek,~C., Djorgovski,~S.~J., Drake,~A.~J.,
-Graham,~M.~J., Williams,~R., Chen,~Y., Moghaddam,~B., and Turmon,~M.
-2011, [arxiv:1111.3699] to appear in Proc. IAU 285, ``New Horizons in Transient
-Astronomy,'' Oxford, September 2011
-
-\bibitem{Gittin89}
-Gittins, J. 1989, ``Multi-Armed Bandit Allocation Indices,'' published by Wiley
-
-\bibitem{Auer02}
-Auer, P., Cesa-Bianchi, N., and Fischer, P. 2002,
-``Finite-time Analysis of the Multiarmed Bandit Probem,''
-Machine Learning {\bf 47} 235
-
-\bibitem{Neill05}
-Neill, D. and Moore, A. 2005,
-``Detecting Significant Multidimensional Spatial Clusters,''
-Advances in Neural Information Processing Systems {\bf 17} 969
-
-\bibitem{bryan}
-Bryan, B., Schneider, J., Miller, C.~J., Nichol, R.~C., Genovese, C., and
-Wasserman, L., 2007,
-The Astrophysical Journal {\bf 665}, 25
-
-\bibitem{kim2011}
-Kim, Dae-Won, Protopapas, Pavlos, Byun, Young-Ik, Alcock, Charles, Khardon,
-Roni, and Trichas, Markos 2011, arXiv:1101.3316
-
-\bibitem{pichara2012}
-Pichara, K., Protopapas, P., Kim, D.-W., Marquette, J.-B., and Tisserand, P.
-2012, Monthly Notices of the Royal Astronomical Society, {\bf 427} 1284
-
-\bibitem{brink2012}
-Brink, Henrik, Richards, Joseph W., Poznanski, Dovi, Bloom, Joshua S., Rice,
-John, Negahban, Sahand, and Wainwright, Martin 2012, arXiv:1209.3775
-
-\bibitem{Moore97a}
-Moore, A., and Lee, M. 1998, Journal of Artificial Intelligence Research {\bf 8} 67
-
-\bibitem{Sabhnani06}
-Sabhnani, M., Moore, A., and Dubrawski, A. 2006,
-``T-Cube: A Data Structure for Fast Extraction of Time Series from Large Datasets,''
-technical report number CMU-ML-06-104
-
-\bibitem{Moore02}
-Moore, A. W., and Schneider, J. G. 2002, 
-``RADSEARCH: A new approach for finding optimal rules
-efficiently from dense datasets,'' in ``AAAI-2002''
-
-\bibitem{Moore97}
-Moore, A., Schneider, J., and Deng, K. 1997,
-``Efficient Locally Weighted Polynomial Regression Predictions,'' in
-``International Conference on Machine Learning''
-
-\bibitem{Moore99}
-Moore, A. 1999, ``Very Fast EM-based Mixture Model Clustering using Multiresolution
-Kd-trees,'' in ``Neural Information Processing Systems 11''  pp. 543-549
-
-\bibitem{Kulldorf97}
-Kulldorrff, M. 1997,
-Communications in Statistics -- Theory and Methods {\bf 26} 1481
-
-
-\bibitem{Neill03}
-Neill, D. and Moore, A. 2003,
-``A fast multi-resolution method for detection of significant spatial overdensities,''
-Carnegie Mellon University Computer Science Department paper 2175
-
-
-\bibitem{gard07}
-Gardner, J. P., Connolly, A. J., and McBride, C. 2007,
-``Enabling rapid development of parallel tree search applications,''
-in ``Proceedings of the 2007 Workshop on Challenges of Large Applications in Distributed
-Environments (CLADE)''
-
-\bibitem{connolly10}
-Connolly, A. J., Peterson, J., Jernigan, J. Garrett, Abel, Robert, Bankert, Justin,
-Chang, Chihway, Claver, Charles F., Gibson, Robert, Gilmore, David K., Grace, Emily,
-Johnes, R. Lynne, Ivezic, Zeljko, Jee, James, Juric, Mario, Kahn, Steven M.,
-Krabbendam, Victor L., Krughoff, Simon, Lorenz, Suzanne, Pizagno, Jame,s Rasmussen,
-Andrew, Todd, Nathan, Tyson, J. Anthon, Young, Mallory 2010, Proceedings of the SPIE
-{\bf 7738} 773810
-
-%%%%%%%%%%%%%%%%%in order above this line
 
 %\bibitem[Abdalla {\it et al}. 2011]{abdalla}
 %Abdalla,~F.~B., Banerji,~M., Lahav,~O., and Rashkov,~V. 2011,
@@ -1819,130 +1939,6 @@ Andrew, Todd, Nathan, Tyson, J. Anthon, Young, Mallory 2010, Proceedings of the 
 %``Report of the Dark Energy Task Force,''
 %\verb|http://jdem.gsfc.nasa.gov/science/DETF_Report.pdf|
 
-%\bibitem[Blocker and Protopapas 2013]{blocker2013}
-%Blocker, Alexander W. and Protopapas, Pavlos 2013, arXiv:1301.3027
-
-%\bibitem[Bloom {\it et al}. 2011]{bloom2011}
-%Bloom,~J.~S., Richards,~J.~W., Nugent,~P.~E., Quimby,~R.~M., Kasliwal,~M.~M.,
-%Starr,~D.~L., Posnanski,~D., Ofek,~E.~O., Cenko,~S.~B., Butler,~N.~R.,
-%Kulkarni,~S.~R., Gal-Yam,~A., and Law,~N. 2011 [arXiv:1106.5491]
-
-%\bibitem[Bryan 2007]{brentsthesis}
-%Bryan, B., 2007, Ph.D. thesis
-%\verb|http://reports-archive.adm.cs.cmu.edu/anon/|
-%\verb|ml2007/abstracts/07-122.html|
-
-%\bibitem[Connolly {\it et al}. 2005]{imsim}
-%Connolly,~A.~J., Peterson,~J., Jernigan,~J.~G., Abel,~R., Bankert,~J.,
-%Chang,~C., Claver,~C.~F., Gibson,~R., Gilmore,~D.~K., Grace,~E., Jones,~R.~L.,
-%Ivezic,~Z., Jee,~J., Juric,~M., Kahn,~S.~M., Krabbendam,~V.~L., Krughoff,~S.,
-%Lorenz,~S., Pizagno,~J., Rasmussen,~A., Todd,~N. Tyson,~J.~A., and Young,~M.
-%2005, Society of the Photo-Optical Instrumentation Engineers (SPIE) Converence
-%Series {\bf 7738}, 53
-
-%\bibitem[Cunha {\it et al}. 2012]{cunha2012}
-%Cunha,~C.~E., Huterer,~D., Lin,~H., Busha,~M.~T., and Wechsler,~R.~H. 2012,
-%[arXiv:1207.3347]
-
-%\bibitem[Daniel and Linder 2010]{muvarpi2}
-%Daniel,~S.~F. and Linder,~E.~V. 2010, Physical Review D {\bf 82}, 103523
-
-%\bibitem[Das {\it et al}. 2011]{sudeep}
-%Das,~S., de Putter,~R., Linder,~E.~V., and Nakajima,~R. 2011,
-%[arXiv:1102.5090]
-
-%\bibitem[Davis {\it et al}. 2007]{essence}
-%Davis,~T.~M., M\"ortsell,~E., Sollerman,~J., Becker,~A.~C., Blondin,~S.,
-%Challis,~P., Clocchiatti,~A., Filippenko,~A.~V., Foley,~R.~J., Garnavich,~P.~M.,
-%Jha,~S., Krisciunas,~K., Kirshner,~R.~P., Leibundgut,~B., Li,~W., Matheson,~T.,
-%Miknaitis,~G., Pignata,~G., Rest,~A., Riess,~A.~G., Schmidt,~B.~P.,
-%Smith,~R.~C., Spyromilio,~J., Stubbs,~C.~W., Suntzeff,~N.~B., Tonry,~J.~L.,
-%Wood-Vasey,~W.~M., and Zenteno,~A. 2007, The Astrophysical Journal, {\bf 666},
-%716
-
-%\bibitem[de Putter {\it et al}. 2010]{roland}
-%de Putter,~R., Huterer,~D. and Linder,~E.~V. 2010, Physical Review D {\bf 81},
-%103513
-
-%\bibitem[Foster \it{et al}. 2009]{foster}
-%Foster, Leslie, Waagen, Alex, Aijaz, Nabeela, Hurley, Michael, Luis, Apolonio,
-%Rinsky, Joel, Satyavolu, Chandrika, Way, Michael J., Gazis, Paul, Srivastava,
-%Ashok 2009, Journal of Machine Learning Research {\bf 10} 857
-
-%\bibitem[Linder 2013]{linder2013}
-%Linder, Eric V. 2013, Journal of Cosmology and Astropartical Physics {\bf 1304}
-%031
-
-%\bibitem[Long {\it et al}. 2012]{long2012}
-%Long,~J.~P., El Karoui,~N., Rice,~J.~A., Richards,~J.~W., and Bloom,~J.~S. 2012,
-%Publications of the Astronomical Society of the Pacific {\bf 124} 280
-
-%\bibitem[LSST Collaboration 2011]{lsstoverview}
-%LSST Collaboration 2011, [arXiv:0805.2366]
-%\verb|http://www.lsst.org/lsst/overview/|
-
-%\bibitem[LSST Dark Energy Science Collaboration 2012]{desc}
-%LSST Dark Energy Science Collaboration 2012, [arXiv:1211.0310]
-
-%\bibitem[LSST Science Collaborations 2009]{sciencebook}
-%LSST Science Collaborations 2009, ``LSST Science Book'',
-%\verb|http://www.lsst.org/lsst/science/scibook|
-
-%\bibitem[Ma {\it et al}. 2006]{Ma2006}
-%Ma,~Z., Hu,~H., and Huterer,~D. 2006, The Astrophysical Journal {\bf 636}, 21
-
-%\bibitem[Mahabal {\it et al}. 2011b]{mahabal2011b}
-%Mahabal,~A.~A., Djorgovski,~S.~G., Drake,~A.~J., Donalek~C., Graham,~M~J.,
-%Williams,~R.~D., Chen,~Y., Moghaddam,~B., Turmon,~M., Beshore,~E., and Larson,~S.
-%2011b, Bulletin of the Astronomical Society of India {\bf 39}, 387
-
-%\bibitem[Mandelbaum {\it et al}. 2008]{mandelbaum2008}
-%Mandelbaum,~R., Seljak,~U., Hirata,~C.~M., Bardelli,~S., Bolzonella,!M.,
-%Bongiorno,~A., Carollo,~M., Contini,~T., Cunha,~C.~E., Garilli,~B.,
-%Iovino,~A., Kambczyk,~P, Kneib,~J.-P., Knobel,~C., Koo,~D.~C., Lamareille,~F.,
-%Le F\`evre,~O., Leborgne,~J.-F., Lilly,~S.~J., Maier,~C., Mainieri,~V.,
-%Mignoli,~M., Newman,~J.~A., Oesch,~P.~A., Perez-Montero,~E., Ricciardelli,~E.,
-%Scodeggio,~M., Silverman,~J., and Tasca,~L. 2008, Monthly Notices of the Royal
-%Astronomical Society {\bf 386}, 781
-
-%\bibitem{Moore00}
-%Moore,~A., Connolly,~A., Genovese,~C., Grone,~L., Kanidoris,~N., Nichol,~R.,
-%Schneider,~J., Szalay,~A., Szapudi,~I., and Wasserman,~L. 2000,
-%``Fast Algorithms and Efficient Statistics: N-point Correlation Functions,'' in
-%MPA/MPE/ESO Conference on Mining the Sky [arXiv:astro-ph/0012333]
-
-%\bibitem{morgan2011}
-%Morgan, A.N., Long, James, Richards, Joseph W., Broderick, Tamara, Butler,
-%Nathaniel R., and Bloom, Joshua S. 2011, arXiv:1112.3654
-
-%\bibitem[Preston {\it et al}. 2009]{preston2009}
-%Preston, Dan, Protopapas, Pavlos, and Brodely, Carla 2009, arXiv:0901.3329
-
-%\bibitem[Richards {\it et al}. 2004]{qso}
-%Richards,~G.~T., Nichols,~R.~C., Gray,~A.~G., Brunner,~R.~J., Lupton,~R.~H.,
-%Vanden Berk,~D.~E., Chong,~S.~S., Weinstein,~M.~A., Schneider,~D.~P.,
-%Anderson,~S.~F., Munn,~J.~A., Harris,~H.~C., Strauss,~M.~A., Fan,~X.,
-%Gunn,~J.~E., Ivezi\'c,~Z., York,~D.~G., Brinkmann,~J., and Moore,~A.~W. 2004,
-%The Astrophysical Journal Supplement Series, {\bf 155}, 257
-
-%\bibitem[Richards {\it et al}. 2012b]{richards2012b}
-%Richards, Joseph W., Starr, Dan L., Miller, Adam A., Bloom, Joshua S.,
-%Butler, Nathaniel R., Brink, Henrik, and Crellin-Quick, Arien 2012b,
-%The Astrophysical Journal Supplement Series {\bf 203} 32
-
-%\bibitem[Rosenfield {\it et al}. 2011]{rosenfield2011}
-%Rosenfield,~P., Connolly,~A., Fay,~J., Sayres,~C., and Tofflemire,~B. 2011,
-%Astronomical Society of the Pacific Conference Series {\bf 443}, 109
-
-%\bibitem[Sesar {\it et al}. 2011]{linear}
-%Sesar,~B., Stuart,~J.~S., Ivezi\'c,~\u Z., Morgan,~D.~P., Becker,~A.~C., and
-%Wo\'zniak,~P. 2011, The Astronomical Journal {\bf 142}, 190
-
-
-%\bibitem[Wiley {\it et al}. 2011]{wiley2011}
-%Wiley,~K, Connolly,~A.~J., Gardner,~J., Krughoff,~S., Balazinska,~M., Howe,~B.,
-%Kwon,~Y., and Bu, ~Y. 2011, Publication of the Astronomical Society of the
-%Pacific {\bf 123}, 366
 
 \end{thebibliography} 
 
