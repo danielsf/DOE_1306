@@ -138,8 +138,8 @@ ahead to the end of all possible experiments results in the
 development of myopic heuristics that improve the speed of these
 learning techniques but at a substantial cost in how well they perform
 on real data.  See, for example, 
-Figure 1 from Garnett {\it et al}. (2011) and Figures
-3 and 4 of Garnett {\it et al}. (2012a).
+Figure 1 from reference \cite{Garnett11} and Figures
+3 and 4 of reference \cite{Garnett12}.
 
 By addressing these challenges we propose to develop active learning
 algorithms that will scale to data sets with hundreds of millions of
@@ -176,7 +176,7 @@ following objectives.
 of big data science will require confronting problems not yet addressed by
 automatic data analysis algorithms. Most model-fitting algorithms,
 including GPs, return a prediction and an error on that value that is
-unimodal and usually Guassian.  As future experiments push the boundaries
+unimodal and usually Gaussian.  As future experiments push the boundaries
 of our physical understanding, this assumption will cease to be valid.  A
 particularly difficult case is where the data allows multiple
 interpretations and thus the real posterior belief about a variable should
@@ -279,7 +279,8 @@ has been used to compute the 2--point function on over 10$^6$ galaxies and
 the 3--point correlation function of 400,000 galaxies from the SDSS survey
 \cite{Scranton2002,Szapudi2002,Nichol2006,mcbride2011a,mcbride2011b} as
 well as in measures of the marked correlation functions \cite{Skibba2006}.
-As part of this collaboration \cite{yip2004a, vdp2009, daniel2011}
+As part of this collaboration,
+references \cite{yip2004a, vdp2009, daniel2011}
 introduced to astrophysics signal compression and analysis techniques that
 are now regularly applied to the analysis of spectroscopic surveys. More
 recently this collaboration has developed algorithms for automatically
@@ -454,10 +455,10 @@ GPs have been used successfully to describe a wide range of physical
 phenomena without having to assume a model of the underlying process, even
 in the case of sparse measurements.  Examples in cosmology include the
 expansion history of the universe \cite{ericgp} and interpolating point
-spread functions across large images \cite{psf}.  Mahabal {\it et al}. (2008b) 
-and Wang {\it et al}. (2011,
-2012) use a mixture of Gaussian Processes to model light curves and
-identify periodically varying sources.  Huisje {\it et al}. (2011, 2012)
+spread functions across large images \cite{psf}.  References 
+\cite{mahabal2008b,wang2011,wang2012} 
+use a mixture of Gaussian Processes to model light curves and
+identify periodically varying sources.  References \cite{huijse2011,huijse2012}
 improve upon their methods, using information-theoretical quantities to
 separate the true period of these variations from systematics introduced by
 observational apparatus.  The PIs have used GPs to accelerate the search of
@@ -511,7 +512,7 @@ training points.  Eq.~\ref{eq:cov} extends directly to the case of multiple
 query points by taking the variables as matrices where appropriate, and the
 result is a full covariance matrix for the query points.  Readers looking
 for a more detailed explanation of GPs should consult
-Rasmussen and Williams (2006).
+reference \cite{gp}.
 
 
 The inferences in Eqns \ref{eq:mean} and \ref{eq:cov} are non-parametric:
@@ -533,7 +534,8 @@ in a handful of broadband filters (i.e., taking their photometry), is
 several thousand times cheaper.  For this reason, surveys such as the DES
 and the LSST are designed to exclusively take photometric data and rely on
 researchers to develop algorithms for estimating a galaxy's true redshift
-from its observed photometry (\cite{connolly95} usually in five or six bands).  Because of
+from its observed photometry \cite{connolly95} 
+(usually in five or six bands).  Because of
 the observational cost, only a few spectrographically determined redshifts are available
 to help train these algorithms.
 
@@ -608,7 +610,7 @@ the problem as one of learning the form of a one-to-one scalar function.
 We propose to use the probabilistic nature of GPs to learn the full
 probability distribution that a given galaxy is at a given redshift.  The
 resulting prediction is simultaneously more robust against sparse, noisy or
-degenerate training data, more usable in follow-on scientific analyses, and
+degenerate training data, more usable in follow-up scientific analyses, and
 more amenable to model improvement by the introduction of active learning.
 % Figure \ref{subfig:gp} shows preliminary results from our algorithm when
 % trained on spectroscopic data from 50,000 galaxies and tested on the same
@@ -669,7 +671,8 @@ to experiment with functions including those using a basis
 function representation of the function models. For example, a preliminary analysis using
  principal component
 analysis on the input $\{\vec{\theta}\}$ to set $\bar{y}$ according to a linear
-regression on the principal component most correlated with the outputs $\vec{y}$.
+regression on the principal component most correlated 
+with the outputs $\vec{y}$
 shows an  improvement in the peformance of
 the GP as a function regressor.
 
@@ -737,8 +740,10 @@ model likelihood of the single-mode model.
 \end{enumerate}
 
 \vspace{.5\baselineskip}
-Through this iterative approach, we expect to build  GPs such that, even when it
-succumbs to the degeneracies seen in Figure \ref{subfig:gp}, it will still place
+Through this iterative approach, we expect to build  GPs such that, even when 
+they
+succumb to the degeneracies seen in Figure \ref{subfig:gp}, 
+they will still place
 significant probability density at the true
 $z_\text{photometric}=z_\text{spectroscopic}$ value.  This will represent a
 signtificant improvement over current model-learning algorithms, which are
@@ -805,17 +810,23 @@ It is useful to see the challenges involved in developing good active
 learning criteria by considering what an optimal algorithm might need to
 do.  Figure \ref{fig:searchtree} shows the computation it would require.
 The root of the tree contains the current decision on which point to choose
-and an optimal algorithm would consider them all.  For each choice, it
+and an optimal algorithm would consider them all.  For each 
+potential choice, it
 would then consider every possible outcome (label) that might be obtained
 and weight them by the estimated probability of each outcome.  For each
 outcome, it would then consider what next point it would choose if it
 received that outcome.  The tree expands down to a depth equal to the
 number of data points that will be chosen and at the leaf every possible
-model would be learned and evaluated.  Since the number of leaves is
+model would be learned and evaluated.  
+The algorithm only chooses a new point to label (the decision signified by the
+root of the tree) after it has evaluated all possible choices out to their
+ultimate consequence.
+Since the number of leaves is
 exponential in the depth of the tree, this quickly become intractable.  A
 typical solution (referred to as myopic) is to truncate the tree to zero or
 one level.  A second speedup is often obtained by replacing a full model
-evaluation with a fast heuristic (see \cite{Settles09} for a summary of
+evaluation with a fast heuristic (see reference
+\cite{Settles09} for a summary of
 common heuristics).
 
 The evaluation of the model, whether in a full or truncated tree, is also a
@@ -948,7 +959,7 @@ methods on real data sets that contain all these additional challenges.
 \includegraphics[scale=1.0]{rrlyrae.png}
 }
 \caption{
-Taken from \cite{rrlyrae} the left panels shows the expected
+Taken from reference \cite{rrlyrae} the left panels shows the expected
 sampling of
 a light curve by the LSST at its main survey cadence (top left) and
 for a higher sampling rate that will be employed for 10\% of the LSST
@@ -1107,10 +1118,10 @@ the search short and/or replace the computation of expensive expectations
 with simple heuristics.  We propose the following new methods:
 \vspace{.5\baselineskip}
 \begin{itemize}
-\item Approximate pruning rules in the spirit of the exact rules in
+\item Approximate pruning rules in the spirit of the exact rules in reference
   \cite{Garnett12} that can trade off accuracy for search speed.
 
-\item In \cite{Wang13} we showed how to combine an exact one-step myopic
+\item In reference \cite{Wang13} we showed how to combine an exact one-step myopic
   evaluation with an approximation of the future impact on positives found
   that could achieve results better than expensive look aheads on graph problems.
   We will develop analogous methods for Euclidean spaces and multi-class or
@@ -1119,8 +1130,8 @@ with simple heuristics.  We propose the following new methods:
 
 \item There is a large literature on bandit problems including the optimal
   algorithms derived from allocation indices when the alternatives are
-  independent (see \cite{Gittin89}) and the more recent approaches based on
-  obtaining provable regret bounds (see \cite{Auer02} and the extensive
+  independent (see reference \cite{Gittin89}) and the more recent approaches based on
+  obtaining provable regret bounds (see reference \cite{Auer02} and the extensive
   work after it).  Bandit problems are about finding good choices and
   exploiting them repeatedly.  Active search is different because each
   selection pays off at most once and the key is using that information to
@@ -1190,7 +1201,7 @@ directing experiments as they are performed.
 We will not choose our follow-up observations based on cross-validation testing,
 but rather based on which observations we expect to yield the most significant
 decreases in the entropy of our probabilistic model.
-Huijse {\it et al}. (2011,2012) use a similar scheme to find the correlation
+References \cite{huijse2011,huijse2012} use a similar scheme to find the correlation
 between observations within a single light curve.  We will attempt to find
 the type of observation with the greatest information content. 
 
@@ -1198,8 +1209,8 @@ In {\it active search} the ultimate objective in following up detected
 anomalies is to maximize the number of interesting anomalies
 classified and characterized while staying within a budget of
 follow-up observations or experiments. The problem and the Bayesian
-optimal algorithm for it are described in Garnett et al 2011 and Garnett
-et al 2012a. We propose to expand on these approaches using scan
+optimal algorithm for it are described in references
+\cite{Garnett11,Garnett12}. We propose to expand on these approaches using scan
 statistics to consider not just individual anomalies but also group
 anomaly detection algorithms that consider arbitrary groupings of
 self-similar anomalous records \cite{Neill05}.
@@ -1210,7 +1221,7 @@ two distinct advantages which render them particularly amenable to
 integration into active learning frameworks.  Variance can be used
 to assign an uncertainty to the predicted value and the covariance
 provides the structure between all pairs of predicted and observed
-outputs.  Bryan {et al} (2007) and Daniel {et al} (2012) use these
+outputs.  References \cite{bryan,daniel2012} use these
 aspects to great affect, treating the determined variances as a
 measure of the information that can be learned by promoting a query
 point to a new training point and thus learning the likelihood surface
@@ -1344,8 +1355,8 @@ distributions.
 GPs.  Test the algorithm against data from the DES, and simulated LSST.
 
 \item (Schneider) Develop active learning methods optimized for our next generation GPs.
-We will initially develop myopic criteria, selecting data for follow up whose classification
-considered in a vacuum is the most advantages.  We will then develop methods to implement
+Initially develop myopic criteria, selecting data for follow up whose classification
+considered in a vacuum is the most advantages.  Later, develop methods to implement
 one- and two-step-look-ahead criteria.
 
 \item (Connolly) Test the developed active learning methods on photometric redshift data.
@@ -1363,7 +1374,7 @@ any researcher using any data set.
 
 \item (Schneider)
 Develop active feature acquisition algorithms based on the probability distributions
-output by our next generation GPs.  We will use them to determine what additional
+output by our next generation GPs.  Use them to determine what additional
 information (e.g., morphological or angular correlation function) provides the most
 helpful supplement information in the case of photometric redshifts.
 
