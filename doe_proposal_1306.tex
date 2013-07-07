@@ -820,7 +820,7 @@ model would be learned and evaluated.  The algorithm only chooses a new
 point to label (the decision signified by the root of the tree) after it
 has evaluated all possible choices out to their ultimate consequence.
 Since the number of leaves is exponential in the depth of the tree, this
-quickly become intractable.  A typical solution (referred to as myopic) is
+quickly becomes intractable.  A typical solution (referred to as myopic) is
 to truncate the tree to zero or one level.  A second speedup is often
 obtained by replacing a full model evaluation with a fast heuristic (see
 reference \cite{Settles09} for a summary of common heuristics).  In our
@@ -841,7 +841,7 @@ A myopic information gain (change in entropy) strategy looks ahead one step
 and chooses the data point that minimizes the expected entropy (monotonic
 in $\det(\Sigma_q)$).  Even this can be expensive since it requires the
 computation of the determinant.  An alternative is minimizing the average
-variance $\text{tr}(\Sigma_q)$, also known as V-optimality).  A further
+variance $\text{tr}(\Sigma_q)$ (also known as V-optimality).  A further
 approximation is to do no look ahead and simply choose the data point
 corresponding to the largest diagonal element in $\text{tr}(\Sigma_q)$.  This is
 known as uncertainty sampling.
