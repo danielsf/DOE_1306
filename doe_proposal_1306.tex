@@ -800,24 +800,10 @@ criteria.
 \subsection{Novel active learning criteria}
 
 \begin{figure}[t]
-\subfigure[]{
-\includegraphics[scale=0.3]{searchtree.png}
+\centerline{\includegraphics[scale=0.4]{searchtree.png}}
+\caption{Search tree for an optimal active learning algorithm that will
+  choose two more data points.}
 \label{fig:searchtree}
-}
-\subfigure[]{
-\includegraphics[scale=0.2]{learning_curve.png}
-\label{fig:learning}
-}
-\caption{Figure \ref{fig:searchtree}:Search tree for an optimal active learning algorithm that will
-  choose two more data points.
-  Figure \ref{fig:learning}:
-  Active learning applied to classification according to a scalar function on a
-6-dimensional data space.  The horizontal axis is the size of the training data
-set.  The vertical axis is the mean value of the output probability distribution
-at the true value of the scalar function.  The black curve assembles the
-training set randomly.  The red curve selects new training points that maximize
-the figure of merit $\left(-\ln[P(\text{mode})]\right)$.}
-\label{fig:bothlearning}
 \end{figure}
 
 It is useful to see the challenges involved in developing good active
@@ -920,6 +906,21 @@ We propose the following new methods:
 % this work.
 
 \subsection{Active learning for photometric redshifts}
+
+\begin{figure}[t]
+\centerline{
+\includegraphics[scale=0.4]{learning_curve.png}
+}
+\caption{
+Active learning applied to classification according to a scalar function on a
+6-dimensional data space.  The horizontal axis is the size of the training data
+set.  The vertical axis is the mean value of the output probability distribution
+at the true value of the scalar function.  The black curve assembles the
+training set randomly.  The red curve selects new training points that maximize
+the figure of merit $\left(-\ln[P(\text{mode})]\right)$.
+}
+\label{fig:learning}
+\end{figure}
 
 In both empirical and forward-fitting photometric redshift codes, biases
 arise from the fact that the distribution of training samples (templates)
