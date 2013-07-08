@@ -27,7 +27,7 @@
 \pagestyle{empty}
 
 
-\renewcommand{\baselinestretch}{0.99}
+\renewcommand{\baselinestretch}{0.971}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -166,7 +166,7 @@ machine learning methods.
 On-line, data-driven analysis will require model-fitting and
 classifications that are non-parametric and probabilistic.  Gaussian
 Processes (GPs) meet these requirements and we will, therefore, build our
-methods around them.  We note, however, objectives 2-4 below will result in
+methods around them.  We note, however, that objectives 2-4 below will result in
 algorithms that do not depend on this choice, and should be applicable to
 any regression or classification method that yields a probability
 distribution over outcomes.  We divide our research program into the
@@ -277,8 +277,7 @@ orbital tracks in sparsely sampled temporal data \cite{kubica}. The
 software associated with these algorithms was made publicly available and
 has been used to compute the 2--point function on over 10$^6$ galaxies and
 the 3--point correlation function of 400,000 galaxies from the SDSS survey
-\cite{Scranton2002,Szapudi2002,Nichol2006,mcbride2011a,mcbride2011b} as
-well as in measures of the marked correlation functions \cite{Skibba2006}.
+\cite{Scranton2002,Szapudi2002,Nichol2006,mcbride2011a,mcbride2011b}.
 As part of this collaboration,
 references \cite{yip2004a, vdp2009, daniel2011}
 introduced to astrophysics signal compression and analysis techniques that
@@ -618,19 +617,6 @@ more amenable to model improvement by the introduction of active learning.
 % modeling yields significantly less scatter about the true
 % $z_\text{photometric}=z_\text{spectroscopic}$ relationship.
 
-\begin{figure}[t]
-\centerline{\includegraphics[scale=0.3]{sdss_lnsum.png}}
-\caption{
-The mean value of
-$\ln[P(\text{truth})]$ as a function of photometric redshift (the vertical
-axes in Figures \ref{fig:scatter}) for all
-three algorithms under consideration using real
-data taken from the Sloan Digital Sky Survey \cite{Abazajian:2008wr}.  
-In this latter case, the
-algorithms are trained on 21,000 galaxies and tested on 191,000 galaxies.
-}
-\label{fig:lnsum}
-\end{figure}
 
 The tests considered above represent idealized cases.
 The algorithm resulting in Figure \ref{fig:scatter} was trained on high
@@ -707,6 +693,20 @@ approaches that attempt to find a relationship between the form of the covarianc
 function and the entropy of the distribution produced by the GP.
 \end{itemize}
 \vspace{.5\baselineskip}
+
+\begin{figure}[t]
+\centerline{\includegraphics[scale=0.3]{sdss_lnsum.png}}
+\caption{
+The mean value of
+$\ln[P(\text{truth})]$ as a function of photometric redshift (the vertical
+axes in Figures \ref{fig:scatter}) for all
+three algorithms under consideration using real
+data taken from the Sloan Digital Sky Survey \cite{Abazajian:2008wr}.  
+In this latter case, the
+algorithms are trained on 21,000 galaxies and tested on 191,000 galaxies.
+}
+\label{fig:lnsum}
+\end{figure}
 
 \subsection{Fortifying Gaussian Processes against degenerate training data}
 \label{sec:multimode}
@@ -871,7 +871,7 @@ We propose the following new methods:
   to look ahead further.  Previously, we published a method for increasing
   look ahead in an active search problem by pruning the search tree
   \cite{Garnett12}.  It drastically reduces computation while provably
-  returning the correct answer (i.e. not an approximation).  We propose to
+  returning the correct answer (i.e.\ it is not an approximation).  We propose to
   develop analogous pruning rules for the active learning problem.  We will
   further extend both methods by developing approximate pruning rules that
   trade off the aggressiveness of pruning, and thus the amount of look
@@ -1033,7 +1033,7 @@ Choices must be made about what color bands to measure and at what timing
 and frequency.  These choices might be revisited continously throughout the
 follow up process.  This is called the {\em active feature acquisition
   problem}. Small errors in the identification and classification of transient
-sources will swamp the system.  The LSST will detect 7.5x10$^8$ sources
+sources can swamp the system.  The LSST will detect 7.5x10$^8$ sources
 {\bf every night}.  Even for the most numerous transient events (SNe), less
 than 10$^{-5}$ of the total number of sources will belong to this class.
 The most energetic bursters are 500 times rarer.  Algorithms for
@@ -1047,8 +1047,8 @@ at different times.
 Finally, transient classification and active learning must be done in real
 time.  Where a non-variable object's spectrographic redshift could be measured years
 after its photometry was collected, a decision to follow up on a transient
-must be taken in seconds or minutes. Otherwise, valuable data
-might fade before it can be captured.  With timescales as short as seconds
+must be taken in seconds or minutes (otherwise, valuable data
+might fade before it can be captured).  With timescales as short as seconds
 to hours we require the ability to identify, classify and report any
 detection in time to allow for follow-up observations before the initial
 phenomenon fades.
@@ -1164,7 +1164,7 @@ posterior class probabilities to get a combined distribution over what we
 expect to see if we choose to observe some currently unobserved feature.
 The result is a set of joint prediction distributions over all class labels
 and unobserved features.  These distributions are what we need to
-instantiate an information theoretic version of figure \ref{fig:searchtree}
+instantiate an information theoretic version of Figure \ref{fig:searchtree}
 for the active feature acquisition problem.  The nodes that consider all
 possible outcomes become integrals over the combined distribution of
 expected observations.  The evaluation function in the leaves is the
@@ -1181,7 +1181,7 @@ acquisition problem will have additional constraints because the
 opportunity to observe features will proceed along the time dimension and
 an instantaneous decision to observe that time-color combination or pass it
 up forever will have to be made.  The search tree can be modified
-accordingly by restricting the observations available at each ``choose
+accordingly by restricting the observations available at each ``chosen
 node''.
 
 The good performance of myopic algorithms, both practically and
@@ -1312,7 +1312,7 @@ each other.
 We will focus on multiple projects in each of the three years of this
 program.  Algorithms will be released as they are developed in a
 twice-yearly release cycle.  Algorithm development will be undertaken using
-data from the DES survey, and a series of detailed simulations developed
+data from the DES survey, and detailed simulations developed
 for the LSST \cite{connolly10}.  Each item below will indicate which of the
 PIs will take the lead in that stage of the program.
 
@@ -1349,7 +1349,7 @@ PIs will take the lead in that stage of the program.
   the case of photometric redshifts.
 
 \item (Connolly) Extend our GPs to the problem of transient-classification.
-  Analyze stellar sources where there are known populations with defined
+  Analyze sources where there are known populations with defined
   variability signatures (e.g.\ Cepheid variables) to provide validation
   for the analysis.
 
@@ -1389,7 +1389,7 @@ PIs will take the lead in that stage of the program.
 \newpage
 
 
-\section*{References}
+\section{References}
 \begin{thebibliography}{99}
 \bibitem{Garnett11}
 Garnett,~R., Krishnamurhty,~Y., Wang,~D., Schneider,~J., and Mann,~R. 2011,
@@ -1451,9 +1451,9 @@ McBride,~C.~K., Connolly,~A.~J., Gardner,~J.~P., Scranton,~R., Scoccimarro,~R.,
 Berlind,~A.~A., Mar\'in,~F., and Schneider,~D.~P. 2011, The Astrophysical
 Journal {\bf 739}, 85
 
-\bibitem{Skibba2006}
-Skibba,~R., Sheth,~R.~K., Connolly,~A.~J., and Scranton,~R. 2006,
-Monthly Notices of the Royal Astronomical Society, {\bf 369}, 68
+%\bibitem{Skibba2006}
+%Skibba,~R., Sheth,~R.~K., Connolly,~A.~J., and Scranton,~R. 2006,
+%Monthly Notices of the Royal Astronomical Society, {\bf 369}, 68
 
 \bibitem{yip2004a}
 Yip,~C.~W., Connolly,~A.~J., Szalay,~A.~S., Budav\'ari,~T., SubbaRao,~M.,
